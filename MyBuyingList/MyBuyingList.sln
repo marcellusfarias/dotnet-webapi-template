@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Web", "MyBuyingList\MyBuyingList.Web.csproj", "{78A9AB73-2600-4162-AB3C-9451EF553132}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Web", "MyBuyingList\MyBuyingList.Web.csproj", "{78A9AB73-2600-4162-AB3C-9451EF553132}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Infra", "MyBuyingList.Infra\MyBuyingList.Infra.csproj", "{31C52840-E04D-4C90-A055-A467CDDB494E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Infrastructure", "MyBuyingList.Infrastructure\MyBuyingList.Infrastructure.csproj", "{31C52840-E04D-4C90-A055-A467CDDB494E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Domain", "MyBuyingList.Domain\MyBuyingList.Domain.csproj", "{B75B6459-7E14-4BCD-8534-A63E8166DCDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Domain", "MyBuyingList.Domain\MyBuyingList.Domain.csproj", "{B75B6459-7E14-4BCD-8534-A63E8166DCDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Application", "MyBuyingList.Application\MyBuyingList.Application.csproj", "{145633D8-6989-42C5-BF9F-6E2504A0F37B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Application", "MyBuyingList.Application\MyBuyingList.Application.csproj", "{145633D8-6989-42C5-BF9F-6E2504A0F37B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
