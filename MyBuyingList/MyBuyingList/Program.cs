@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 builder.Services.AddLogging();
 ILogger<Program> logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
 builder.Services.AddInfrastructureServices(logger, builder.Configuration);
@@ -28,6 +29,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     try
     {
+        //Run migrations that havent been ran.
         db.Database.Migrate();
     }
     catch (Exception ex)
