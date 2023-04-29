@@ -12,4 +12,8 @@ namespace MyBuyingList.Application.Common.Interfaces;
 public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
+    DbSet<Group> Groups { get; }
+    DbSet<BuyingList> BuyingLists { get; }
+    DbSet<BuyingListItem> BuyingListItems { get; }
+
 }

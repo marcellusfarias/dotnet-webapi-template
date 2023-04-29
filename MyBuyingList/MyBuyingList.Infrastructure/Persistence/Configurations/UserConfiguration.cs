@@ -9,23 +9,31 @@ using System.Threading.Tasks;
 
 namespace MyBuyingList.Infrastructure.Persistence.Configurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+internal class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");
 
-        builder.Property(p => p.UserId).UseIdentityColumn();
+        builder.Property(p => p.Id).UseIdentityColumn();
         builder.Property(p => p.UserName).HasMaxLength(256).IsRequired();
         builder.Property(p => p.Email).IsRequired().HasMaxLength(256);
         builder.Property(p => p.Password).IsRequired().HasMaxLength(32);
-        builder.Property(p => p.CreatedAt).IsRequired().HasMaxLength(32).HasDefaultValue(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc));
+        builder.Property(p => p.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
 
-        builder.HasKey(p => p.UserId).HasName("PK_users_id");
+        builder.HasKey(p => p.Id).HasName("PK_users_id");
         builder.HasIndex(p => p.Email).IsUnique(true);
         builder.HasIndex(p => p.UserName).IsUnique(true);
+        builder.HasMany(p => p.GroupsCreatedBy)
+            .WithOne(g => g.User)
+            .HasForeignKey(g => g.Id)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.BuyingListCreatedBy)
+            .WithOne(bl => bl.UserCreated)
+            .HasForeignKey(bl => bl.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasData(
-            new User { UserId = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = "123" });
+            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = "123" });
     }
 }
