@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
 using MyBuyingList.Infrastructure;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,9 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddLogging();
+builder.Services.AddSwaggerGen();
+
 ILogger<Program> logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
 builder.Services.AddInfrastructureServices(logger, builder.Configuration);
+
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    options.RoutePrefix = string.Empty;
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -20,7 +31,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 else
-{
+{    
     app.UseDeveloperExceptionPage();
 }
 

@@ -4,7 +4,7 @@ using MyBuyingList.Controllers;
 
 namespace MyBuyingList.Web.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TestingController : Controller
 {
     private readonly IApplicationDbContext _context;
