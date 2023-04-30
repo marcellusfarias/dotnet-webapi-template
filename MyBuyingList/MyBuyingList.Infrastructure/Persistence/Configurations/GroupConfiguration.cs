@@ -24,7 +24,7 @@ internal class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.HasIndex(g => g.GroupName).IsUnique(true);
         builder.HasOne(g => g.User)
             .WithMany(u => u.GroupsCreatedBy)
-            .HasForeignKey(p => p.Id)
+            .HasForeignKey(p => p.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(g => g.BuyingLists)
             .WithOne(bl => bl.Group)

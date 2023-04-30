@@ -17,9 +17,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<Group> Groups => Set<Group>();
-
     public DbSet<BuyingList> BuyingLists => Set<BuyingList>();
-
     public DbSet<BuyingListItem> BuyingListItems => Set<BuyingListItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)

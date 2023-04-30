@@ -13,7 +13,7 @@ internal class BuyingListConfiguration : IEntityTypeConfiguration<BuyingList>
 {
     public void Configure(EntityTypeBuilder<BuyingList> builder)
     {
-        builder.ToTable("buying_list");
+        builder.ToTable("buying_lists");
 
         builder.Property(bl => bl.Id).UseIdentityColumn();
         builder.Property(bl => bl.Name).HasMaxLength(256).IsRequired();

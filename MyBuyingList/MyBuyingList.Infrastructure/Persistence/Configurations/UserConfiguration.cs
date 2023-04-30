@@ -26,7 +26,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(p => p.UserName).IsUnique(true);
         builder.HasMany(p => p.GroupsCreatedBy)
             .WithOne(g => g.User)
-            .HasForeignKey(g => g.Id)
+            .HasForeignKey(g => g.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(p => p.BuyingListCreatedBy)
             .WithOne(bl => bl.UserCreated)
