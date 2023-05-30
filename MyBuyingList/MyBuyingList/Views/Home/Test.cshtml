@@ -1,0 +1,51 @@
+﻿
+@{
+    Layout = null;
+}
+@using MyBuyingList.Application.Common.Interfaces;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Test</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarMobile" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="">Buying List</a>
+        </div>
+        <div id="navbarMobile" class="collapse ">
+            <ul class="nav navbar-nav visible-xs">
+                <li class="active"><a href="">Home</a></li>
+                <li><a href="">Contatos</a></li>
+            </ul>
+        </div>
+        <ul class="nav navbar-nav navbar-right hidden-xs">
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <ul style="margin:0px; padding:0px;" class="list-inline">
+                        <li>Teste</li>
+                        <li></li>
+                        <li><span class="caret"></span></li>
+                    </ul>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Editar Informacoes</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Sair</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+</body>
+</html>

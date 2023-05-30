@@ -11,15 +11,11 @@ using System.Threading.Tasks;
 
 namespace MyBuyingList.Infrastructure;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Group> Groups => Set<Group>();
-    public DbSet<BuyingList> BuyingLists => Set<BuyingList>();
-    public DbSet<BuyingListItem> BuyingListItems => Set<BuyingListItem>();
-
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

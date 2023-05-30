@@ -1,18 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using MyBuyingList.Infrastructure;
+using MyBuyingList.Application;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+ILogger<Program> logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
+builder.Services.AddInfrastructureServices(logger, builder.Configuration);
+builder.Services.AddApplicationServices(logger);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddLogging();
 builder.Services.AddSwaggerGen();
-
-ILogger<Program> logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
-builder.Services.AddInfrastructureServices(logger, builder.Configuration);
 
 var app = builder.Build();
 app.UseSwagger();
@@ -21,6 +23,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
 });
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -37,7 +40,7 @@ else
 
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var db = (ApplicationDbContext) scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
     try
     {
         //Run migrations that havent been ran.
@@ -60,4 +63,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+logger.LogInformation("Running app");
 app.Run();

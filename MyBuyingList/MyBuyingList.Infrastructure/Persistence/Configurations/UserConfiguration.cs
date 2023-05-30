@@ -20,6 +20,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(p => p.Email).IsRequired().HasMaxLength(256);
         builder.Property(p => p.Password).IsRequired().HasMaxLength(32);
         builder.Property(p => p.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
+        builder.Property(p => p.Active).IsRequired().HasDefaultValueSql("FALSE");
 
         builder.HasKey(p => p.Id).HasName("PK_users_id");
         builder.HasIndex(p => p.Email).IsUnique(true);
