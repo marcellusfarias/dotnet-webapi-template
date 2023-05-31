@@ -8,7 +8,7 @@ namespace MyBuyingList.Domain.Entities;
 
 public class Group : BaseAuditableEntity
 {
-    public string GroupName { get; set; } = string.Empty;
+    public required string GroupName { get; set; } 
     public User User { get; set; }
     public ICollection<BuyingList> BuyingLists { get; set; }
 }
