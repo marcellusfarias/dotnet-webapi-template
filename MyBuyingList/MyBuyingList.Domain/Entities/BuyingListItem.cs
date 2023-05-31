@@ -9,7 +9,7 @@ namespace MyBuyingList.Domain.Entities;
 public class BuyingListItem : BaseEntity
 {
     public int BuyingListId { get; set; }
-    public string Description { get; set; } = string.Empty;
+    public required string Description { get; set; }
     public bool Completed { get; set; }
     public BuyingList BuyingList { get; set; }
 }
