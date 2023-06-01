@@ -35,6 +35,6 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasData(
-            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = "123" });
+            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = "123", Active = true });
     }
 }

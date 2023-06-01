@@ -1,6 +1,5 @@
 ﻿using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.DTOs;
-using MyBuyingList.Application.ViewModels;
 using MyBuyingList.Domain.Entities;
 using System;
 using System.Collections.Generic;

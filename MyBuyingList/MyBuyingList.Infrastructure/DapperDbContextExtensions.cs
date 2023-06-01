@@ -18,7 +18,7 @@ internal static class DapperDbContextExtensions
         this DbContext context,
         CancellationToken ct,
         string text,
-        object parameters = null,
+        object? parameters = null,
         int? timeout = null,
         CommandType? type = null
     )
@@ -26,7 +26,7 @@ internal static class DapperDbContextExtensions
         using var command = new DapperEFCoreCommand(
             context,
             text,
-            parameters,
+            parameters ?? new object(),
             timeout,
             type,
             ct

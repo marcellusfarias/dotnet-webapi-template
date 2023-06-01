@@ -16,7 +16,13 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("DefaultConnection"); //log and throw error
+        string? connectionString = configuration.GetConnectionString("DefaultConnection"); 
+        if(connectionString == null)
+        {
+            logger.LogError($"Invalid connection string.");
+            throw new Exception("Invalid connection string.");
+        }
+        
         services.AddDbContext<ApplicationDbContext>(
                 options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
             );
