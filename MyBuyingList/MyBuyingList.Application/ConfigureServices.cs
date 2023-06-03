@@ -2,18 +2,13 @@
 using Microsoft.Extensions.Logging;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.Execution;
 using MyBuyingList.Application.DTOs;
 using MyBuyingList.Domain.Entities;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
+using FluentValidation;
+using System;
+using MyBuyingList.Application.Validations;
 
 namespace MyBuyingList.Application;
 
@@ -28,12 +23,14 @@ public static class ConfigureServices
         var configuration = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<User, UserDto>();
+            cfg.CreateMap<UserDto, User>();
         });
         
         // use DI (http://docs.automapper.org/en/latest/Dependency-injection.html) or create the mapper yourself
-        var mapper = configuration.CreateMapper();
+        IMapper mapper = configuration.CreateMapper();
         services.AddSingleton(mapper);
 
+        services.AddScoped<IValidator<UserDto>, UserValidator>();
         return services;
     }
 }
