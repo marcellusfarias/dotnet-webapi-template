@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Application;
 using Microsoft.Extensions.Options;
+using MyBuyingList.Web.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 app.UseAuthorization();
 
 app.MapControllerRoute(

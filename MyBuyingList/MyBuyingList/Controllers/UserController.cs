@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using MyBuyingList.Application.Common.Errors;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
 
@@ -17,21 +19,17 @@ namespace MyBuyingList.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult<UserDto> Get()
+        public IActionResult Get()
         {
-            var list = _userService.List();
-            return Ok(list);
+            var users = _userService.List();
+            return Ok(users);
         }
 
         [HttpPost]
         public IActionResult Create(UserDto userDto)
         {
-            return _userService
-                .Create(userDto)
-                .Match<IActionResult>(
-                m => Ok(userDto.Id),
-                err => BadRequest(err.Message)
-                );
+            _userService.Create(userDto);
+            return Created("", userDto);
         }
     }
 }

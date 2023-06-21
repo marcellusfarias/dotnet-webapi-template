@@ -12,8 +12,8 @@ namespace MyBuyingList.Application.Validations
     {
         public UserValidator() 
         {
-            RuleFor(x => x.UserName).NotEmpty().WithMessage("Please specify a name");
-
+            RuleFor(x => x.UserName).NotEmpty().WithMessage("Please specify a name.");
+            RuleFor(x => x.Email).NotEmpty().WithMessage("Please specify an email address.");
         }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using MyBuyingList.Application.Common.CustomErrors;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
-using MyBuyingList.Domain.Common;
 using MyBuyingList.Domain.Entities;
 using System.Text;
 
@@ -23,32 +21,25 @@ public class UserService : IUserService
         _validator = validator;
     }
 
-    public IEnumerable<UserDto> List() => 
-       _mapper.Map<IEnumerable<UserDto>>(_userRepository.GetAll());   
-    
-    public Result<bool, MyCustomError> Create(UserDto userDto)
+    public IEnumerable<UserDto> List()
+    {
+        IEnumerable<User> users = _userRepository.GetAll();
+        IEnumerable<UserDto> list = _mapper.Map<IEnumerable<UserDto>>(users); //maybe get thi exception?
+        return list;
+    }
+
+    public void Create(UserDto userDto)
     {
         ValidationResult validationResult = _validator.Validate(userDto);
 
-        if(!validationResult.IsValid)
+        if (!validationResult.IsValid)
         {
-            StringBuilder stringBuilder= new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             validationResult.Errors.ForEach(err => stringBuilder.Append(err));
 
-            return new MyCustomError(stringBuilder.ToString());
+            throw new ValidationException(stringBuilder.ToString());
         }
 
-        try
-        {
-            _userRepository.Add(_mapper.Map<User>(userDto));
-        }
-        catch (Exception ex)
-        {
-            return new MyCustomError(ex.Message);
-        }
-       
-        return true;
+        _userRepository.Add(_mapper.Map<User>(userDto));
     }
-       
-    
 }
