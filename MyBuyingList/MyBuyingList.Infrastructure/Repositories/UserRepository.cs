@@ -21,7 +21,7 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 }

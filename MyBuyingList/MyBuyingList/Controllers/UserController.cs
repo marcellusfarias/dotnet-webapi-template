@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using MyBuyingList.Application.Common.Errors;
-using MyBuyingList.Application.Common.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
 
@@ -29,7 +25,7 @@ namespace MyBuyingList.Web.Controllers
         public IActionResult Create(UserDto userDto)
         {
             _userService.Create(userDto);
-            return Created("", userDto);
+            return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
         }
     }
 }

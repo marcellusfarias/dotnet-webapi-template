@@ -10,5 +10,5 @@ namespace MyBuyingList.Application.Common.Exceptions;
 public class ValidationException : Exception
 {
     private static string defaultErrorMessage = "An error occured while validating the model. Ex: {0}";
-    public ValidationException(string message) : base(string.Format(defaultErrorMessage, message)) { }
+    public ValidationException(Exception inner) : base(string.Format(defaultErrorMessage, inner.Message), inner) { }
 }

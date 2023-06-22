@@ -23,7 +23,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -36,7 +36,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -49,7 +49,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -62,7 +62,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -75,7 +75,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -88,7 +88,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 
@@ -101,7 +101,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
         catch (Exception ex)
         {
-            throw new DatabaseException(ex.Message);
+            throw new DatabaseException(ex);
         }        
     }
 }

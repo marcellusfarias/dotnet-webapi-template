@@ -7,10 +7,12 @@ namespace MyBuyingList.Web.Middlewares;
 public class ErrorHandlingMiddleware
 {
     private readonly RequestDelegate next;
+    private readonly ILogger _logger;
 
-    public ErrorHandlingMiddleware(RequestDelegate next)
+    public ErrorHandlingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
     {
         this.next = next;
+        _logger = loggerFactory.CreateLogger<ErrorHandlingMiddleware>();
     }
 
     public async Task Invoke(HttpContext context /* other dependencies */)
@@ -21,20 +23,22 @@ public class ErrorHandlingMiddleware
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(context, ex);
+            await HandleExceptionAsync(context, ex, _logger);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
     {
         var code = HttpStatusCode.InternalServerError; // 500 if unexpected
 
         switch (exception)
         {
             case DatabaseException:
+                logger.LogError($"Database exception. Stack trace: {exception.InnerException}");
                 code = HttpStatusCode.InternalServerError;
                 break;
             case ValidationException:
+                logger.LogError($"Validation exception. Stack trace: {exception.InnerException}");
                 code = HttpStatusCode.BadRequest;
                 break;
         }

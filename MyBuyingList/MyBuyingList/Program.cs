@@ -12,7 +12,7 @@ builder.Services.AddInfrastructureServices(logger, builder.Configuration);
 builder.Services.AddApplicationServices(logger);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+//builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddLogging();
 builder.Services.AddSwaggerGen();
@@ -28,11 +28,9 @@ app.UseSwaggerUI(options =>
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
-{
-    
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+{    
+    app.UseExceptionHandler("/Home/Error");    
+    app.UseHsts(); // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 }
 else
 {    
@@ -43,9 +41,8 @@ using (var scope = app.Services.CreateScope())
 {
     var db = (ApplicationDbContext) scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
     try
-    {
-        //Run migrations that havent been ran.
-        db.Database.Migrate();
+    {        
+        db.Database.Migrate(); //Run migrations that havent been ran.
     }
     catch (Exception ex)
     {
