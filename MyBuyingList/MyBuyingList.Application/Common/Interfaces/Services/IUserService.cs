@@ -6,4 +6,6 @@ public interface IUserService
 {
     IEnumerable<UserDto> List();
     void Create(UserDto userDto);
+    void Update(UserDto userDto);
+    void Delete(UserDto userDto);
 }

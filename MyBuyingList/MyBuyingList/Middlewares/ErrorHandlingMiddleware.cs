@@ -37,7 +37,7 @@ public class ErrorHandlingMiddleware
                 logger.LogError($"Database exception. Stack trace: {exception.InnerException}");
                 code = HttpStatusCode.InternalServerError;
                 break;
-            case ValidationException:
+            case CustomValidationException:
                 logger.LogError($"Validation exception. Stack trace: {exception.InnerException}");
                 code = HttpStatusCode.BadRequest;
                 break;

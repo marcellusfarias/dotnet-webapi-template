@@ -2,30 +2,37 @@
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
 
-namespace MyBuyingList.Web.Controllers
+namespace MyBuyingList.Web.Controllers;
+
+public class UserController : ApiControllerBase
 {
-    public class UserController : ApiControllerBase
+    private readonly IUserService _userService;
+    private readonly ILogger<UserController> _logger;
+    public UserController(ILogger<UserController> logger, IUserService userService)
     {
-        private readonly IUserService _userService;
-        private readonly ILogger<UserController> _logger;
-        public UserController(ILogger<UserController> logger, IUserService userService)
-        {
-            _userService = userService;
-            _logger = logger;
-        }
-
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var users = _userService.List();
-            return Ok(users);
-        }
-
-        [HttpPost]
-        public IActionResult Create(UserDto userDto)
-        {
-            _userService.Create(userDto);
-            return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
-        }
+        _userService = userService;
+        _logger = logger;
     }
+
+    [HttpGet]
+    public IActionResult Get()
+    {
+        var users = _userService.List();
+        return Ok(users);
+    }
+
+    [HttpPost]
+    public IActionResult Create(UserDto userDto)
+    {
+        _userService.Create(userDto);
+        return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
+    }
+
+    [HttpPut]
+    public IActionResult Update(UserDto userDto)
+    {
+        _userService.Create(userDto);
+        return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
+    }
+
 }
