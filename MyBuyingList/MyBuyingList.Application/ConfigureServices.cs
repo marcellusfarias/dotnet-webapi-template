@@ -7,8 +7,6 @@ using AutoMapper;
 using MyBuyingList.Application.DTOs;
 using MyBuyingList.Domain.Entities;
 using FluentValidation;
-using System;
-using MyBuyingList.Application.Validations;
 
 namespace MyBuyingList.Application;
 

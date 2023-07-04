@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Domain", "MyBu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Application", "MyBuyingList.Application\MyBuyingList.Application.csproj", "{145633D8-6989-42C5-BF9F-6E2504A0F37B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Application.Tests", "MyBuyingList.Application.Tests\MyBuyingList.Application.Tests.csproj", "{4924AB00-E1C3-4F4D-9243-07788B642022}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{145633D8-6989-42C5-BF9F-6E2504A0F37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{145633D8-6989-42C5-BF9F-6E2504A0F37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{145633D8-6989-42C5-BF9F-6E2504A0F37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4924AB00-E1C3-4F4D-9243-07788B642022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4924AB00-E1C3-4F4D-9243-07788B642022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4924AB00-E1C3-4F4D-9243-07788B642022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4924AB00-E1C3-4F4D-9243-07788B642022}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

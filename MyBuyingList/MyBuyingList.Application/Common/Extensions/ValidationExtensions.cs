@@ -1,10 +1,6 @@
 ﻿using FluentValidation;
 using MyBuyingList.Application.Common.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace MyBuyingList.Application.Common.Extensions;
 

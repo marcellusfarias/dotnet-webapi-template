@@ -36,13 +36,13 @@ public class UserService : IUserService
 
     public void Update(UserDto userDto)
     {
-        _validator.ValidateAndThrow(userDto);
+        _validator.ValidateAndThrowCustomException(userDto);
         _userRepository.Edit(_mapper.Map<User>(userDto));
     }
 
     public void Delete(UserDto userDto)
     {
-        _validator.ValidateAndThrow(userDto);
+        _validator.ValidateAndThrowCustomException(userDto);
         _userRepository.Delete(_mapper.Map<User>(userDto));
     }
 }
