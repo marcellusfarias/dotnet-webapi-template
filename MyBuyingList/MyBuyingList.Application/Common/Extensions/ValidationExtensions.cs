@@ -4,6 +4,7 @@ using ValidationException = FluentValidation.ValidationException;
 
 namespace MyBuyingList.Application.Common.Extensions;
 
+// not problem with static method since we should not mock FluentValidation: https://docs.fluentvalidation.net/en/latest/testing.html#
 public static class ValidationExtensions
 {
     public static void ValidateAndThrowCustomException<T>(this IValidator<T> validator, T instance)

@@ -7,11 +7,7 @@ using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.DTOs;
 using MyBuyingList.Application.Services;
 using MyBuyingList.Domain.Entities;
-using System.Net;
-using System.Numerics;
-using System.Runtime.Intrinsics.X86;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using MyBuyingList.Application.Common.Mappings;
 
 namespace MyBuyingList.Application.Tests.UnitTests;
 
@@ -19,36 +15,42 @@ public class UserServiceTests
 {
     private UserService _sut;
     private readonly Mock<IUserRepository> _userRepositoryMock = new Mock<IUserRepository>();
-    private readonly Mock<IMapper> _mapperMock = new Mock<IMapper>();
+    private readonly IMapper _mapper;
     private readonly IValidator<UserDto> _validatorMock = new UserValidator(); //should not mock: https://docs.fluentvalidation.net/en/latest/testing.html#
-
 
     public UserServiceTests()
     {
-        _sut = new UserService(_userRepositoryMock.Object, _mapperMock.Object, _validatorMock);
+        var mappingConfig = new MapperConfiguration(mc =>
+        {
+            mc.AddProfile(new DefaultProfile());
+        });
 
-        // TODO: Try to use an AutoMapperProfile according to the second answer here:
+        _mapper = mappingConfig.CreateMapper();
+
+        _sut = new UserService(_userRepositoryMock.Object, _mapper, _validatorMock);
+
+        // Other way if not using Profile
         // https://stackoverflow.com/questions/36074324/how-to-mock-an-automapper-imapper-object-in-web-api-tests-with-structuremap-depe
-        _mapperMock.Setup(x => x.Map<IEnumerable<UserDto>>(It.IsAny<IEnumerable<User>>()))
-            .Returns((IEnumerable<User> sources) =>
-            {
-                // abstract mapping function code here, return instance of DestinationClass
-                var returnValue = new List<UserDto>();
+        //_mapper.Setup(x => x.Map<IEnumerable<UserDto>>(It.IsAny<IEnumerable<User>>()))
+        //    .Returns((IEnumerable<User> sources) =>
+        //    {
+        //        // abstract mapping function code here, return instance of DestinationClass
+        //        var returnValue = new List<UserDto>();
 
-                foreach (var source in sources)
-                {
-                    returnValue.Add(new UserDto()
-                    {
-                        Id = source.Id,
-                        UserName = source.UserName,
-                        Password = source.Password,
-                        Email = source.Email,
-                        Active = source.Active
-                    });
-                }
+        //        foreach (var source in sources)
+        //        {
+        //            returnValue.Add(new UserDto()
+        //            {
+        //                Id = source.Id,
+        //                UserName = source.UserName,
+        //                Password = source.Password,
+        //                Email = source.Email,
+        //                Active = source.Active
+        //            });
+        //        }
 
-                return returnValue;
-            });
+        //        return returnValue;
+        //    });
     }
 
     [Fact]
@@ -60,7 +62,6 @@ public class UserServiceTests
         User user3 = new User() { Id = 3, UserName = "Cindy", Email = "cindy@outlook.com", Password = "cindy123", Active = false };
 
         IEnumerable<User> mockedUsers = new List<User>() { user1, user2, user3 };
-
         _userRepositoryMock
             .Setup(x => x.GetAll())
             .Returns(mockedUsers);
@@ -111,20 +112,35 @@ public class UserServiceTests
         _userRepositoryMock.Verify(r => r.Add(It.IsAny<User>()), Times.Once);
     }
 
+    public static IEnumerable<object[]> InvalidDtos =>
+        new List<object[]>
+        {
+            new object[] 
+            { 
+                new UserDto() { Id = 1, UserName = "", Password = "123", Email = "myemail@email.com", Active = true }, 
+                "An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error" 
+            },
+            new object[]
+            {
+                new UserDto() { Id = 1, UserName = "John", Password = "123", Email = string.Empty, Active = true },
+                "An error occured while validating the model. Exception: Validation failed: \r\n -- Email: Please specify an email address. Severity: Error"
+            }
+        };
+
     //TODO: pass as parameter many DTO with different errors.
-    [Fact]
-    public void Create_ShouldThrowException_WhenDtoIsInvalid()
+    [Theory]
+    [MemberData(nameof(InvalidDtos))]
+    public void Create_ShouldThrowException_WhenDtoIsInvalid(UserDto newUser, string errorMessage)
     {
         //Arrange
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = "", Password = "123", Email = "myemail@email.com", Active = true };
 
         //Act
-        var action = _sut.Invoking(x => _sut.Create(userDto1));
+        var action = _sut.Invoking(x => _sut.Create(newUser));
 
         // Assert
         action.Should()
             .Throw<CustomValidationException>()
-            .WithMessage("An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error");
+            .WithMessage(errorMessage);
     }
 
     [Fact]
@@ -143,19 +159,19 @@ public class UserServiceTests
         _userRepositoryMock.Verify(r => r.Edit(It.IsAny<User>()), Times.Once);
     }
 
-    [Fact]
-    public void Update_ShouldThrowException_WhenDtoIsInvalid()
+    [Theory]
+    [MemberData(nameof(InvalidDtos))]
+    public void Update_ShouldThrowException_WhenDtoIsInvalid(UserDto newUser, string errorMessage)
     {
         //Arrange
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = string.Empty, Password = "123", Email = "myemail@email.com", Active = true };
-
+       
         //Act
-        var action = _sut.Invoking(x => _sut.Update(userDto1));
+        var action = _sut.Invoking(x => _sut.Update(newUser));
 
         // Assert
         action.Should()
             .Throw<CustomValidationException>()
-            .WithMessage("An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error");
+            .WithMessage(errorMessage);
     }
 
     [Fact]
@@ -174,18 +190,18 @@ public class UserServiceTests
         _userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
     }
 
-    [Fact]
-    public void Delete_ShouldThrowException_WhenDtoIsInvalid()
+    [Theory]
+    [MemberData(nameof(InvalidDtos))]
+    public void Delete_ShouldThrowException_WhenDtoIsInvalid(UserDto newUser, string errorMessage)
     {
         //Arrange
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = string.Empty, Email = "myemail@hotmail.com", Password = "123", Active = true };
-
+        
         //Act
-        var action = _sut.Invoking(x => _sut.Delete(userDto1));
+        var action = _sut.Invoking(x => _sut.Delete(newUser));
 
         // Assert
         action.Should()
             .Throw<CustomValidationException>()
-            .WithMessage("An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error");
+            .WithMessage(errorMessage);
     }
 }
