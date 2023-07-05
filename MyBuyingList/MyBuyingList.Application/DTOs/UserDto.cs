@@ -19,10 +19,10 @@ public class UserValidator : AbstractValidator<UserDto>
 {
     public UserValidator()
     {
-        RuleFor(x => x.Id).NotEmpty().WithMessage("Please specify an id.");
+        RuleFor(x => x.Id).NotEmpty().WithMessage("Please specify an id.").GreaterThan(0).WithMessage("Id should have a positive value.");
         RuleFor(x => x.Email).NotEmpty().WithMessage("Please specify an email address.");
         RuleFor(x => x.UserName).NotEmpty().WithMessage("Please specify a name.");
         RuleFor(x => x.Password).NotEmpty().WithMessage("Please specify a password.");
-        RuleFor(x => x.Active).NotEmpty().WithMessage("Please specify if it's active or not.");        
+        RuleFor(x => x.Active).Must(x => x == false || x == true).WithMessage("Please specify if it's active or not.");        
     }
 }

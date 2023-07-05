@@ -93,39 +93,67 @@ public class UserServiceTests
         users.Should().BeEmpty();
     }
 
-    //TODO: try to use this: 
-    // https://stackoverflow.com/questions/54219742/mocking-ef-core-dbcontext-and-dbset
-    [Fact]
-    public void Create_ShouldHaveNoErrors_WhenDtoIsValid()
-    {
-        //Arrange
-        User user1 = new User() { Id = 1, UserName = "Alph", Email = "alph@hotmail.com", Password = "123", Active = true };
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = "Alph", Password = "123", Email = "alph@hotmail.com", Active = true };
-
-        _userRepositoryMock
-            .Setup(x => x.Add(user1));
-
-        //Act
-        _sut.Create(userDto1);
-
-        //Assert
-        _userRepositoryMock.Verify(r => r.Add(It.IsAny<User>()), Times.Once);
-    }
+    public static IEnumerable<object[]> ValidDtos =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new User() { Id = 1, UserName = "Alph", Email = "alph@hotmail.com", Password = "123", Active = true },
+                new UserDto() { Id = 1, UserName = "Alph", Email = "alph@hotmail.com", Password = "123",  Active = true },
+            },
+            new object[]
+            {
+                new User() { Id = 1000, UserName = "Bob", Email = "bob@gmail.com", Password = "123", Active = false },
+                new UserDto() { Id = 1000, UserName = "Bob", Email = "bob@gmail.com", Password = "123",  Active = false },
+            },
+            new object[]
+            {
+                new User() { Id = 10, UserName = "Cindy McAdams", Email = "cindy@gmail.com", Password = "123", Active = false },
+                new UserDto() { Id = 10, UserName = "Cindy McAdams", Email = "cindy@gmail.com", Password = "123",  Active = false },
+            },
+        };
 
     public static IEnumerable<object[]> InvalidDtos =>
         new List<object[]>
         {
-            new object[] 
-            { 
-                new UserDto() { Id = 1, UserName = "", Password = "123", Email = "myemail@email.com", Active = true }, 
-                "An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error" 
+            new object[]
+            {
+                new UserDto() { Id = 1, UserName = "", Password = "123", Email = "myemail@email.com", Active = true },
+                "An error occured while validating the model. Exception: Validation failed: \r\n -- UserName: Please specify a name. Severity: Error"
             },
             new object[]
             {
                 new UserDto() { Id = 1, UserName = "John", Password = "123", Email = string.Empty, Active = true },
                 "An error occured while validating the model. Exception: Validation failed: \r\n -- Email: Please specify an email address. Severity: Error"
+            },
+            new object[]
+            {
+                new UserDto() { Id = 1, UserName = "John", Password = string.Empty, Email = "myemail@email.com", Active = true },
+                "An error occured while validating the model. Exception: Validation failed: \r\n -- Password: Please specify a password. Severity: Error"
+            },
+            new object[]
+            {
+                new UserDto() { Id = -1, UserName = "John", Password = "123", Email = "myemail@email.com", Active = false },
+                "An error occured while validating the model. Exception: Validation failed: \r\n -- Id: Id should have a positive value. Severity: Error"
             }
         };
+
+    //TODO: try to use this: 
+    // https://stackoverflow.com/questions/54219742/mocking-ef-core-dbcontext-and-dbset
+    [Theory]
+    [MemberData(nameof(ValidDtos))]
+    public void Create_ShouldHaveNoErrors_WhenDtoIsValid(User user, UserDto userDto)
+    {
+        //Arrange
+        _userRepositoryMock
+            .Setup(x => x.Add(user));
+
+        //Act
+        _sut.Create(userDto);
+
+        //Assert
+        _userRepositoryMock.Verify(r => r.Add(It.IsAny<User>()), Times.Once);
+    }
 
     //TODO: pass as parameter many DTO with different errors.
     [Theory]
@@ -143,17 +171,16 @@ public class UserServiceTests
             .WithMessage(errorMessage);
     }
 
-    [Fact]
-    public void Update_ShouldHaveNoErrors_WhenDtoIsValid()
+    [Theory]
+    [MemberData(nameof(ValidDtos))]
+    public void Update_ShouldHaveNoErrors_WhenDtoIsValid(User user, UserDto userDto)
     {
         //Arrange
-        User user1 = new User() { Id = 1, UserName = "Alph", Email = "alph@hotmail.com", Password = "123", Active = true };
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = "Alph", Password = "123", Email = "alph@hotmail.com", Active = true };
         _userRepositoryMock
-            .Setup(x => x.Edit(user1));
+            .Setup(x => x.Edit(user));
 
         //Act
-        _sut.Update(userDto1);
+        _sut.Update(userDto);
 
         // Assert
         _userRepositoryMock.Verify(r => r.Edit(It.IsAny<User>()), Times.Once);
@@ -174,17 +201,16 @@ public class UserServiceTests
             .WithMessage(errorMessage);
     }
 
-    [Fact]
-    public void Delete_ShouldHaveNoErrors_WhenDtoIsValid()
+    [Theory]
+    [MemberData(nameof(ValidDtos))]
+    public void Delete_ShouldHaveNoErrors_WhenDtoIsValid(User user, UserDto userDto)
     {
         //Arrange
-        User user1 = new User() { Id = 1, UserName = "Alph", Email = "alph@hotmail.com", Password = "123", Active = true };
-        UserDto userDto1 = new UserDto() { Id = 1, UserName = "Alph", Password = "123", Email = "alph@hotmail.com", Active = true };
         _userRepositoryMock
-            .Setup(x => x.Delete(user1));
+            .Setup(x => x.Delete(user));
 
         //Act
-        _sut.Delete(userDto1);
+        _sut.Delete(userDto);
 
         // Assert
         _userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
