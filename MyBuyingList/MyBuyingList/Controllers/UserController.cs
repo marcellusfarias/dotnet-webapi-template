@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
 
 namespace MyBuyingList.Web.Controllers;
 
+[Authorize]
 public class UserController : ApiControllerBase
 {
     private readonly IUserService _userService;

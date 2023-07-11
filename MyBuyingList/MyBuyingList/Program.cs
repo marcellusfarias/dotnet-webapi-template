@@ -4,6 +4,8 @@ using MyBuyingList.Infrastructure;
 using MyBuyingList.Application;
 using Microsoft.Extensions.Options;
 using MyBuyingList.Web.Middlewares;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddApplicationServices(logger);
 
 // Add services to the container.
 //builder.Services.AddControllersWithViews();
+
 builder.Services.AddControllers();
 builder.Services.AddLogging();
 builder.Services.AddSwaggerGen();
