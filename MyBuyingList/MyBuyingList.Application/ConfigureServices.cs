@@ -29,6 +29,7 @@ public static class ConfigureServices
         services.AddSingleton(mapper);
 
         services.AddScoped<IValidator<UserDto>, UserValidator>();
+        services.AddScoped<ICustomAuthenticationService, CustomAuthenticationService>();
         return services;
     }
 }

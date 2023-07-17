@@ -5,4 +5,6 @@ namespace MyBuyingList.Application.Common.Interfaces.Repositories;
 public interface IUserRepository : IRepository<User>
 {
     IEnumerable<User> GetActiveUsers();
+    //will provide claims also
+    User? GetAuthenticationDataByUsername(string username);
 }

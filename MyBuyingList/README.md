@@ -23,12 +23,10 @@ According to Fluent Validation docs (https://docs.fluentvalidation.net/en/latest
 One may ask about testing and how to mock it, since it's an extension method. Again, according to their own documentation, one should treat the lib as a black box, so no mocking is required. Doc link: https://docs.fluentvalidation.net/en/latest/testing.html
 
 5. Authentication and authorization.
-
 For this topic, we considered using Microsoft ASP.NET Identity Authentication or create our own mechanism. 
-
 ASP.NET Identity is a feature-rich membership system by Microsoft for authentication and authorization in ASP.NET applications. It is feature rich (including user registration, login, password recovery, and account confirmation), supports database storage, offers flexible authentication options (windows and external providers, for example), but can be complex, and may impact performance in high scalability scenarios (because of DB).
-		
 We think Identity is very valuable and would probably be the least-effort path. But, since this is a learning project, we decided to implement our own mechanism. We chosed to do authentication with JWT using JwtBearer lib.
+One important point to mention is where to store Jwt's token. After some research, decided to store in a cookie according to this article: https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914
 For Authorization: ......
 
 6. Database
@@ -41,12 +39,13 @@ Postgres because it's free and great. Code first because I have previous experie
 * Async
 * Sessions, filters, more specific backend stuff in general for controllers.
 * Event driven? Cancellation Token?
-* Set Postgres UI
 * Further knowledge on postgres and entity framework. Transactions and lazy loading
 * Integration Testing
 * Fix Docker
 * AOT
 * Frontend? React?
+* Add refresh token & cookie with JWT
+* Add hash password into database
 
 ## Others
 * Health Checks

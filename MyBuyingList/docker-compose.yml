@@ -23,6 +23,16 @@ services:
             - "55432:5432"
         networks:
             - buyinglist-db
+    db_admin:
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+          PGADMIN_DEFAULT_EMAIL: admin@admin.com
+          PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+          - "5050:80"
+        networks:
+            - buyinglist-db
 volumes:
   # Persist contents of the DB outside of the container
     #- type: bind

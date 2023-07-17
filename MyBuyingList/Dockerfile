@@ -12,6 +12,7 @@ COPY ["MyBuyingList.sln", "./"]
 COPY ["./MyBuyingList/*.csproj", "./MyBuyingList/"]
 COPY ["./MyBuyingList.Domain/*.csproj", "./MyBuyingList.Domain/"]
 COPY ["./MyBuyingList.Application/*.csproj", "./MyBuyingList.Application/"]
+COPY ["./MyBuyingList.Application.Tests/*.csproj", "./MyBuyingList.Application.Tests/"]
 COPY ["./MyBuyingList.Infrastructure/*.csproj", "./MyBuyingList.Infrastructure/"]
 RUN dotnet restore "MyBuyingList.sln"
 

@@ -1,25 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Application.Common.Interfaces.Repositories;
+using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Infrastructure.Authentication;
 
 namespace MyBuyingList.Web.Controllers
 {
     public class LoginController : ApiControllerBase
     {
-        //inject this with some interface. Should not call anything from infrastructure, but rather application.
-        private IJwtProvider _jwtProvider;
-        public LoginController(IJwtProvider jwtProvider)
+        private ICustomAuthenticationService _authenticationService;
+        public LoginController(ICustomAuthenticationService authenticationService)
         {
-            _jwtProvider = jwtProvider;
+            _authenticationService = authenticationService;
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(string username, string password)
         {
-            //compare hashed password with the one in database
+            if (string.IsNullOrEmpty(username)|| string.IsNullOrEmpty(password))
+                return BadRequest("Invalid username or password.");
 
-            //Generate and return if valid.
-            return Ok(_jwtProvider.Generate(email));
+            var jwtToken = _authenticationService.AuthenticateAndReturnToken(username, password);
+
+            return Ok(jwtToken);
         }
     }
 }

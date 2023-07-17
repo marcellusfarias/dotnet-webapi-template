@@ -33,6 +33,10 @@ public class ErrorHandlingMiddleware
 
         switch (exception)
         {
+            case AuthenticationException:
+                logger.LogError(exception.Message);
+                code = HttpStatusCode.Unauthorized;
+                break;
             case DatabaseException:
                 logger.LogError($"Database exception. Stack trace: {exception.InnerException}");
                 code = HttpStatusCode.InternalServerError;

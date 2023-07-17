@@ -22,6 +22,19 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
-        }        
+        }
     }
+
+    public User? GetAuthenticationDataByUsername(string username)
+    {
+        try
+        {
+            return _context.Set<User>().Where(x => x.UserName == username && x.Active).Single();
+        }
+        catch (Exception ex)
+        {
+            throw new DatabaseException(ex);
+        }       
+    }
+
 }
