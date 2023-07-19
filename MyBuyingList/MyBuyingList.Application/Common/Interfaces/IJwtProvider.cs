@@ -8,5 +8,5 @@ namespace MyBuyingList.Application.Common.Interfaces;
 
 public interface IJwtProvider
 {
-    string Generate(string username);
+    string Generate(string email);
 }

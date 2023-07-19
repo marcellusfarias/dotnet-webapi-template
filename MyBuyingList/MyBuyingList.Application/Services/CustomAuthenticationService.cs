@@ -2,12 +2,7 @@
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.Common.Interfaces.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Services;
 
@@ -24,15 +19,15 @@ public class CustomAuthenticationService : ICustomAuthenticationService
 
     public string AuthenticateAndReturnToken(string username, string password)
     {
-        var user = _userRepository.GetAuthenticationDataByUsername(username);
+        User? user = _userRepository.GetAuthenticationDataByUsername(username);
         if (user == null)
-            throw new AuthenticationException(new Exception("Username does not exist"), username);
+            throw new AuthenticationException(new Exception(), username);
 
         //TODO: unhash password
 
         if (password == user.Password)
             return _jwtProvider.Generate(user.Email);
         else
-            throw new AuthenticationException(new Exception("Wrong password"), username);
+            throw new AuthenticationException(new Exception(), username);
     }
 }
