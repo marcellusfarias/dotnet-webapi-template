@@ -19,5 +19,6 @@ public class User : BaseEntity
 #pragma warning disable CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
     public virtual ICollection<Group> GroupsCreatedBy { get; set; }
     public virtual ICollection<BuyingList> BuyingListCreatedBy { get; set; }
+    public virtual ICollection<UserRole> UserRoles { get; set; }
 #pragma warning restore CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
 }

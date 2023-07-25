@@ -5,7 +5,8 @@ This is a side project I created for practing .Net. It's inspired on Jason's cle
 ## Topics I've researched and conclusions
 1. AutoMapper: DTOs, profile and testing
 
-
+Decided to go with DTOs after seeing a lot of engineers using it. Still nto sure if I think it's 'boilerplate code or not. For now, the only difference is the password on the UserDTO. Will continue developing this project and check for more use cases before taking a decision.
+So, I used AutoMapper library, which is a straightforward choice. I decided to go with a Profile setup, specially because I think it's easier for mocking on tests. If I didnt use that, would need to do the first answer for each test: https://stackoverflow.com/questions/36074324/how-to-mock-an-automapper-imapper-object-in-web-api-tests-with-structuremap-depe
 
 2. xUnit vs nUnit.
 After some research over NUnit and xUnit, I decided to go with the second. The main reason for it is that bu default xUnit tests run 100% independently by default. That means, each test has it own instance, and because of that you can run it in parallel with no worries.

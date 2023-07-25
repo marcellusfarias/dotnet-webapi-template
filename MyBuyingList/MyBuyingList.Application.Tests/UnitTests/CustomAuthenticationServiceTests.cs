@@ -1,11 +1,6 @@
 ﻿using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using MyBuyingList.Domain.Entities;
 using FluentAssertions;
@@ -21,9 +16,8 @@ public class CustomAuthenticationServiceTests
     private readonly Mock<IUserRepository> _userRepositoryMock = new Mock<IUserRepository>();
 
     public CustomAuthenticationServiceTests()
-    {
-        _sut = new CustomAuthenticationService(_userRepositoryMock.Object, _jwtProviderMock.Object);
-    }
+        => _sut = new CustomAuthenticationService(_userRepositoryMock.Object, _jwtProviderMock.Object);
+    
 
     [Fact]
     public void AuthenticateAndReturnToken_WhenUserDoesNotExist_ShouldThrowException()

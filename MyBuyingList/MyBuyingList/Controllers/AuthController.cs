@@ -5,16 +5,16 @@ using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Infrastructure.Authentication;
 
 namespace MyBuyingList.Web.Controllers;
-public class LoginController : ApiControllerBase
+public class AuthController : ApiControllerBase
 {
     private ICustomAuthenticationService _authenticationService;
-    public LoginController(ICustomAuthenticationService authenticationService)
+    public AuthController(ICustomAuthenticationService authenticationService)
     {
         _authenticationService = authenticationService;
     }
 
     [HttpPost]
-    public IActionResult Login(string username, string password)
+    public IActionResult Authenticate(string username, string password)
     {
         if (string.IsNullOrEmpty(username)|| string.IsNullOrEmpty(password))
             return BadRequest("Invalid username or password.");

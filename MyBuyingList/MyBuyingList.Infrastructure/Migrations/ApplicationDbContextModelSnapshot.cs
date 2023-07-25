@@ -169,6 +169,109 @@ namespace MyBuyingList.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.Policy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_policies");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_policies_name");
+
+                    b.ToTable("policies", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "CreateUser"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "UpdateUser"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "DeleteUser"
+                        });
+                });
+
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("PK_roles_id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_roles_name");
+
+                    b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Administrator"
+                        });
+                });
+
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.RolePolicy", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PolicyId")
+                        .HasColumnType("integer")
+                        .HasColumnName("policy_id");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_role_policies");
+
+                    b.HasAlternateKey("RoleId", "PolicyId")
+                        .HasName("ak_role_policies_role_id_policy_id");
+
+                    b.HasIndex("PolicyId")
+                        .HasDatabaseName("ix_role_policies_policy_id");
+
+                    b.ToTable("role_policies", (string)null);
+                });
+
             modelBuilder.Entity("MyBuyingList.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -225,12 +328,41 @@ namespace MyBuyingList.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Active = false,
+                            Active = true,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "marcelluscfarias@gmail.com",
                             Password = "123",
                             UserName = "admin"
                         });
+                });
+
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.UserRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_roles");
+
+                    b.HasAlternateKey("RoleId", "UserId")
+                        .HasName("ak_user_roles_role_id_user_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_roles_user_id");
+
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("MyBuyingList.Domain.Entities.BuyingList", b =>
@@ -278,6 +410,48 @@ namespace MyBuyingList.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.RolePolicy", b =>
+                {
+                    b.HasOne("MyBuyingList.Domain.Entities.Policy", "Policy")
+                        .WithMany("RolePolicies")
+                        .HasForeignKey("PolicyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_policies_policies_policy_id");
+
+                    b.HasOne("MyBuyingList.Domain.Entities.Role", "Role")
+                        .WithMany("RolePolicies")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_role_policies_roles_role_id");
+
+                    b.Navigation("Policy");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.UserRole", b =>
+                {
+                    b.HasOne("MyBuyingList.Domain.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles_role_id");
+
+                    b.HasOne("MyBuyingList.Domain.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_users_user_id");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyBuyingList.Domain.Entities.BuyingList", b =>
                 {
                     b.Navigation("Items");
@@ -288,11 +462,25 @@ namespace MyBuyingList.Infrastructure.Migrations
                     b.Navigation("BuyingLists");
                 });
 
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.Policy", b =>
+                {
+                    b.Navigation("RolePolicies");
+                });
+
+            modelBuilder.Entity("MyBuyingList.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("RolePolicies");
+
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("MyBuyingList.Domain.Entities.User", b =>
                 {
                     b.Navigation("BuyingListCreatedBy");
 
                     b.Navigation("GroupsCreatedBy");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

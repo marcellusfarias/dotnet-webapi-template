@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
+using MyBuyingList.Infrastructure.Authentication;
 
 namespace MyBuyingList.Web.Controllers;
 
@@ -24,6 +25,7 @@ public class UserController : ApiControllerBase
         return Ok(users);
     }
 
+    [HasPermission(Policies.CreateUser)]
     [HttpPost]
     public IActionResult Create(UserDto userDto)
     {
@@ -31,6 +33,7 @@ public class UserController : ApiControllerBase
         return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
     }
 
+    [HasPermission(Policies.UpdateUser)]
     [HttpPut]
     public IActionResult Update(UserDto userDto)
     {
