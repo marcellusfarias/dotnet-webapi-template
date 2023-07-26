@@ -7,10 +7,10 @@ using MyBuyingList.Infrastructure.Authentication;
 namespace MyBuyingList.Web.Controllers;
 public class AuthController : ApiControllerBase
 {
-    private ICustomAuthenticationService _authenticationService;
-    public AuthController(ICustomAuthenticationService authenticationService)
+    private IJwtProvider _jwtProvider;
+    public AuthController(IJwtProvider jwtProvider)
     {
-        _authenticationService = authenticationService;
+        _jwtProvider = jwtProvider;
     }
 
     [HttpPost]
@@ -19,7 +19,7 @@ public class AuthController : ApiControllerBase
         if (string.IsNullOrEmpty(username)|| string.IsNullOrEmpty(password))
             return BadRequest("Invalid username or password.");
 
-        var jwtToken = _authenticationService.AuthenticateAndReturnToken(username, password);
+        var jwtToken = _jwtProvider.AuthenticateAndReturnToken(username, password);
 
         return Ok(jwtToken);
     }

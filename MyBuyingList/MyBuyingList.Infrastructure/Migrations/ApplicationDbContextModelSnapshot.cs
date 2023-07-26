@@ -240,6 +240,11 @@ namespace MyBuyingList.Infrastructure.Migrations
                         {
                             Id = 1,
                             Name = "Administrator"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "RegularUser"
                         });
                 });
 

@@ -6,5 +6,5 @@ public interface IUserRepository : IRepository<User>
 {
     IEnumerable<User> GetActiveUsers();
     //will provide claims also
-    User? GetAuthenticationDataByUsername(string username);
+    User? GetAuthenticationDataByEmail(string email);
 }

@@ -15,21 +15,27 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, ILogger logger)
     {
-        logger.LogInformation("Adding application services");
-        services.AddScoped<IUserService, UserService>();
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddAutoMapperConfiguration();
+        services.AddValidators();
+        
+        return services;
+    }
 
-        var configuration = new MapperConfiguration(cfg => 
+    private static void AddAutoMapperConfiguration(this IServiceCollection services)
+    {
+        // use DI (http://docs.automapper.org/en/latest/Dependency-injection.html) or create the mapper yourself
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        var configuration = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile(new DefaultProfile());
         });
 
-        // use DI (http://docs.automapper.org/en/latest/Dependency-injection.html) or create the mapper yourself
-        IMapper mapper = configuration.CreateMapper();
-        services.AddSingleton(mapper);
+        services.AddSingleton(configuration.CreateMapper());
+    }
 
+    private static void AddValidators(this IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IValidator<UserDto>, UserValidator>();
-        services.AddScoped<ICustomAuthenticationService, CustomAuthenticationService>();
-        return services;
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MyBuyingList.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -22,13 +23,16 @@ public static class ConfigureServices
     {
         string connectionString = GetConnectionString(configuration, logger);        
         services.AddDbContext<ApplicationDbContext>(
-                options => options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention()
+                options => options.UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention()
+                .UseLazyLoadingProxies()
             );
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddScoped<ApplicationDbContext>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddJwtAuthentication();
+        services.AddAuthorizationConfiguration();        
 
         return services;
     }
@@ -39,6 +43,12 @@ public static class ConfigureServices
         services.AddTransient<IJwtProvider, JwtProvider>();
         services.ConfigureOptions<JwtOptionsSetup>();
         services.ConfigureOptions<JwtBearerOptionsSetup>();        
+    }
+
+    private static void AddAuthorizationConfiguration(this IServiceCollection services)
+    {
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
     }
 
     private static string GetConnectionString(IConfiguration configuration, ILogger logger)

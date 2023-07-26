@@ -47,10 +47,10 @@ Postgres because it's free and great. Code first because I have previous experie
 * Frontend? React?
 * Add refresh token & cookie with JWT
 * Add hash password into database
-* Add authorization with claims
 
 ## Others
 * Health Checks
 * Rate limit
 * Security
 * Benchmarks & Performance Tests
+* Think if authentication services should be on Application Layer or Infrastructure

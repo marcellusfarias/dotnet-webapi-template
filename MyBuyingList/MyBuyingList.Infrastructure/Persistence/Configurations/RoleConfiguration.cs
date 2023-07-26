@@ -11,7 +11,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
     {
         builder.ToTable("roles");
 
-        builder.Property(role => role.Id).UseIdentityColumn();
+        builder.HasKey(role => role.Id).HasName("PK_roles_id");
         builder.Property(role => role.Name).HasMaxLength(256).IsRequired();
 
         builder.HasIndex(role => role.Name).IsUnique(true);

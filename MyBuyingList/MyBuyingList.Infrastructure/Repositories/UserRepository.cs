@@ -25,11 +25,11 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         }
     }
 
-    public User? GetAuthenticationDataByUsername(string username)
+    public User? GetAuthenticationDataByEmail(string email)
     {
         try
         {
-            return _context.Set<User>().Where(x => x.UserName == username && x.Active).Single();
+            return _context.Set<User>().Where(x => x.Email == email && x.Active).Single();
         }
         catch (Exception ex)
         {
