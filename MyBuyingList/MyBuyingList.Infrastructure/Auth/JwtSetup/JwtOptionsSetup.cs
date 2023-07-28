@@ -1,12 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyBuyingList.Infrastructure.Authentication;
+namespace MyBuyingList.Infrastructure.Auth.JwtSetup;
 
 internal class JwtOptionsSetup : IConfigureOptions<JwtOptions>
 {

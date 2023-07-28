@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Application.DTOs;
-using MyBuyingList.Infrastructure.Authentication;
+using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+using MyBuyingList.Infrastructure.Auth.Constants;
 
 namespace MyBuyingList.Web.Controllers;
 

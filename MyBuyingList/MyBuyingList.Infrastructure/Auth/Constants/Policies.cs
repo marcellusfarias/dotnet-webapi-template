@@ -6,8 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBuyingList.Infrastructure.Authentication;
+namespace MyBuyingList.Infrastructure.Auth.Constants;
 
+//maybe this should be on the Domain project
 public static class Policies
 {
     public const string CreateUser = "CreateUser";
@@ -24,7 +25,8 @@ public static class Policies
         fieldInfos
             .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
             .ToList()
-            .ForEach(x => policies.Add(new Policy { Id = currentId++,  Name = (string)x.GetRawConstantValue()! }));
+            //.OrderBy(x => x.Name) order not guarenteed
+            .ForEach(x => policies.Add(new Policy { Id = currentId++, Name = (string)x.GetRawConstantValue()! }));
 
         return policies;
     }

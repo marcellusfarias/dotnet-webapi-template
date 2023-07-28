@@ -24,17 +24,4 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
             throw new DatabaseException(ex);
         }
     }
-
-    public User? GetAuthenticationDataByEmail(string email)
-    {
-        try
-        {
-            return _context.Set<User>().Where(x => x.Email == email && x.Active).Single();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }       
-    }
-
 }

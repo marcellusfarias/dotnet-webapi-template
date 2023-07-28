@@ -17,7 +17,8 @@ public static class ConfigureServices
     {
         services.AddAutoMapperConfiguration();
         services.AddValidators();
-        
+        services.AddServices();
+
         return services;
     }
 
@@ -35,7 +36,12 @@ public static class ConfigureServices
 
     private static void AddValidators(this IServiceCollection services)
     {
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IValidator<UserDto>, UserValidator>();
+    }
+
+    private static void AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ILoginService, LoginService>();
     }
 }

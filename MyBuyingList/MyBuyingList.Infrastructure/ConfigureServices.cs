@@ -1,19 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using MyBuyingList.Infrastructure;
-using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
-using Npgsql;
 using Microsoft.Extensions.Logging;
-using MyBuyingList.Application.Common.Interfaces;
-using Microsoft.EntityFrameworkCore.Storage;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
-using MyBuyingList.Infrastructure.Repositories;
-using MyBuyingList.Domain.Entities;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using MyBuyingList.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using MyBuyingList.Application.Common.Interfaces.Repositories;
+using MyBuyingList.Infrastructure;
+using MyBuyingList.Infrastructure.Repositories;
+using MyBuyingList.Infrastructure.Auth.JwtSetup;
+using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Infrastructure.Auth.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -40,9 +36,9 @@ public static class ConfigureServices
     private static void AddJwtAuthentication(this IServiceCollection services)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-        services.AddTransient<IJwtProvider, JwtProvider>();
         services.ConfigureOptions<JwtOptionsSetup>();
-        services.ConfigureOptions<JwtBearerOptionsSetup>();        
+        services.ConfigureOptions<JwtBearerOptionsSetup>();
+        services.AddTransient<IJwtProvider, JwtProvider>();
     }
 
     private static void AddAuthorizationConfiguration(this IServiceCollection services)

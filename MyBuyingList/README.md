@@ -34,18 +34,24 @@ For Authorization: ......
 
 Postgres because it's free and great. Code first because I have previous experience with database-first, but not with code first. Also, it seems that people are using it more. Seems easier for deploying and version control because of migrations. Also for testing and mocking.
 
-7. Minimal API?
+7. Minimal API or not?
+
+8. EFCore
+
+Write about the following topics:
+* Which loading data method chosed and why: https://learn.microsoft.com/en-us/ef/core/querying/related-data/
+* Tracking vs no tracking
+* Async
 
 ## TODOs
 * Async
 * Sessions, filters, more specific backend stuff in general for controllers.
 * Event driven? Cancellation Token?
-* Further knowledge on postgres and entity framework. Transactions and lazy loading
 * Integration Testing
 * Fix Docker
 * AOT
 * Frontend? React?
-* Add refresh token & cookie with JWT
+* Add refresh token & cookie with JWT & secret
 * Add hash password into database
 
 ## Others
