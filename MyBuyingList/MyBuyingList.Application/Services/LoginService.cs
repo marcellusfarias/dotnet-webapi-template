@@ -6,7 +6,7 @@ using MyBuyingList.Application.Common.Exceptions;
 
 namespace MyBuyingList.Application.Services;
 
-internal class LoginService : ILoginService
+public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
@@ -22,9 +22,12 @@ internal class LoginService : ILoginService
             throw new AuthenticationException(new Exception("Empty username or password"), username);
 
         //should I create a repository method?
-        User? user = _userRepository.GetAll().Where(x => x.UserName == username && x.Active).Single();         
+        User? user = _userRepository.GetAll().Where(x => x.UserName == username && x.Active).FirstOrDefault(); 
+        if (user == null)
+            throw new AuthenticationException(new Exception("Invalid credentials"), username);
+        
         var unhashedPassword = user.Password; //TODO !
-        if (user == null || password != unhashedPassword)
+        if (password != unhashedPassword)
             throw new AuthenticationException(new Exception("Invalid credentials"), username);
 
         return _jwtProvider.GenerateToken(user.Id);

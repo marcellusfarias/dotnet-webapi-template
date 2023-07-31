@@ -5,7 +5,6 @@ using MyBuyingList.Application.Services;
 using System.Reflection;
 using AutoMapper;
 using MyBuyingList.Application.DTOs;
-using MyBuyingList.Domain.Entities;
 using FluentValidation;
 using MyBuyingList.Application.Common.Mappings;
 

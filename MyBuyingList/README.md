@@ -59,4 +59,4 @@ Write about the following topics:
 * Rate limit
 * Security
 * Benchmarks & Performance Tests
-* Think if authentication services should be on Application Layer or Infrastructure
+* Should put testing project inside app project so I can make the classes internal instead of public?
