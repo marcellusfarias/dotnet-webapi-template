@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using MyBuyingList.Application.DTOs;
 using MyBuyingList.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyBuyingList.Application.Common.Mappings;
 
@@ -15,6 +10,9 @@ public class DefaultProfile : Profile
     {
         CreateMap<UserDto, User>();
         CreateMap<User, UserDto>();
+
+        CreateMap<BuyingListDto, BuyingList>();
+        CreateMap<BuyingList, BuyingListDto>();
 
         // Example with more details
         //CreateMap<Source, Destination>()

@@ -15,7 +15,7 @@ internal class BuyingListConfiguration : IEntityTypeConfiguration<BuyingList>
     {
         builder.ToTable("buying_lists");
 
-        builder.Property(bl => bl.Id).UseIdentityColumn();
+        builder.Property(bl => bl.Id).UseIdentityAlwaysColumn();
         builder.Property(bl => bl.Name).HasMaxLength(256).IsRequired();
         builder.Property(bl => bl.GroupId).IsRequired();
         builder.Property(g => g.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");

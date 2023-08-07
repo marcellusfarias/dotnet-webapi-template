@@ -14,6 +14,12 @@ public static class Policies
     public const string CreateUser = "CreateUser";
     public const string UpdateUser = "UpdateUser";
     public const string DeleteUser = "DeleteUser";
+    public const string GetAllUsers = "GetAllUsers";
+
+    public const string BuyingListGet = "BuyingListGet";
+    public const string BuyingListCreate = "BuyingListCreate";
+    public const string BuyingListUpdate = "BuyingListUpdate";
+    public const string BuyingListDelete = "BuyingListDelete";
 
     public static IEnumerable<Policy> GetValues()
     {

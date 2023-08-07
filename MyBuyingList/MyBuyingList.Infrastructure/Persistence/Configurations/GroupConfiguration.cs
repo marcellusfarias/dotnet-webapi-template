@@ -15,7 +15,7 @@ internal class GroupConfiguration : IEntityTypeConfiguration<Group>
     {
         builder.ToTable("groups");
 
-        builder.Property(g => g.Id).UseIdentityColumn();
+        builder.Property(g => g.Id).UseIdentityAlwaysColumn();
         builder.Property(g => g.GroupName).HasMaxLength(256).IsRequired();
         builder.Property(g => g.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(g => g.CreatedBy).IsRequired();

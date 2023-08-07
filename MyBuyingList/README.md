@@ -60,3 +60,4 @@ Write about the following topics:
 * Security
 * Benchmarks & Performance Tests
 * Should put testing project inside app project so I can make the classes internal instead of public?
+* Document http responses on swagger

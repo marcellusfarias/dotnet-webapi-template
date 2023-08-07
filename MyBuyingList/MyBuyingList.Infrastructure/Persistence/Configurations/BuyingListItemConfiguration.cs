@@ -15,7 +15,7 @@ internal class BuyingListItemConfiguration : IEntityTypeConfiguration<BuyingList
     {
         builder.ToTable("buying_list_items");
 
-        builder.Property(bli => bli.Id).UseIdentityColumn();
+        builder.Property(bli => bli.Id).UseIdentityAlwaysColumn();
         builder.Property(bli => bli.Description).HasMaxLength(256).IsRequired();
         builder.Property(bli => bli.Completed).IsRequired();
 

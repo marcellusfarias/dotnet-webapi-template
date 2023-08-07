@@ -17,15 +17,9 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
-        string connectionString = GetConnectionString(configuration, logger);        
-        services.AddDbContext<ApplicationDbContext>(
-                options => options.UseNpgsql(connectionString)
-                .UseSnakeCaseNamingConvention()
-                .UseLazyLoadingProxies()
-            );
-        services.AddDatabaseDeveloperPageExceptionFilter();
-        services.AddScoped<ApplicationDbContext>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        string connectionString = GetConnectionString(configuration, logger);
+        services.CreateDbContext(connectionString);
+        services.AddRepositores();
 
         services.AddJwtAuthentication();
         services.AddAuthorizationConfiguration();        
@@ -45,6 +39,23 @@ public static class ConfigureServices
     {
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+    }
+
+    private static void CreateDbContext(this IServiceCollection services, string connectionString)
+    {
+        services.AddDbContext<ApplicationDbContext>(
+                options => options.UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention()
+                .UseLazyLoadingProxies()
+            );
+        services.AddDatabaseDeveloperPageExceptionFilter();
+        services.AddScoped<ApplicationDbContext>();
+    }
+
+    private static void AddRepositores(this IServiceCollection services)
+    {
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IBuyingListRepository, BuyingListRepository>();
     }
 
     private static string GetConnectionString(IConfiguration configuration, ILogger logger)

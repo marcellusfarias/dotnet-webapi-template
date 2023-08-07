@@ -19,6 +19,7 @@ public class UserController : ApiControllerBase
     }
 
     //TODO: pagination
+    [HasPermission(Policies.GetAllUsers)]
     [HttpGet]
     public IActionResult Get()
     {
@@ -40,6 +41,15 @@ public class UserController : ApiControllerBase
     {
         _userService.Create(userDto);
         return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
+    }
+
+    [HasPermission(Policies.DeleteUser)]
+    [HttpDelete]
+    public IActionResult Delete(UserDto userDto)
+    {
+        //return 204 if no content?
+        _userService.Delete(userDto);
+        return Ok();
     }
 
 }

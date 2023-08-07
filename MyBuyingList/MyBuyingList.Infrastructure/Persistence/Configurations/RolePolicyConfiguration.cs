@@ -9,7 +9,7 @@ public class RolePolicyConfiguration : IEntityTypeConfiguration<RolePolicy>
     public void Configure(EntityTypeBuilder<RolePolicy> builder)
     {
         builder.ToTable("role_policies");
-        builder.HasKey(x => x.Id);
+        builder.Property(p => p.Id).UseIdentityAlwaysColumn();
         builder.HasAlternateKey(x => new { x.RoleId, x.PolicyId });
 
         builder.HasOne(rolePolicy => rolePolicy.Policy)

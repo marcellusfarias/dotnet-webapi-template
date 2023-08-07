@@ -15,7 +15,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.ToTable("users");
 
-        builder.Property(p => p.Id).UseIdentityColumn();
+        builder.Property(p => p.Id).UseIdentityAlwaysColumn();
         builder.Property(p => p.UserName).HasMaxLength(256).IsRequired();
         builder.Property(p => p.Email).IsRequired().HasMaxLength(256);
         builder.Property(p => p.Password).IsRequired().HasMaxLength(32);

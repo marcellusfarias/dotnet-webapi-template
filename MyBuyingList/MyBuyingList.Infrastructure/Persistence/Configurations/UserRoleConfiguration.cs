@@ -9,7 +9,7 @@ internal class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     public void Configure(EntityTypeBuilder<UserRole> builder)
     {
         builder.ToTable("user_roles");
-        builder.HasKey(x => x.Id);  
+        builder.Property(p => p.Id).UseIdentityAlwaysColumn();
         builder.HasAlternateKey(userRole => new { userRole.RoleId, userRole.UserId });
 
         builder.HasOne(userRole => userRole.User)
