@@ -21,6 +21,11 @@ public static class Policies
     public const string BuyingListUpdate = "BuyingListUpdate";
     public const string BuyingListDelete = "BuyingListDelete";
 
+    public const string GroupGet = "GroupGet";
+    public const string GroupCreate = "GroupCreate";
+    public const string GroupUpdate = "GroupUpdate";
+    public const string GroupDelete = "GroupDelete";
+
     public static IEnumerable<Policy> GetValues()
     {
         List<Policy> policies = new List<Policy>();

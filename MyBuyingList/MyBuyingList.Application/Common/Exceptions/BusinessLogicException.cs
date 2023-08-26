@@ -10,6 +10,7 @@ namespace MyBuyingList.Application.Common.Exceptions;
 public  class BusinessLogicException : Exception
 {
     private static string defaultErrorMessage = "An error occured while validating the model. Message: {0}";
+    public BusinessLogicException() : base(defaultErrorMessage) { }
     public BusinessLogicException(string message) : base(string.Format(defaultErrorMessage, message)) { }
     public BusinessLogicException(Exception inner) : base(string.Format(defaultErrorMessage, inner.Message), inner) { }
 }

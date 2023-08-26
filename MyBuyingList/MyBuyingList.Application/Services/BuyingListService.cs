@@ -22,10 +22,10 @@ public class BuyingListService : IBuyingListService
 
     public GetBuyingListDto? GetById(int id)
     {
-        var buyingList = _buyingListRepository.Get(id);
+        BuyingList? buyingList = _buyingListRepository.Get(id);
         return buyingList == null
             ? throw new ResourceNotFoundException()
-            : _mapper.Map<GetBuyingListDto>(buyingList);
+            : _mapper.Map<BuyingList, GetBuyingListDto>(buyingList);
     }
 
     public int Create(CreateBuyingListDto buyingListDto, int currentUserId)

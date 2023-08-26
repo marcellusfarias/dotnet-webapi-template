@@ -21,6 +21,9 @@ public class UserController : ApiControllerBase
 
     //TODO: pagination
     [HasPermission(Policies.GetAllUsers)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public IActionResult GetAllUsers()
     {
@@ -29,6 +32,10 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.CreateUser)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public IActionResult Create(CreateUserDto createUserDto)
     {
@@ -37,6 +44,10 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UpdateUser)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangeActiveStatus")]
     public IActionResult ChangeActiveStatus(int userId, bool activeStatus)
     {
@@ -45,6 +56,12 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UpdateUser)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangePassword")]
     public IActionResult ChangePassword(UpdateUserPasswordDto updateUserPasswordDto)
     {
@@ -53,6 +70,10 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.DeleteUser)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
     public IActionResult Delete(int id)
     {

@@ -56,6 +56,7 @@ public static class ConfigureServices
     {
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBuyingListRepository, BuyingListRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
     }
 
     private static string GetConnectionString(IConfiguration configuration, ILogger logger)

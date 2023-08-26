@@ -17,6 +17,6 @@ public class CreateUserDtoMapping
 {
     public void ConfigureMappings(IMapperConfigurationExpression cfg)
     {
-        cfg.CreateMap<GetBuyingListDto, BuyingList>();
+        cfg.CreateMap<BuyingList, GetBuyingListDto>();
     }
 }

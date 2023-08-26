@@ -58,6 +58,7 @@ public static class ConfigureServices
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ILoginService, LoginService>();
-        //services.AddScoped<IBuyingListService, BuyingListService>();
+        services.AddScoped<IBuyingListService, BuyingListService>();
+        services.AddScoped<IGroupService, GroupService>();
     }
 }

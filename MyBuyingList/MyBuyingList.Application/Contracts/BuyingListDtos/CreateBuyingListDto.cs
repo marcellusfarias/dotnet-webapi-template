@@ -9,7 +9,6 @@ namespace MyBuyingList.Application.Contracts.BuyingListDtos;
 //so the user does not specify them on Creating a BuyingList
 public class CreateBuyingListDto
 {
-    public int? Id { get; set; }
     public required string Name { get; set; }
     public required int GroupId { get; set; }
     public int? CreatedBy { get; set; }
