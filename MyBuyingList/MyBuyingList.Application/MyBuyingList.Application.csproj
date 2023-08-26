@@ -23,7 +23,6 @@
 		<Folder Include="Common\Behaviours\" />
 		<Folder Include="Common\Extensions\" />
 		<Folder Include="Common\Models\" />
-		<Folder Include="ViewModels\" />
 	</ItemGroup>
 
 </Project>

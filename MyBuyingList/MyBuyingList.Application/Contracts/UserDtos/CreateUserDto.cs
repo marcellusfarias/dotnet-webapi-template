@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using MyBuyingList.Application.Common.Mappings;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.DTOs.UserDtos;
