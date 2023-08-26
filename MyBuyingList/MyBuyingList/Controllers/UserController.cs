@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Interfaces.Services;
-using MyBuyingList.Application.DTOs;
+using MyBuyingList.Application.Contracts.User;
+using MyBuyingList.Application.DTOs.UserDtos;
 using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
 using MyBuyingList.Infrastructure.Auth.Constants;
 
@@ -21,35 +22,42 @@ public class UserController : ApiControllerBase
     //TODO: pagination
     [HasPermission(Policies.GetAllUsers)]
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult GetAllUsers()
     {
-        var users = _userService.List();
+        var users = _userService.GetAllUsers();
         return Ok(users);
     }
 
     [HasPermission(Policies.CreateUser)]
     [HttpPost]
-    public IActionResult Create(UserDto userDto)
+    public IActionResult Create(CreateUserDto createUserDto)
     {
-        _userService.Create(userDto);
-        return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
+        _userService.Create(createUserDto);
+        return new ObjectResult(createUserDto) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HasPermission(Policies.UpdateUser)]
-    [HttpPut]
-    public IActionResult Update(UserDto userDto)
+    [HttpPut("ChangeActiveStatus")]
+    public IActionResult ChangeActiveStatus(int userId, bool activeStatus)
     {
-        _userService.Create(userDto);
-        return new ObjectResult(userDto) { StatusCode = StatusCodes.Status201Created };
+        _userService.ChangeActiveStatus(userId, activeStatus);
+        return NoContent();
+    }
+
+    [HasPermission(Policies.UpdateUser)]
+    [HttpPut("ChangePassword")]
+    public IActionResult ChangePassword(UpdateUserPasswordDto updateUserPasswordDto)
+    {
+        _userService.ChangeUserPassword(updateUserPasswordDto.Id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword);
+        return NoContent();
     }
 
     [HasPermission(Policies.DeleteUser)]
     [HttpDelete]
-    public IActionResult Delete(UserDto userDto)
+    public IActionResult Delete(int id)
     {
-        //return 204 if no content?
-        _userService.Delete(userDto);
-        return Ok();
+        _userService.Delete(id); //throws ResourceNotFoundException
+        return NoContent();
     }
 
 }

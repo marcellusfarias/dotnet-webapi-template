@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using FluentValidation;
-using MyBuyingList.Application.Common.Extensions;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.Common.Interfaces.Services;
-using MyBuyingList.Application.DTOs;
 using MyBuyingList.Domain.Entities;
+using MyBuyingList.Application.Common.Exceptions;
+using MyBuyingList.Application.DTOs.UserDtos;
 
 namespace MyBuyingList.Application.Services;
 
@@ -12,37 +11,70 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
-    private readonly IValidator<UserDto> _validator;
 
-    public UserService(IUserRepository userRepository, IMapper mapper, IValidator<UserDto> validator)
+    public UserService(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
         _mapper = mapper;
-        _validator = validator;
     }
 
-    public IEnumerable<UserDto> List()
+    public GetUserDto GetUser(int userId)
+    {
+        var user = _userRepository.Get(userId);
+        return user == null 
+            ? throw new ResourceNotFoundException()
+            : _mapper.Map<GetUserDto>(user);
+    }
+
+    public IEnumerable<GetUserDto> GetAllUsers()
     {
         IEnumerable<User> users = _userRepository.GetAll();
-        IEnumerable<UserDto> list = _mapper.Map<IEnumerable<UserDto>>(users); //maybe get this exception?
+        IEnumerable<GetUserDto> list = _mapper.Map<IEnumerable<GetUserDto>>(users); //map exceptions?
         return list;
     }
 
-    public void Create(UserDto userDto)
+    public int Create(CreateUserDto userDto)
     {
-        _validator.ValidateAndThrowCustomException(userDto);
-        _userRepository.Add(_mapper.Map<User>(userDto));
+        var user = _mapper.Map<User>(userDto);
+        user.Active = true;
+        // hash password, check if password is ok
+                
+        return _userRepository.Add(user);
     }
 
-    public void Update(UserDto userDto)
+    //test NULL active status
+    public void ChangeActiveStatus(int userId, bool activeStatus)
     {
-        _validator.ValidateAndThrowCustomException(userDto);
-        _userRepository.Edit(_mapper.Map<User>(userDto));
+        var user = _userRepository.Get(userId);
+        if (user is null)
+            throw new ResourceNotFoundException();
+
+        user.Active = activeStatus;
+
+        _userRepository.Edit(user);
     }
 
-    public void Delete(UserDto userDto)
+    public void ChangeUserPassword(int userId, string oldPassword, string newPassword)
     {
-        _validator.ValidateAndThrowCustomException(userDto);
-        _userRepository.Delete(_mapper.Map<User>(userDto));
+        var user = _userRepository.Get(userId);
+        if (user is null)
+            throw new ResourceNotFoundException();
+
+        if (user.Password != oldPassword)
+            throw new BusinessLogicException("Old password does not match current one.");
+
+        user.Password = newPassword;
+
+        _userRepository.Edit(user);
     }
+
+    public void Delete(int userId)
+    {
+        var user = _userRepository.Get(userId);
+
+        if (user == null)
+            throw new ResourceNotFoundException();
+
+        _userRepository.LogicalExclusion(user);
+    }    
 }

@@ -3,8 +3,15 @@ using MyBuyingList.Infrastructure;
 using MyBuyingList.Application;
 using MyBuyingList.Web.Middlewares;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.MiddlewareAnalysis;
+using MyBuyingList.Web;
+using System.Diagnostics;
+using MyBuyingList.Web.Filters;
+
+const bool _DEBUG = true;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
 
 ILogger<Program> logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
 builder.Services.AddInfrastructureServices(logger, builder.Configuration);
@@ -13,7 +20,7 @@ builder.Services.AddApplicationServices(logger);
 // Add services to the container.
 //builder.Services.AddControllersWithViews();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => { options.Filters.Add(typeof(RequestBodyValidationFilter));});
 builder.Services.AddLogging();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -50,14 +57,37 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+#region Adding debugging middleware logic
+
+if(_DEBUG)
+{
+    // Grab the "Microsoft.AspNetCore" DiagnosticListener from DI
+    var listener = app.Services.GetRequiredService<DiagnosticListener>();
+
+    // Create an instance of the AnalysisDiagnosticAdapter using the IServiceProvider
+    // so that the ILogger is injected from DI
+    var observer = ActivatorUtilities.CreateInstance<AnalysisDiagnosticAdapter>(app.Services);
+
+    // Subscribe to the listener with the SubscribeWithAdapter() extension method
+    using var disposable = listener.SubscribeWithAdapter(observer);
+}
+
+#endregion
+
+//needed for RequestBodyValidationFilter
+app.Use((context, next) =>
+{
+    context.Request.EnableBuffering();
+    return next();
+});
+
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
     options.RoutePrefix = string.Empty;
 });
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

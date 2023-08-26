@@ -11,10 +11,6 @@ namespace MyBuyingList.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_roles_id",
-                table: "roles");
-
             migrationBuilder.AlterColumn<int>(
                 name: "id",
                 table: "users",
@@ -94,20 +90,11 @@ namespace MyBuyingList.Infrastructure.Migrations
                 oldType: "integer")
                 .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn)
                 .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-            migrationBuilder.AddPrimaryKey(
-                name: "pk_roles",
-                table: "roles",
-                column: "id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "pk_roles",
-                table: "roles");
-
             migrationBuilder.AlterColumn<int>(
                 name: "id",
                 table: "users",
@@ -187,11 +174,6 @@ namespace MyBuyingList.Infrastructure.Migrations
                 oldType: "integer")
                 .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .OldAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn);
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_roles_id",
-                table: "roles",
-                column: "id");
         }
     }
 }

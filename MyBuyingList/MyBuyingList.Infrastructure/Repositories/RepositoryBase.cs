@@ -2,11 +2,12 @@
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
+using MyBuyingList.Domain.Common;
 using System.Data;
 
 namespace MyBuyingList.Infrastructure.Repositories;
 
-public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class
+public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
     public ApplicationDbContext _context { get; protected set; }
     protected RepositoryBase(ApplicationDbContext context)
@@ -39,12 +40,14 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }        
     }
 
-    public void Add(TEntity entity)
+    public int Add(TEntity entity)
     {
         try
         {
-            _context.Set<TEntity>().Add(entity);
+            var savedEntity = _context.Set<TEntity>().Add(entity).Entity;
             _context.SaveChanges();
+
+            return savedEntity.Id;
         }
         catch (Exception ex)
         {

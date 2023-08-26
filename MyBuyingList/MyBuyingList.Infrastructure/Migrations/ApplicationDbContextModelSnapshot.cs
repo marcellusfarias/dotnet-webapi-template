@@ -255,7 +255,7 @@ namespace MyBuyingList.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_roles");
+                        .HasName("PK_roles_id");
 
                     b.HasIndex("Name")
                         .IsUnique()

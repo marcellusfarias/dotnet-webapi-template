@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyBuyingList.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230807010900_Changed_Identity_ToAlwaysInsteadOfByDefault")]
+    [Migration("20230808185012_Changed_Identity_ToAlwaysInsteadOfByDefault")]
     partial class Changed_Identity_ToAlwaysInsteadOfByDefault
     {
         /// <inheritdoc />
@@ -258,7 +258,7 @@ namespace MyBuyingList.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_roles");
+                        .HasName("PK_roles_id");
 
                     b.HasIndex("Name")
                         .IsUnique()

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Infrastructure.Auth.Constants;
-using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Infrastructure.Auth.JwtSetup;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

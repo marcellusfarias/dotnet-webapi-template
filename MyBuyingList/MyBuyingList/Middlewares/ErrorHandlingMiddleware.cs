@@ -33,17 +33,25 @@ public class ErrorHandlingMiddleware
 
         switch (exception)
         {
+            case CustomValidationException:
+                logger.LogError($"Validation exception. Stack trace: {exception.InnerException}");
+                code = HttpStatusCode.BadRequest; //400
+                break;
             case AuthenticationException:
                 logger.LogError(exception.Message);
-                code = HttpStatusCode.Unauthorized;
+                code = HttpStatusCode.Unauthorized; //401
+                break;
+            case ResourceNotFoundException:
+                logger.LogError(exception.Message);
+                code = HttpStatusCode.NotFound; // 404
+                break;
+            case BusinessLogicException:
+                logger.LogError($"Business rule exception. Message: {exception.Message}");
+                code = HttpStatusCode.UnprocessableEntity; //422
                 break;
             case DatabaseException:
                 logger.LogError($"Database exception. Stack trace: {exception.InnerException}");
-                code = HttpStatusCode.InternalServerError;
-                break;
-            case CustomValidationException:
-                logger.LogError($"Validation exception. Stack trace: {exception.InnerException}");
-                code = HttpStatusCode.BadRequest;
+                code = HttpStatusCode.InternalServerError; //500
                 break;
         }
 

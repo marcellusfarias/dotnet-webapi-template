@@ -9,7 +9,7 @@ Decided to go with DTOs after seeing a lot of engineers using it. Still nto sure
 So, I used AutoMapper library, which is a straightforward choice. I decided to go with a Profile setup, specially because I think it's easier for mocking on tests. If I didnt use that, would need to do the first answer for each test: https://stackoverflow.com/questions/36074324/how-to-mock-an-automapper-imapper-object-in-web-api-tests-with-structuremap-depe
 
 2. xUnit vs nUnit.
-After some research over NUnit and xUnit, I decided to go with the second. The main reason for it is that bu default xUnit tests run 100% independently by default. That means, each test has it own instance, and because of that you can run it in parallel with no worries.
+After some research over NUnit and xUnit, I decided to go with the first. The main reason for it is that bu default xUnit tests run 100% independently by default. That means, each test has it own instance, and because of that you can run it in parallel with no worries.
 Another good indicator is that Microsoft itself started using xUnit on it's own projects.
 
 3. Exceptions vs Result monad.
@@ -19,9 +19,10 @@ After some research, I got into the conclusion that I would keep Exceptions over
 * Boilerplate code: tried to applied Result monad in this project. Got into the conclusion that for smalls projects, it may work fine. But for projects with many layers, keeping casting errors types can lead to boilerplate code. Exceptions were created exactly to avoid this type of coding. 
 * One can create it's own Exception classes and handle them properly on the app's middlewares. 
 
-4. FluentValidation: exceptions and testing.
-According to Fluent Validation docs (https://docs.fluentvalidation.net/en/latest/advanced.html), we used it's recommended way to throw custom exceptions. That way we create a pattern for the app's middleware error handling. You can check it at Application/Common/Extensions.
-One may ask about testing and how to mock it, since it's an extension method. Again, according to their own documentation, one should treat the lib as a black box, so no mocking is required. Doc link: https://docs.fluentvalidation.net/en/latest/testing.html
+4. FluentValidation: usage, exceptions and testing.
+* FluentValidation is used mainly on the RequestBodyValidationFilter class, and it's used to validate user input data, which are mainly represented as DTOs.
+* According to the docs (https://docs.fluentvalidation.net/en/latest/advanced.html), it's recommended to throw your own custom exceptions. We handle them on the app's ErrorHandlingMiddleware.
+* According to the docs ( https://docs.fluentvalidation.net/en/latest/testing.html) one should not mock it, but treat it as a black box.
 
 5. Authentication and authorization.
 For this topic, we considered using Microsoft ASP.NET Identity Authentication or create our own mechanism. 
@@ -53,6 +54,7 @@ Write about the following topics:
 * Frontend? React?
 * Add refresh token & cookie with JWT & secret
 * Add hash password into database
+* Think about reusing validating rules in DTOs.
 
 ## Others
 * Health Checks
@@ -61,3 +63,6 @@ Write about the following topics:
 * Benchmarks & Performance Tests
 * Should put testing project inside app project so I can make the classes internal instead of public?
 * Document http responses on swagger
+* HTTPS
+* Read about ALL middlewares and configure as needed in the app.
+* Constants for string lengths?

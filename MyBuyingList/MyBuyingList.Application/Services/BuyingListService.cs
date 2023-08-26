@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using MyBuyingList.Application.Common.Extensions;
+using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Application.Common.Interfaces.Services;
-using MyBuyingList.Application.DTOs;
+using MyBuyingList.Application.Contracts.BuyingListDtos;
+using MyBuyingList.Application.DTOs.UserDtos;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Services;
@@ -12,34 +13,47 @@ public class BuyingListService : IBuyingListService
 {
     private readonly IBuyingListRepository _buyingListRepository;
     private readonly IMapper _mapper;
-    private readonly IValidator<BuyingListDto> _validator;
 
-    public BuyingListService(IBuyingListRepository buyingListRepository, IMapper mapper, IValidator<BuyingListDto> validator)
+    public BuyingListService(IBuyingListRepository buyingListRepository, IMapper mapper)
     {
         _buyingListRepository = buyingListRepository;
         _mapper = mapper;
-        _validator = validator;
-    }
-    public BuyingListDto? GetById(int id)
-    {
-        return _mapper.Map<BuyingListDto>(_buyingListRepository.Get(id));
     }
 
-    public void Create(BuyingListDto buyingListDto)
+    public GetBuyingListDto? GetById(int id)
     {
-        _validator.ValidateAndThrowCustomException(buyingListDto);
-        _buyingListRepository.Add(_mapper.Map<BuyingList>(buyingListDto));
+        var buyingList = _buyingListRepository.Get(id);
+        return buyingList == null
+            ? throw new ResourceNotFoundException()
+            : _mapper.Map<GetBuyingListDto>(buyingList);
     }
-    
-    public void Update(BuyingListDto buyingListDto)
+
+    public int Create(CreateBuyingListDto buyingListDto, int currentUserId)
     {
-        _validator.ValidateAndThrowCustomException(buyingListDto);
-        _buyingListRepository.Edit(_mapper.Map<BuyingList>(buyingListDto));
+        var buyingList = _mapper.Map<BuyingList>(buyingListDto);
+        buyingList.CreatedBy = currentUserId;
+
+        return _buyingListRepository.Add(buyingList);
     }
-    
-    public void Delete(BuyingListDto buyingListDto)
+
+    public void ChangeName(UpdateBuyingListNameDto dto)
     {
-        _validator.ValidateAndThrowCustomException(buyingListDto);
-        _buyingListRepository.Delete(_mapper.Map<BuyingList>(buyingListDto));
+        var buyingList = _buyingListRepository.Get(dto.Id);
+        if (buyingList is null)
+            throw new ResourceNotFoundException();
+
+        buyingList.Name = dto.Name;
+
+        _buyingListRepository.Edit(buyingList);
     }
+
+    public void Delete(int buyingListId)
+    {
+        var buyingList = _buyingListRepository.Get(buyingListId);
+
+        if (buyingList == null)
+            throw new ResourceNotFoundException();
+
+        _buyingListRepository.DeleteBuyingListAndItems(buyingList);
+    }    
 }
