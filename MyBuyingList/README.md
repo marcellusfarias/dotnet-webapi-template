@@ -74,6 +74,10 @@ I also plan to add Cache for this.
 
 Planning to move on to Minimal APIs.
 
+### Github Actions
+
+Configure Github actions pipeline.
+
 ### Integration Testing
 
 Will add integration testing. I'm willing to use TestContainers.
