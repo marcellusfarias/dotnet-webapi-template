@@ -50,19 +50,17 @@ Chosed Postgres over MSSQL because it's free. Using a code-first because I alrea
 
 Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. One thing that made me stick with EFCore is that the performance is improved a lot on .Net 8 (closer to Dapper, but still not better. Check: https://www.youtube.com/watch?v=Q4LtKa_HTHU). But I plan to use Dapper at least a little on this application for learning purposes.
 
-I'm using a lazy-load approach. 
-
-TODO: 
-
-Write about the following topics:
-* Which loading data method chosed and why: https://learn.microsoft.com/en-us/ef/core/querying/related-data/
-* Tracking vs no tracking
+I'm using lazy-loading. 
 
 ## TODOs
 
+### EFCore
+
+RESEARCH: Convert Proxy to POCO or change Lazy Loading to Eager Loading. Research about tracking.
+
 ### Async support
 
-Of course this application will have async support. Since I was testing many things in parallel, I let it for the future, but it's the next thing to be added. I will also add CancellationToken.
+Add CancellationToken and return research where I can return IAsyncEnumerator/Enumerable.
 
 ### Session and cache
 

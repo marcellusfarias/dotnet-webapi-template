@@ -25,10 +25,23 @@ public class UserService : IUserService
             ? throw new ResourceNotFoundException()
             : _mapper.Map<GetUserDto>(user);
     }
+    public async Task<GetUserDto> GetUserAsync(int userId)
+    {
+        var user = await _userRepository.GetAsync(userId);
+        return user == null
+            ? throw new ResourceNotFoundException()
+            : _mapper.Map<GetUserDto>(user);
+    }
 
     public IEnumerable<GetUserDto> GetAllUsers()
     {
         IEnumerable<User> users = _userRepository.GetAll();
+        IEnumerable<GetUserDto> list = _mapper.Map<IEnumerable<GetUserDto>>(users); //map exceptions?
+        return list;
+    }
+    public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync()
+    {
+        IEnumerable<User> users = await _userRepository.GetAllAsync();
         IEnumerable<GetUserDto> list = _mapper.Map<IEnumerable<GetUserDto>>(users); //map exceptions?
         return list;
     }
@@ -42,6 +55,15 @@ public class UserService : IUserService
         return _userRepository.Add(user);
     }
 
+    public async Task<int> CreateAsync(CreateUserDto userDto)
+    {
+        var user = _mapper.Map<User>(userDto);
+        user.Active = true;
+        // hash password, check if password is ok
+
+        return await _userRepository.AddAsync(user);
+    }
+
     //test NULL active status
     public void ChangeActiveStatus(int userId, bool activeStatus)
     {
@@ -52,6 +74,18 @@ public class UserService : IUserService
         user.Active = activeStatus;
 
         _userRepository.Edit(user);
+    }
+
+    //test NULL active status
+    public async Task ChangeActiveStatusAsync(int userId, bool activeStatus)
+    {
+        var user = await _userRepository.GetAsync(userId);
+        if (user is null)
+            throw new ResourceNotFoundException();
+
+        user.Active = activeStatus;
+
+        await _userRepository.EditAsync(user);
     }
 
     public void ChangeUserPassword(int userId, string oldPassword, string newPassword)
@@ -68,6 +102,20 @@ public class UserService : IUserService
         _userRepository.Edit(user);
     }
 
+    public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword)
+    {
+        var user = await _userRepository.GetAsync(userId);
+        if (user is null)
+            throw new ResourceNotFoundException();
+
+        if (user.Password != oldPassword)
+            throw new BusinessLogicException("Old password does not match current one.");
+
+        user.Password = newPassword;
+
+        await _userRepository.EditAsync(user);
+    }
+
     public void Delete(int userId)
     {
         var user = _userRepository.Get(userId);
@@ -76,5 +124,15 @@ public class UserService : IUserService
             throw new ResourceNotFoundException();
 
         _userRepository.LogicalExclusion(user);
-    }    
+    }
+
+    public async Task DeleteAsync(int userId)
+    {
+        var user = await _userRepository.GetAsync(userId);
+
+        if (user == null)
+            throw new ResourceNotFoundException();
+
+        await _userRepository.LogicalExclusionAsync(user);
+    }
 }
