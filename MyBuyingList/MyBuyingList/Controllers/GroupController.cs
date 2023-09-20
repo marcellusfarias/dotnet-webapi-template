@@ -25,9 +25,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public IActionResult Get(int groupId)
+    public async Task<IActionResult> Get(int groupId)
     {
-        var buyingListDto = _groupService.GetById(groupId);
+        var buyingListDto = await _groupService.GetByIdAsync(groupId);
         return Ok(buyingListDto);
     }
 
@@ -37,7 +37,7 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public IActionResult Create(CreateGroupDto groupDto)
+    public async Task<IActionResult> Create(CreateGroupDto groupDto)
     {
         if (!Int32.TryParse(HttpContext.User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value, out int currentUserId))
         {
@@ -45,7 +45,7 @@ public class GroupController : ApiControllerBase
             throw new Exception("Unexpected error. Can't get user id.");
         }
 
-        var id = _groupService.Create(groupDto, currentUserId);
+        var id = await _groupService.CreateAsync(groupDto, currentUserId);
         return new ObjectResult(id) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -56,9 +56,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangeName")]
-    public IActionResult UpdateChangeName(UpdateGroupNameDto groupDto)
+    public async Task<IActionResult> UpdateChangeName(UpdateGroupNameDto groupDto)
     {
-        _groupService.ChangeName(groupDto);
+        await _groupService.ChangeNameAsync(groupDto);
         return NoContent();
     }
 
@@ -68,9 +68,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
-    public IActionResult Delete(int groupId)
+    public async Task<IActionResult> Delete(int groupId)
     {
-        _groupService.Delete(groupId);
+        await _groupService.DeleteAsync(groupId);
         return NoContent();
     }
 }
