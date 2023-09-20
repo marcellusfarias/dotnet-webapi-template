@@ -26,4 +26,23 @@ public class BuyingListRepository : RepositoryBase<BuyingList>, IBuyingListRepos
             throw new DatabaseException(ex);
         }       
     }
+
+    public async Task DeleteBuyingListAndItemsAsync(BuyingList buyingList)
+    {
+        try
+        {
+            if (buyingList.Items.Count > 0)
+            {
+                foreach (var item in buyingList.Items)
+                    _context.Set<BuyingListItem>().Remove(item);
+            }
+
+            _context.Set<BuyingList>().Remove(buyingList);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new DatabaseException(ex);
+        }
+    }
 }

@@ -28,12 +28,27 @@ public class BuyingListService : IBuyingListService
             : _mapper.Map<BuyingList, GetBuyingListDto>(buyingList);
     }
 
+    public async Task<GetBuyingListDto?> GetByIdAsync(int id)
+    {
+        BuyingList? buyingList = _buyingListRepository.Get(id);
+        return buyingList == null
+            ? throw new ResourceNotFoundException()
+            : _mapper.Map<BuyingList, GetBuyingListDto>(buyingList);
+    }
+
     public int Create(CreateBuyingListDto buyingListDto, int currentUserId)
     {
         var buyingList = _mapper.Map<BuyingList>(buyingListDto);
         buyingList.CreatedBy = currentUserId;
 
         return _buyingListRepository.Add(buyingList);
+    }
+    public async Task<int> CreateAsync(CreateBuyingListDto buyingListDto, int currentUserId)
+    {
+        var buyingList = _mapper.Map<BuyingList>(buyingListDto);
+        buyingList.CreatedBy = currentUserId;
+
+        return await _buyingListRepository.AddAsync(buyingList);
     }
 
     public void ChangeName(UpdateBuyingListNameDto dto)
@@ -46,6 +61,16 @@ public class BuyingListService : IBuyingListService
 
         _buyingListRepository.Edit(buyingList);
     }
+    public async Task ChangeNameAsync(UpdateBuyingListNameDto dto)
+    {
+        var buyingList = await _buyingListRepository.GetAsync(dto.Id);
+        if (buyingList is null)
+            throw new ResourceNotFoundException();
+
+        buyingList.Name = dto.Name;
+
+        await _buyingListRepository.EditAsync(buyingList);
+    }
 
     public void Delete(int buyingListId)
     {
@@ -55,5 +80,14 @@ public class BuyingListService : IBuyingListService
             throw new ResourceNotFoundException();
 
         _buyingListRepository.DeleteBuyingListAndItems(buyingList);
-    }    
+    }
+    public async Task DeleteAsync(int buyingListId)
+    {
+        var buyingList = await _buyingListRepository.GetAsync(buyingListId);
+
+        if (buyingList == null)
+            throw new ResourceNotFoundException();
+
+        await _buyingListRepository.DeleteBuyingListAndItemsAsync(buyingList);
+    }
 }
