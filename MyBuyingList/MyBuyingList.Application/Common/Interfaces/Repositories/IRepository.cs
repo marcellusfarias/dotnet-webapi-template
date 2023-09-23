@@ -7,7 +7,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     TEntity? Get(int id);
     Task<TEntity?> GetAsync(int id);
     IEnumerable<TEntity> GetAll();
-    Task<IEnumerable<TEntity>> GetAllAsync();
+    Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken);
     /// <summary>
     /// Adds a new entity in the database.
     /// </summary>

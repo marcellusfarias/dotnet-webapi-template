@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 
-public class ResourceNotFoundException : Exception
+public class ResourceNotFoundException : Exception, ICustomHttpException
 {
     private static string defaultErrorMessage = "Resource not found.";
-    public ResourceNotFoundException() : base(defaultErrorMessage) { }
-    public ResourceNotFoundException(Exception inner) : base(string.Format(defaultErrorMessage), inner) { }
+    public int HttpResponseCode => 404; // Not found
+    public string HttpResponseMessage => defaultErrorMessage;
+    public ResourceNotFoundException() : base(defaultErrorMessage) { }    
 }

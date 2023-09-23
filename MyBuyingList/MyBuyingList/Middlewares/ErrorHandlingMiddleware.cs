@@ -29,35 +29,30 @@ public class ErrorHandlingMiddleware
 
     private static Task HandleExceptionAsync(HttpContext context, Exception exception, ILogger logger)
     {
-        var code = HttpStatusCode.InternalServerError; // 500 if unexpected
-
-        switch (exception)
+        if (exception is OperationCanceledException)
         {
-            case CustomValidationException:
-                logger.LogError($"Validation exception. Stack trace: {exception.InnerException}");
-                code = HttpStatusCode.BadRequest; //400
-                break;
-            case AuthenticationException:
-                logger.LogError(exception.Message);
-                code = HttpStatusCode.Unauthorized; //401
-                break;
-            case ResourceNotFoundException:
-                logger.LogError(exception.Message);
-                code = HttpStatusCode.NotFound; // 404
-                break;
-            case BusinessLogicException:
-                logger.LogError($"Business rule exception. Message: {exception.Message}");
-                code = HttpStatusCode.UnprocessableEntity; //422
-                break;
-            case DatabaseException:
-                logger.LogError($"Database exception. Stack trace: {exception.InnerException}");
-                code = HttpStatusCode.InternalServerError; //500
-                break;
+            logger.LogInformation("Aborting request because it was cancelled");
+            context.Abort();
+            return Task.CompletedTask;
+        }           
+
+        int code = (int) HttpStatusCode.InternalServerError; // 500 if unhandled
+        string message = exception.Message;
+        string contentType = "application/json";
+
+        var customException = exception as ICustomHttpException;
+        if (customException is not null)
+        {
+            message = customException.HttpResponseMessage;
+            code = customException.HttpResponseCode;
         }
 
-        var result = JsonConvert.SerializeObject(new { error = exception.Message });
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)code;
+        logger.LogError(message);
+        logger.LogError(exception.ToString());
+
+        context.Response.ContentType = contentType;
+        context.Response.StatusCode = code;
+        var result = JsonConvert.SerializeObject(new { error = message });
         return context.Response.WriteAsync(result);
     }
 }

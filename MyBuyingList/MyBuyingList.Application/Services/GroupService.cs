@@ -75,7 +75,7 @@ public class GroupService : IGroupService
             throw new ResourceNotFoundException();
 
         if (group.BuyingLists.Count > 0)
-            throw new BusinessLogicException();
+            throw new BusinessLogicException($"Can't delete group {groupId}. There are buying lists associated with it.");
 
         _groupRepository.Delete(group);
     }
@@ -87,7 +87,7 @@ public class GroupService : IGroupService
             throw new ResourceNotFoundException();
 
         if (group.BuyingLists.Count > 0)
-            throw new BusinessLogicException();
+            throw new BusinessLogicException($"Can't delete group {groupId}. There are buying lists associated with it.");
 
         await _groupRepository.DeleteAsync(group);
     }

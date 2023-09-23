@@ -1,5 +1,6 @@
 ﻿using MyBuyingList.Application.DTOs;
 using MyBuyingList.Application.DTOs.UserDtos;
+using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Common.Interfaces.Services;
 
@@ -8,7 +9,7 @@ public interface IUserService
     GetUserDto GetUser(int id);
     Task<GetUserDto> GetUserAsync(int id);
     IEnumerable<GetUserDto> GetAllUsers();
-    Task<IEnumerable<GetUserDto>> GetAllUsersAsync();
+    Task<IEnumerable<User>> GetAllUsersAsync(CancellationToken cancellationToken);
     
     /// <summary>
     /// Creates a new user.

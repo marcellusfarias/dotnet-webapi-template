@@ -38,8 +38,6 @@ Since the main goal for this application is learning, I chosed to implement my o
 
 One important point to mention is where to store Jwt's token. After some research, decided to store in a cookie according to this article: https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914.
 
-Current TODOs for authentication: store secret on a appropriated place (probably using docker secrets), create refreshing token mechanism and configure Cookie.
-
 For Authorization, I created an elegant way that uses Attributes and overrides the PolicyProvider. It relies on Constants that are also used on the migrations for automatically adding new Roles and Policies into the database. The custom AuthorizationHandler checks if the required policy is attached on the JWT token.
 
 ### 6. Database
@@ -52,6 +50,12 @@ Before choosing EFCore, I did a research on Dapper. I see the performance differ
 
 I'm using lazy-loading. 
 
+### 8. Cancellation Token
+
+Cancellation Token will be added on every controller endpoint that has an I/O operation. Since we use Unit of Work on the repositories, it should not be a problem. For more information, see: https://stackoverflow.com/questions/50329618/should-i-always-add-cancellationtoken-to-my-controller-actions.
+
+Note that on the ErrorHandlingMiddleware we added a few lines to abort the request if the operation was cancelled. The reason for it is that since the client closed the connection (and that's how the Cancellation is triggered) there is no reason to return an HttpReponse.
+
 ## TODOs
 
 ### EFCore
@@ -60,11 +64,11 @@ RESEARCH: Convert Proxy to POCO or change Lazy Loading to Eager Loading. Researc
 
 ### Async support
 
-Add CancellationToken and return research where I can return IAsyncEnumerator/Enumerable.
+Research where I can return IAsyncEnumerator/Enumerable instead of task.
 
 ### Session and cache
 
-As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism.
+As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism. Create docker secret for JWT key.
 
 I also plan to add Cache for this. 
 

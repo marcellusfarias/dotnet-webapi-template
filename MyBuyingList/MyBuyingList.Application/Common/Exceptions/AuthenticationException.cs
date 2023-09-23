@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 
-public class AuthenticationException : Exception
+public class AuthenticationException : Exception, ICustomHttpException
 {
     private static string defaultErrorMessage = "An error occured when authenticating user {0}.";
-    public AuthenticationException(Exception inner, string username) : base(string.Format(defaultErrorMessage, username), inner) { }
+    private string _httpResponseMessage;
+    public AuthenticationException(Exception inner, string username) : base(string.Format(defaultErrorMessage, username), inner) 
+    {
+        _httpResponseMessage = string.Format(defaultErrorMessage, username);
+    }
+
+    public int HttpResponseCode => 401; //Unauthorized
+    public string HttpResponseMessage => _httpResponseMessage;
 }

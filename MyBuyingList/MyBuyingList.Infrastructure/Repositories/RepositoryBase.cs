@@ -53,12 +53,16 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }        
     }
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync()
+    public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
-            var entities = await _context.Set<TEntity>().ToListAsync();
+            var entities = await _context.Set<TEntity>().ToListAsync(cancellationToken);
             return entities;
+        }
+        catch(OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
