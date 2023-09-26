@@ -16,18 +16,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         _context = context;
     }
 
-    public TEntity? Get(int id)
-    {
-        try
-        {
-            return _context.Set<TEntity>().Find(id);
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
-    }
-
     public async Task<TEntity?> GetAsync(int id)
     {
         try
@@ -38,19 +26,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         {
             throw new DatabaseException(ex);
         }
-    }
-
-    public IEnumerable<TEntity> GetAll()
-    {
-        try
-        {
-            IEnumerable<TEntity> entities = _context.Set<TEntity>().AsNoTracking().AsEnumerable();
-            return entities.ToList();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
     }
 
     public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -70,21 +45,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public int Add(TEntity entity)
-    {
-        try
-        {
-            var savedEntity = _context.Set<TEntity>().Add(entity).Entity;
-            _context.SaveChanges();
-
-            return savedEntity.Id;
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
-    }
-
     public async Task<int> AddAsync(TEntity entity)
     {
         try
@@ -100,19 +60,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public void AddRange(ICollection<TEntity> entities)
-    {
-        try
-        {
-            _context.Set<TEntity>().AddRange(entities);
-            _context.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
-    }
-
     public async Task AddRangeAsync(ICollection<TEntity> entities)
     {
         try
@@ -124,19 +71,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         {
             throw new DatabaseException(ex);
         }
-    }
-
-    public void Delete(TEntity entity)
-    {
-        try
-        {
-            _context.Set<TEntity>().Remove(entity);
-            _context.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
     }
 
     public async Task DeleteAsync(TEntity entity)
@@ -152,19 +86,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public void DeleteRange(ICollection<TEntity> entities)
-    {
-        try
-        {
-            _context.Set<TEntity>().RemoveRange(entities);
-            _context.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
-    }
-
     public async Task DeleteRangeAsync(ICollection<TEntity> entities)
     {
         try
@@ -178,18 +99,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public void Edit(TEntity entity)
-    {
-        try
-        {
-            _context.Entry(entity).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }        
-    }
     public async Task EditAsync(TEntity entity)
     {
         try
