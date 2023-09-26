@@ -46,9 +46,11 @@ Chosed Postgres over MSSQL because it's free. Using a code-first because I alrea
 
 ### 7. EFCore
 
-Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. One thing that made me stick with EFCore is that the performance is improved a lot on .Net 8 (closer to Dapper, but still not better. Check: https://www.youtube.com/watch?v=Q4LtKa_HTHU). But I plan to use Dapper at least a little on this application for learning purposes.
+Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. I sticked with EFCore for this one.
 
 I'm using lazy-loading. 
+
+_Tracking_ vs _no-tracking_: there is a great article about it: https://learn.microsoft.com/en-us/ef/core/querying/tracking. In a nutshell, _tracking_ persists changes to the entity in the SaveChanges method and can improve performance if an entity is already in the context (meaning one less trip to the database). _No-tracking_ doesn't keep state, so it uses less memory and is faster in general, being great for _readonly_ operations. Furthermore, there is still _No-Tracking with Identity Resolution_: https://macoratti.net/22/05/ef_asnoidresol1.htm. It's good for relationship "one-to-many" for memory optimization, since it keep the repeated entity in the context. The default on this project is to track; however, for readonly operations, we tend to use no-tracking and no-tracking with identity resolution.
 
 ### 8. Cancellation Token
 
@@ -60,17 +62,25 @@ Note that on the ErrorHandlingMiddleware we added a few lines to abort the reque
 
 ### EFCore
 
-RESEARCH: Convert Proxy to POCO or change Lazy Loading to Eager Loading. Research about tracking.
+"In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
 
-### Async support
+### Remove Automapper from project
 
-Research where I can return IAsyncEnumerator/Enumerable instead of task.
+Do the mappings manually.
 
 ### Session and cache
 
 As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism. Create docker secret for JWT key.
 
 I also plan to add Cache for this. 
+
+### Async support
+
+Research where I can return IAsyncEnumerator/Enumerable instead of task. 
+
+### Swagger
+
+Remove CancellationToken from the documentation.
 
 ### Minimal API
 
@@ -110,4 +120,4 @@ Other interesting topics that may come in the future:
 * Add HTTPS
 * Review ALL middlewares and configure as needed in the app.
 * Add Constants for string lengths
-* * Read about Event Driven design and decide if it's worth applying it in here.
+* Read about Event Driven design and decide if it's worth applying it in here.

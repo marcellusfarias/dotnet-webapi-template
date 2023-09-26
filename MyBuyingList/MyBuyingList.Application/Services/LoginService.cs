@@ -16,13 +16,14 @@ public class LoginService : ILoginService
         _jwtProvider = jwtProvider;
     }
 
-    public string AuthenticateAndReturnJwtToken(string username, string password)
+    public async Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password)
     {
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             throw new AuthenticationException(new Exception("Empty username or password"), username);
 
         //should I create a repository method?
-        User? user = _userRepository.GetAll().Where(x => x.UserName == username && x.Active).FirstOrDefault(); 
+        var users = await _userRepository.GetActiveUsersAsync();
+        User? user = users.Where(x => x.UserName == username).FirstOrDefault();
         if (user == null)
             throw new AuthenticationException(new Exception("Invalid credentials"), username);
         
@@ -30,6 +31,6 @@ public class LoginService : ILoginService
         if (password != unhashedPassword)
             throw new AuthenticationException(new Exception("Invalid credentials"), username);
 
-        return _jwtProvider.GenerateToken(user.Id);
+        return await _jwtProvider.GenerateTokenAsync(user.Id);
     }
 }

@@ -17,13 +17,6 @@ public class GroupService : IGroupService
         _groupRepository = groupRepository;
         _mapper = mapper;
     }
-    public GetGroupDto? GetById(int id)
-    {
-        var group = _groupRepository.Get(id);
-        return group == null
-            ? throw new ResourceNotFoundException()
-            : _mapper.Map<GetGroupDto>(group);
-    }
     public async Task<GetGroupDto?> GetByIdAsync(int id)
     {
         var group = await _groupRepository.GetAsync(id);
@@ -31,13 +24,7 @@ public class GroupService : IGroupService
             ? throw new ResourceNotFoundException()
             : _mapper.Map<GetGroupDto>(group);
     }
-    public int Create(CreateGroupDto groupDto, int currentUserId)
-    {
-        var buyingList = _mapper.Map<Group>(groupDto);
-        buyingList.CreatedBy = currentUserId;
-
-        return _groupRepository.Add(buyingList);
-    }
+    
     public async Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId)
     {
         var buyingList = _mapper.Map<Group>(groupDto);
@@ -46,16 +33,6 @@ public class GroupService : IGroupService
         return await _groupRepository.AddAsync(buyingList);
     }
 
-    public void ChangeName(UpdateGroupNameDto dto)
-    {
-        var buyingList = _groupRepository.Get(dto.Id);
-        if (buyingList is null)
-            throw new ResourceNotFoundException();
-
-        buyingList.GroupName = dto.GroupName;
-
-        _groupRepository.Edit(buyingList);
-    }
     public async Task ChangeNameAsync(UpdateGroupNameDto dto)
     {
         var buyingList = await _groupRepository.GetAsync(dto.Id);
@@ -67,18 +44,6 @@ public class GroupService : IGroupService
         await _groupRepository.EditAsync(buyingList);
     }
 
-    public void Delete(int groupId)
-    {
-        var group = _groupRepository.Get(groupId);
-
-        if (group is null)
-            throw new ResourceNotFoundException();
-
-        if (group.BuyingLists.Count > 0)
-            throw new BusinessLogicException($"Can't delete group {groupId}. There are buying lists associated with it.");
-
-        _groupRepository.Delete(group);
-    }
     public async Task DeleteAsync(int groupId)
     {
         var group = await _groupRepository.GetAsync(groupId);

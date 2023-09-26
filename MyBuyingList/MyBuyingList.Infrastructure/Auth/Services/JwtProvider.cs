@@ -20,22 +20,22 @@ internal class JwtProvider : IJwtProvider
         _options = options.Value;
     }
 
-    public string GenerateToken(int userId)
+    public async Task<string> GenerateTokenAsync(int userId)
     {
-        List<string> permissions = GetPermissions(userId);
+        var permissions = GetPermissionsAsync(userId);
 
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.NameId, userId.ToString()),
         };
 
-        permissions.ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
-
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mySuperSecretKey")),
                 SecurityAlgorithms.HmacSha256Signature
             );
 
+        (await permissions).ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
+        
         var token = new JwtSecurityToken(
             _options.Issuer,
             _options.Audience,
@@ -50,9 +50,9 @@ internal class JwtProvider : IJwtProvider
         return tokenValue;
     }
 
-    private List<string> GetPermissions(int userId)
+    private async Task<List<string>> GetPermissionsAsync(int userId)
     {
-        var user = _userRepository.Get(userId);
+        var user = await _userRepository.GetAsync(userId);
         if (user == null || user.UserRoles == null)
         {
             return new List<string>();

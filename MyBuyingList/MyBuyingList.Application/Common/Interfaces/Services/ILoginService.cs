@@ -8,5 +8,5 @@ namespace MyBuyingList.Application.Common.Interfaces.Services;
 
 public interface ILoginService
 {
-    string AuthenticateAndReturnJwtToken(string username, string password);
+    Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password);
 }

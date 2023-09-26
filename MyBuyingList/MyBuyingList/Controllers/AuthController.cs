@@ -11,9 +11,9 @@ public class AuthController : ApiControllerBase
     }
 
     [HttpPost]
-    public IActionResult Authenticate(string username, string password)
+    public async Task<IActionResult> Authenticate(string username, string password)
     {
-        var jwtToken = _loginService.AuthenticateAndReturnJwtToken(username, password);
+        var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(username, password);
         return string.IsNullOrEmpty(jwtToken) ? Unauthorized() : Ok(jwtToken);
     }
 }

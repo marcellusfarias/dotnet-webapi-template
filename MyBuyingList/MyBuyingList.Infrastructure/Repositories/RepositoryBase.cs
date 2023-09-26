@@ -44,7 +44,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
     {
         try
         {
-            IEnumerable<TEntity> entities = _context.Set<TEntity>().AsEnumerable();
+            IEnumerable<TEntity> entities = _context.Set<TEntity>().AsNoTracking().AsEnumerable();
             return entities.ToList();
         }
         catch (Exception ex)
@@ -57,12 +57,12 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
     {
         try
         {
-            var entities = await _context.Set<TEntity>().ToListAsync(cancellationToken);
+            var entities = await _context.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
             return entities;
         }
         catch(OperationCanceledException)
-        {
-            throw;
+        { 
+            throw; 
         }
         catch (Exception ex)
         {
