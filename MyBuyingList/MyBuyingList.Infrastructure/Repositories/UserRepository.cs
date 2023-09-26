@@ -10,13 +10,13 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
 {
     public UserRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task<IEnumerable<User>> GetActiveUsersAsync()
+    public async Task<IEnumerable<User>> GetActiveUsersAsync(CancellationToken token)
     {
         try
         {
             //if you want to use Dapper for performance issues, see below
             //_context.QueryAsync(ct, "SELECT * FROM users WHERE Active = 'true';");
-            var result = await _context.Set<User>().Where(x => x.Active).ToListAsync();
+            var result = await _context.Set<User>().Where(x => x.Active).ToListAsync(token);
             return result;
         }
         catch (Exception ex)
@@ -26,13 +26,13 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
     }
 
     //test this
-    public async Task LogicalExclusionAsync(User user)
+    public async Task LogicalExclusionAsync(User user, CancellationToken token)
     {
         try
         {
             user.Active = false;
             _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(token);
         }
         catch (Exception ex)
         {

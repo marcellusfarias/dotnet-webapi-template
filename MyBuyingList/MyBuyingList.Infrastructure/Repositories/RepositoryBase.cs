@@ -5,6 +5,7 @@ using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Domain.Common;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace MyBuyingList.Infrastructure.Repositories;
 
@@ -16,11 +17,11 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         _context = context;
     }
 
-    public async Task<TEntity?> GetAsync(int id)
+    public async Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
-            return await _context.Set<TEntity>().FindAsync(id);
+            return await _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -45,7 +46,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<int> AddAsync(TEntity entity)
+    public async Task<int> AddAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
@@ -60,7 +61,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task AddRangeAsync(ICollection<TEntity> entities)
+    public async Task AddRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
@@ -73,7 +74,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task DeleteAsync(TEntity entity)
+    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
@@ -86,7 +87,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task DeleteRangeAsync(ICollection<TEntity> entities)
+    public async Task DeleteRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
@@ -99,7 +100,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task EditAsync(TEntity entity)
+    public async Task EditAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {

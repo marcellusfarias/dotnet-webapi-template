@@ -1,4 +1,5 @@
 ﻿using MyBuyingList.Application.Contracts.GroupDtos;
+using System.Threading;
 
 namespace MyBuyingList.Application.Common.Interfaces.Services;
 
@@ -10,19 +11,19 @@ public interface IGroupService
     /// <param name="id"></param>
     /// <returns></returns>
     /// /// <exception cref="">Throws ResourceNotFound</exception>
-    Task<GetGroupDto?> GetByIdAsync(int id);
+    Task<GetGroupDto?> GetByIdAsync(int id, CancellationToken token);
     /// <summary>
     /// Creates new group.
     /// </summary>
     /// <param name="groupDto"></param>
     /// <param name="currentUserId"></param>
     /// <returns>The new group Id.</returns>
-    Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId);
-    Task ChangeNameAsync(UpdateGroupNameDto dto);
+    Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId, CancellationToken token);
+    Task ChangeNameAsync(UpdateGroupNameDto dto, CancellationToken token);
     /// <summary>
     /// Delete group if no Buying List associated with it.
     /// </summary>
     /// <param name="groupId"></param>
     /// <exception cref="">Throws ResourceNotFound</exception>
-    Task DeleteAsync(int groupId);
+    Task DeleteAsync(int groupId, CancellationToken token);
 }

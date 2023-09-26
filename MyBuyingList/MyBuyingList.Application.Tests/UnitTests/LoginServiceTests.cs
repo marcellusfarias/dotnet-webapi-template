@@ -60,11 +60,11 @@ public class LoginServiceTests
             .Returns(MockerUsers);
 
         _jwtProviderMock
-            .Setup(x => x.GenerateTokenAsync(user.Id).Result)
+            .Setup(x => x.GenerateTokenAsync(user.Id, default).Result)
             .Returns("custom_token");
 
         //Act
-        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, user.Password);
+        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, user.Password, default);
 
         //Assert
         token.Should().BeEquivalentTo("custom_token");

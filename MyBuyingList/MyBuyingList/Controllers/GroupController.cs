@@ -25,9 +25,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> Get(int groupId)
+    public async Task<IActionResult> Get(int groupId, CancellationToken token)
     {
-        var buyingListDto = await _groupService.GetByIdAsync(groupId);
+        var buyingListDto = await _groupService.GetByIdAsync(groupId, token);
         return Ok(buyingListDto);
     }
 
@@ -37,7 +37,7 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> Create(CreateGroupDto groupDto)
+    public async Task<IActionResult> Create(CreateGroupDto groupDto, CancellationToken token)
     {
         if (!Int32.TryParse(HttpContext.User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value, out int currentUserId))
         {
@@ -45,7 +45,7 @@ public class GroupController : ApiControllerBase
             throw new Exception("Unexpected error. Can't get user id.");
         }
 
-        var id = await _groupService.CreateAsync(groupDto, currentUserId);
+        var id = await _groupService.CreateAsync(groupDto, currentUserId, token);
         return new ObjectResult(id) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -56,9 +56,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangeName")]
-    public async Task<IActionResult> UpdateChangeName(UpdateGroupNameDto groupDto)
+    public async Task<IActionResult> UpdateChangeName(UpdateGroupNameDto groupDto, CancellationToken token)
     {
-        await _groupService.ChangeNameAsync(groupDto);
+        await _groupService.ChangeNameAsync(groupDto, token);
         return NoContent();
     }
 
@@ -68,9 +68,9 @@ public class GroupController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
-    public async Task<IActionResult> Delete(int groupId)
+    public async Task<IActionResult> Delete(int groupId, CancellationToken token)
     {
-        await _groupService.DeleteAsync(groupId);
+        await _groupService.DeleteAsync(groupId, token);
         return NoContent();
     }
 }

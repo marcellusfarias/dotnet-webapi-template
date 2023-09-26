@@ -8,7 +8,7 @@ public class BuyingListRepository : RepositoryBase<BuyingList>, IBuyingListRepos
 {
     public BuyingListRepository(ApplicationDbContext context) : base(context) { }
 
-    public async Task DeleteBuyingListAndItemsAsync(BuyingList buyingList)
+    public async Task DeleteBuyingListAndItemsAsync(BuyingList buyingList, CancellationToken token)
     {
         try
         {
@@ -19,7 +19,7 @@ public class BuyingListRepository : RepositoryBase<BuyingList>, IBuyingListRepos
             }
 
             _context.Set<BuyingList>().Remove(buyingList);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(token);
         }
         catch (Exception ex)
         {

@@ -4,5 +4,5 @@ namespace MyBuyingList.Application.Common.Interfaces.Repositories;
 
 public interface IBuyingListRepository : IRepository<BuyingList>
 {
-    Task DeleteBuyingListAndItemsAsync(BuyingList buyingList);
+    Task DeleteBuyingListAndItemsAsync(BuyingList buyingList, CancellationToken token);
 }

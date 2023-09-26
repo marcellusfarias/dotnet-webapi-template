@@ -17,36 +17,36 @@ public class GroupService : IGroupService
         _groupRepository = groupRepository;
         _mapper = mapper;
     }
-    public async Task<GetGroupDto?> GetByIdAsync(int id)
+    public async Task<GetGroupDto?> GetByIdAsync(int id, CancellationToken token)
     {
-        var group = await _groupRepository.GetAsync(id);
+        var group = await _groupRepository.GetAsync(id, token);
         return group == null
             ? throw new ResourceNotFoundException()
             : _mapper.Map<GetGroupDto>(group);
     }
     
-    public async Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId)
+    public async Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId, CancellationToken token)
     {
         var buyingList = _mapper.Map<Group>(groupDto);
         buyingList.CreatedBy = currentUserId;
 
-        return await _groupRepository.AddAsync(buyingList);
+        return await _groupRepository.AddAsync(buyingList, token);
     }
 
-    public async Task ChangeNameAsync(UpdateGroupNameDto dto)
+    public async Task ChangeNameAsync(UpdateGroupNameDto dto, CancellationToken token)
     {
-        var buyingList = await _groupRepository.GetAsync(dto.Id);
+        var buyingList = await _groupRepository.GetAsync(dto.Id, token);
         if (buyingList is null)
             throw new ResourceNotFoundException();
 
         buyingList.GroupName = dto.GroupName;
 
-        await _groupRepository.EditAsync(buyingList);
+        await _groupRepository.EditAsync(buyingList, token);
     }
 
-    public async Task DeleteAsync(int groupId)
+    public async Task DeleteAsync(int groupId, CancellationToken token)
     {
-        var group = await _groupRepository.GetAsync(groupId);
+        var group = await _groupRepository.GetAsync(groupId, token);
 
         if (group is null)
             throw new ResourceNotFoundException();
@@ -54,6 +54,6 @@ public class GroupService : IGroupService
         if (group.BuyingLists.Count > 0)
             throw new BusinessLogicException($"Can't delete group {groupId}. There are buying lists associated with it.");
 
-        await _groupRepository.DeleteAsync(group);
+        await _groupRepository.DeleteAsync(group, token);
     }
 }

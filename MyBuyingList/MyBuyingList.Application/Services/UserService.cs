@@ -4,7 +4,6 @@ using MyBuyingList.Application.Common.Interfaces.Services;
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.DTOs.UserDtos;
-using Microsoft.VisualBasic;
 
 namespace MyBuyingList.Application.Services;
 
@@ -19,17 +18,17 @@ public class UserService : IUserService
         _mapper = mapper;
     }
 
-    public async Task<GetUserDto> GetUserAsync(int userId)
+    public async Task<GetUserDto> GetUserAsync(int userId, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId);
+        var user = await _userRepository.GetAsync(userId, token);
         return user == null
             ? throw new ResourceNotFoundException()
             : _mapper.Map<GetUserDto>(user);
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<User>> GetAllUsersAsync(CancellationToken token)
     {
-        IEnumerable<User> users = await _userRepository.GetAllAsync(cancellationToken);
+        IEnumerable<User> users = await _userRepository.GetAllAsync(token);
         //IEnumerable<GetUserDto> list = _mapper.Map<IEnumerable<GetUserDto>>(users); //map exceptions?
         //return list;
 
@@ -50,30 +49,30 @@ public class UserService : IUserService
         return returningList;
     }
 
-    public async Task<int> CreateAsync(CreateUserDto userDto)
+    public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
     {
         var user = _mapper.Map<User>(userDto);
         user.Active = true;
         // hash password, check if password is ok
 
-        return await _userRepository.AddAsync(user);
+        return await _userRepository.AddAsync(user, token);
     }
 
     //test NULL active status
-    public async Task ChangeActiveStatusAsync(int userId, bool activeStatus)
+    public async Task ChangeActiveStatusAsync(int userId, bool activeStatus, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId);
+        var user = await _userRepository.GetAsync(userId, token);
         if (user is null)
             throw new ResourceNotFoundException();
 
         user.Active = activeStatus;
 
-        await _userRepository.EditAsync(user);
+        await _userRepository.EditAsync(user, token);
     }
 
-    public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword)
+    public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId);
+        var user = await _userRepository.GetAsync(userId, token);
         if (user is null)
             throw new ResourceNotFoundException();
 
@@ -82,16 +81,16 @@ public class UserService : IUserService
 
         user.Password = newPassword;
 
-        await _userRepository.EditAsync(user);
+        await _userRepository.EditAsync(user, token);
     }
 
-    public async Task DeleteAsync(int userId)
+    public async Task DeleteAsync(int userId, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId);
+        var user = await _userRepository.GetAsync(userId, token);
 
         if (user == null)
             throw new ResourceNotFoundException();
 
-        await _userRepository.LogicalExclusionAsync(user);
+        await _userRepository.LogicalExclusionAsync(user, token);
     }
 }

@@ -25,9 +25,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllUsers(CancellationToken token)
     {
-        var users = await _userService.GetAllUsersAsync(cancellationToken);
+        var users = await _userService.GetAllUsersAsync(token);
         return Ok(users);
     }
 
@@ -37,9 +37,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> Create(CreateUserDto createUserDto)
+    public async Task<IActionResult> Create(CreateUserDto createUserDto, CancellationToken token)
     {
-        await _userService.CreateAsync(createUserDto);
+        await _userService.CreateAsync(createUserDto, token);
         return new ObjectResult(createUserDto) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -49,9 +49,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangeActiveStatus")]
-    public async Task<IActionResult> ChangeActiveStatus(int userId, bool activeStatus)
+    public async Task<IActionResult> ChangeActiveStatus(int userId, bool activeStatus, CancellationToken token)
     {
-        await _userService.ChangeActiveStatusAsync(userId, activeStatus);
+        await _userService.ChangeActiveStatusAsync(userId, activeStatus, token);
         return NoContent();
     }
 
@@ -63,9 +63,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangePassword")]
-    public async Task<IActionResult> ChangePassword(UpdateUserPasswordDto updateUserPasswordDto)
+    public async Task<IActionResult> ChangePassword(UpdateUserPasswordDto updateUserPasswordDto, CancellationToken token)
     {
-        await _userService.ChangeUserPasswordAsync(updateUserPasswordDto.Id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword);
+        await _userService.ChangeUserPasswordAsync(updateUserPasswordDto.Id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
         return NoContent();
     }
 
@@ -75,9 +75,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken token)
     {
-        await _userService.DeleteAsync(id); //throws ResourceNotFoundException
+        await _userService.DeleteAsync(id, token);
         return NoContent();
     }
 

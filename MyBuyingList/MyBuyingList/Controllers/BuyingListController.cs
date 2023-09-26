@@ -25,9 +25,9 @@ public class BuyingListController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> Get(int buyingListId)
+    public async Task<IActionResult> Get(int buyingListId, CancellationToken token)
     {
-        var buyingListDto = await _buyingListService.GetByIdAsync(buyingListId);
+        var buyingListDto = await _buyingListService.GetByIdAsync(buyingListId, token);
         return Ok(buyingListDto);
     }
 
@@ -37,7 +37,7 @@ public class BuyingListController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> Create(CreateBuyingListDto buyingListDto)
+    public async Task<IActionResult> Create(CreateBuyingListDto buyingListDto, CancellationToken token)
     {
         if (!Int32.TryParse(HttpContext.User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value, out int currentUserId))
         {
@@ -45,7 +45,7 @@ public class BuyingListController : ApiControllerBase
             throw new Exception("Unexpected error. Can't get user id.");
         }            
 
-        var id = await _buyingListService.CreateAsync(buyingListDto, currentUserId);
+        var id = await _buyingListService.CreateAsync(buyingListDto, currentUserId, token);
         return new ObjectResult(id) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -56,9 +56,9 @@ public class BuyingListController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangeName")]
-    public async Task<IActionResult> UpdateChangeName(UpdateBuyingListNameDto buyingListDto)
+    public async Task<IActionResult> UpdateChangeName(UpdateBuyingListNameDto buyingListDto, CancellationToken token)
     {
-        await _buyingListService.ChangeNameAsync(buyingListDto);
+        await _buyingListService.ChangeNameAsync(buyingListDto, token);
         return NoContent();
     }
 
@@ -68,9 +68,9 @@ public class BuyingListController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpDelete]
-    public async Task<IActionResult> Delete(int buyingListId)
+    public async Task<IActionResult> Delete(int buyingListId, CancellationToken token)
     {
-        await _buyingListService.DeleteAsync(buyingListId);
+        await _buyingListService.DeleteAsync(buyingListId, token);
         return NoContent();
     }
 }

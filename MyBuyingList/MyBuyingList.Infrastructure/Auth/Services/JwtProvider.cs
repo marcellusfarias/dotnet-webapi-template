@@ -20,9 +20,9 @@ internal class JwtProvider : IJwtProvider
         _options = options.Value;
     }
 
-    public async Task<string> GenerateTokenAsync(int userId)
+    public async Task<string> GenerateTokenAsync(int userId, CancellationToken cancellationToken)
     {
-        var permissions = GetPermissionsAsync(userId);
+        var permissions = GetPermissionsAsync(userId, cancellationToken);
 
         var claims = new List<Claim>
         {
@@ -50,9 +50,9 @@ internal class JwtProvider : IJwtProvider
         return tokenValue;
     }
 
-    private async Task<List<string>> GetPermissionsAsync(int userId)
+    private async Task<List<string>> GetPermissionsAsync(int userId, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId);
+        var user = await _userRepository.GetAsync(userId, token);
         if (user == null || user.UserRoles == null)
         {
             return new List<string>();
