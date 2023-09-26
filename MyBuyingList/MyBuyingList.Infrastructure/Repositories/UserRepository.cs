@@ -19,6 +19,10 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
             var result = await _context.Set<User>().Where(x => x.Active).ToListAsync(token);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
@@ -33,6 +37,10 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
             user.Active = false;
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync(token);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

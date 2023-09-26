@@ -23,6 +23,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         {
             return await _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
@@ -55,6 +59,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
 
             return savedEntity.Id;
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
@@ -67,6 +75,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         {
             _context.Set<TEntity>().AddRange(entities);
             await _context.SaveChangesAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -81,6 +93,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             _context.Set<TEntity>().Remove(entity);
             await _context.SaveChangesAsync();
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
@@ -94,6 +110,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             _context.Set<TEntity>().RemoveRange(entities);
             await _context.SaveChangesAsync();
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
@@ -106,6 +126,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         {
             _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

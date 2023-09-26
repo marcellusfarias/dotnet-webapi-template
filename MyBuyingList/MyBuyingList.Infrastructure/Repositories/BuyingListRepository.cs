@@ -21,6 +21,10 @@ public class BuyingListRepository : RepositoryBase<BuyingList>, IBuyingListRepos
             _context.Set<BuyingList>().Remove(buyingList);
             await _context.SaveChangesAsync(token);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new DatabaseException(ex);
