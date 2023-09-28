@@ -46,7 +46,7 @@ public static class ConfigureServices
         services.AddDbContext<ApplicationDbContext>(
                 options => options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention()
-                .UseLazyLoadingProxies()
+                //.UseLazyLoadingProxies()
             );
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddScoped<ApplicationDbContext>();

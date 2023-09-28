@@ -34,6 +34,7 @@ internal class JwtProvider : IJwtProvider
                 SecurityAlgorithms.HmacSha256Signature
             );
 
+        //test if it executes in parallel
         (await permissions).ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
         
         var token = new JwtSecurityToken(
@@ -52,15 +53,14 @@ internal class JwtProvider : IJwtProvider
 
     private async Task<List<string>> GetPermissionsAsync(int userId, CancellationToken token)
     {
-        var user = await _userRepository.GetAsync(userId, token);
-        if (user == null || user.UserRoles == null)
+        var policies = await _userRepository.GetUserPolicies(userId, token);
+        if (policies is null)
         {
             return new List<string>();
         }
 
-        //is this way the most performant way to do join?
-        var permissions = user.UserRoles
-            .SelectMany(userRole => userRole.Role.RolePolicies.Select(rolePolicy => rolePolicy.Policy.Name))
+        var permissions = policies
+            .Select(policy => policy.Name)
             .ToList();
 
         return permissions;
