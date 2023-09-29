@@ -1,4 +1,3 @@
-using AutoMapper;
 using Moq;
 using MyBuyingList.Application.Features.Users.Services;
 using MyBuyingList.Application.Features.Users;

@@ -57,7 +57,7 @@ public class LoginServiceTests
 
         _userRepositoryMock
             .Setup(x => x.GetAllAsync(default).Result)
-            .Returns(MockerUsers);
+            .Returns(MockerUsers.ToList());
 
         _jwtProviderMock
             .Setup(x => x.GenerateTokenAsync(user.Id, default).Result)
