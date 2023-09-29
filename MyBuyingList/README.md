@@ -58,15 +58,21 @@ Note that on the ErrorHandlingMiddleware we added a few lines to abort the reque
 
 ## TODOs
 
-### EFCore
-
-"In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
+This list is orderned by priority.
 
 ### Session and cache
 
 As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism. Create docker secret for JWT key.
 
 I also plan to add Cache for this. 
+
+### Others
+
+* Add Https.
+* Add Health checks
+* Add rate limit
+* Review API documentation.
+* Review ALL middlewares and configure as needed in the app.
 
 ### Try-Catch
 
@@ -80,14 +86,6 @@ Do proper logging.
 
 Research where I can return IAsyncEnumerator/Enumerable instead of task. 
 
-### Minimal API
-
-Planning to move on to Minimal APIs.
-
-### Github Actions
-
-Configure Github actions pipeline.
-
 ### Integration Testing
 
 Will add integration testing. I'm willing to use TestContainers.
@@ -96,26 +94,34 @@ Will add integration testing. I'm willing to use TestContainers.
 
 Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
 
-### Frontend
+### EFCore
 
-Planning to add an UI that will be a separated project, since I want to keep the API and the Interface project's separated. Not convinced yet if I should choose Blazor over React.
+Do deeper research on EFCore features.
+"In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
 
 ### Security
 
 Store the user passwords using hash function.
 TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
+### Minimal API
+
+Planning to move on to Minimal APIs.
+
+### Github Actions
+
+Configure Github actions pipeline.
+
+### Frontend
+
+Planning to add an UI that will be a separated project, since I want to keep the API and the Interface project's separated. Not convinced yet if I should choose Blazor over React.
+
 ### Others
 
 Other interesting topics that may come in the future:
 * AOT: test and play with it, specially do a comparison on the Docker image footprint.
 * Think about reusing validating rules in DTOs.
-* Health Checks support.
-* Rate limit support.
 * Benchmarks & Performance Tests.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
-* Make the API documentation more robust. Using swagger.
-* Add HTTPS
-* Review ALL middlewares and configure as needed in the app.
 * Add Constants for string lengths
 * Read about Event Driven design and decide if it's worth applying it in here.
