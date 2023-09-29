@@ -48,7 +48,7 @@ Chosed Postgres over MSSQL because it's free. Using a code-first because I alrea
 
 Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. I sticked with EFCore for this one.
 
-Currently, changing from Lazy Loading to Eager Loading. I believe lazy loading is prone to causing performance issues, since it increases database round trips if not properly used. Also, it is prone to breaking single responsability principle, since one could perform queries in the Application project, for example.
+Currently, changing from _Lazy loading_ to _Eager loading_. I believe _lazy loading_ is prone to causing performance issues, since it increases database round trips if not properly used. Also, it is prone to breaking single responsability principle, since one could perform queries in the Application project, for example. With _eager loading_ we have more control over both things.
 
 _Tracking_ vs _no-tracking_: there is a great article about it: https://learn.microsoft.com/en-us/ef/core/querying/tracking. In a nutshell, _tracking_ persists changes to the entity in the SaveChanges method and can improve performance if an entity is already in the context (meaning one less trip to the database). _No-tracking_ doesn't keep state, so it uses less memory and is faster in general, being great for _readonly_ operations. Furthermore, there is still _No-Tracking with Identity Resolution_: https://macoratti.net/22/05/ef_asnoidresol1.htm. It's good for relationship "one-to-many" for memory optimization, since it keep the repeated entity in the context. The default on this project is to track; however, for readonly operations, we tend to use no-tracking and no-tracking with identity resolution.
 
@@ -65,10 +65,6 @@ Note that on the ErrorHandlingMiddleware we added a few lines to abort the reque
 "In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
 
 Change LazyLoading to EagerLoading.
-
-### Remove Automapper from project
-
-Do the mappings manually.
 
 ### Session and cache
 

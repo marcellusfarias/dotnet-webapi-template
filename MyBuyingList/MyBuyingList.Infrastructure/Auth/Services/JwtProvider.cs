@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MyBuyingList.Application.Common.Interfaces;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
+using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Infrastructure.Auth.Constants;
 using MyBuyingList.Infrastructure.Auth.JwtSetup;
 using System.IdentityModel.Tokens.Jwt;
@@ -34,7 +34,6 @@ internal class JwtProvider : IJwtProvider
                 SecurityAlgorithms.HmacSha256Signature
             );
 
-        //test if it executes in parallel
         (await permissions).ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
         
         var token = new JwtSecurityToken(

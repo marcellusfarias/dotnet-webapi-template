@@ -1,14 +1,9 @@
 using AutoMapper;
-using FluentAssertions;
-using FluentValidation;
 using Moq;
-using MyBuyingList.Application.Common.Exceptions;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
-using MyBuyingList.Application.DTOs;
-using MyBuyingList.Application.Services;
+using MyBuyingList.Application.Features.Users.Services;
+using MyBuyingList.Application.Features.Users;
+using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Domain.Entities;
-using MyBuyingList.Application.Common.Mappings;
-using MyBuyingList.Application.DTOs.UserDtos;
 
 namespace MyBuyingList.Application.Tests.UnitTests;
 
@@ -16,12 +11,10 @@ public class UserServiceTests
 {
     private UserService _sut;
     private readonly Mock<IUserRepository> _userRepositoryMock = new Mock<IUserRepository>();
-    private readonly IMapper _mapper;
 
     public UserServiceTests()
     {
-        _mapper = MapperHelper.GetMapper();
-        _sut = new UserService(_userRepositoryMock.Object, _mapper);
+        _sut = new UserService(_userRepositoryMock.Object);
     }
 
     //[Fact]

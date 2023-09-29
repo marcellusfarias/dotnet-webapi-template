@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBuyingList.Application.Common.Interfaces.Services;
-using MyBuyingList.Application.Contracts.GroupDtos;
+using MyBuyingList.Application.Features.Groups.DTOs;
+using MyBuyingList.Application.Features.Groups.Services;
 using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
 using MyBuyingList.Infrastructure.Auth.Constants;
 using NuGet.Protocol;

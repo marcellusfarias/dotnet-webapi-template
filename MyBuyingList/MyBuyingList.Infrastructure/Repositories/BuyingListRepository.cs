@@ -1,5 +1,5 @@
 ﻿using MyBuyingList.Application.Common.Exceptions;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
+using MyBuyingList.Application.Features.BuyingLists;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Infrastructure.Repositories;

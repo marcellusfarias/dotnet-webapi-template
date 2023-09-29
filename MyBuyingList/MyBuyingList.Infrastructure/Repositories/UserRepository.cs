@@ -1,7 +1,7 @@
-﻿using MyBuyingList.Application.Common.Interfaces.Repositories;
-using MyBuyingList.Domain.Entities;
+﻿using MyBuyingList.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Application.Common.Exceptions;
+using MyBuyingList.Application.Features.Users;
 
 namespace MyBuyingList.Infrastructure.Repositories;
 

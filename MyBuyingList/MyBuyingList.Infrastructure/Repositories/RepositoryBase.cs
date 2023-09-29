@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Domain.Common;
 using System.Data;
 using System.Runtime.CompilerServices;

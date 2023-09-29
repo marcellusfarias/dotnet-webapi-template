@@ -2,8 +2,8 @@
 using Moq;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
-using MyBuyingList.Application.Services;
+using MyBuyingList.Application.Features.Login.Services;
+using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Tests.UnitTests;

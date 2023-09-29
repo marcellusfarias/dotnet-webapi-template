@@ -1,4 +1,4 @@
-﻿using MyBuyingList.Application.Common.Interfaces.Repositories;
+﻿using MyBuyingList.Application.Features.Groups;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Infrastructure.Repositories;

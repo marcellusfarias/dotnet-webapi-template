@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBuyingList.Application.Common.Interfaces.Services;
+using MyBuyingList.Application.Features.Login.Services;
 
 namespace MyBuyingList.Web.Controllers;
 public class AuthController : ApiControllerBase

@@ -3,13 +3,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using MyBuyingList.Application.Common.Interfaces.Repositories;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Repositories;
 using MyBuyingList.Infrastructure.Auth.JwtSetup;
 using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Infrastructure.Auth.Services;
+using MyBuyingList.Application.Features.BuyingLists;
+using MyBuyingList.Application.Features.Groups;
+using MyBuyingList.Application.Features.Users;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
