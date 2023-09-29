@@ -12,22 +12,26 @@ public class GroupService : IGroupService
     {
         _groupRepository = groupRepository;
     }
+
     public async Task<GetGroupDto?> GetByIdAsync(int id, CancellationToken token)
     {
         var group = await _groupRepository.GetAsync(id, token);
-        return group == null
-            ? throw new ResourceNotFoundException()
-            : GroupMapperDomainToDto.ToGetGroupDto(group);
+
+        if (group is null)
+            throw new ResourceNotFoundException();
+
+        return group.ToGetGroupDto();
     }
 
-    //I should add further validation and check if the groupName already exists.
+    //TODO: perform validations
     public async Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId, CancellationToken token)
     {
-        var buyingList = GroupMapperDtoToDomain.ToGroup(groupDto, currentUserId, DateTime.Now);
+        var buyingList = groupDto.ToGroup(currentUserId, DateTime.Now);
+
         return await _groupRepository.AddAsync(buyingList, token);
     }
 
-    //I should add further validation and check if the groupName already exists.
+    //TODO: perform validations
     public async Task ChangeNameAsync(UpdateGroupNameDto dto, CancellationToken token)
     {
         var buyingList = await _groupRepository.GetAsync(dto.Id, token);

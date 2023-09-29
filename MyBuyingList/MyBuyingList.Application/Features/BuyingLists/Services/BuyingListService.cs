@@ -17,11 +17,14 @@ public class BuyingListService : IBuyingListService
     public async Task<GetBuyingListDto?> GetByIdAsync(int id, CancellationToken token)
     {
         BuyingList? buyingList = await _buyingListRepository.GetAsync(id, token);
-        return buyingList == null
-            ? throw new ResourceNotFoundException()
-            : buyingList.ToGetBuyingListDto();
+
+        if (buyingList is null)
+            throw new ResourceNotFoundException();
+
+        return buyingList.ToGetBuyingListDto();
     }
 
+    //TODO: perform validations
     public async Task<int> CreateAsync(CreateBuyingListDto createBuyingListDto, int currentUserId, CancellationToken token)
     {
         var buyingList = createBuyingListDto.ToBuyingList(currentUserId, DateTime.Now);
@@ -29,6 +32,7 @@ public class BuyingListService : IBuyingListService
         return await _buyingListRepository.AddAsync(buyingList, token);
     }
 
+    //TODO: perform validations
     public async Task ChangeNameAsync(UpdateBuyingListNameDto dto, CancellationToken token)
     {
         var buyingList = await _buyingListRepository.GetAsync(dto.Id, token);
@@ -44,7 +48,7 @@ public class BuyingListService : IBuyingListService
     {
         var buyingList = await _buyingListRepository.GetAsync(buyingListId, token);
 
-        if (buyingList == null)
+        if (buyingList is null)
             throw new ResourceNotFoundException();
 
         await _buyingListRepository.DeleteBuyingListAndItemsAsync(buyingList, token);

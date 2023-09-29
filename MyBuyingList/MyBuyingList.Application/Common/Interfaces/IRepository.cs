@@ -5,7 +5,7 @@ namespace MyBuyingList.Application.Common.Interfaces;
 public interface IRepository<TEntity> where TEntity : BaseEntity
 {
     Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken);
-    Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken);
+    Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds a new entity in the database asyncronously.

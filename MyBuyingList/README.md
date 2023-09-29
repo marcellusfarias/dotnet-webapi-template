@@ -52,7 +52,7 @@ _Tracking_ vs _no-tracking_: there is a great article about it: https://learn.mi
 
 ### 8. Cancellation Token
 
-Cancellation Token will be added on every controller endpoint that has an I/O operation. Since we use _scoped_ database contexts and repository pattern, it should not be a problem. For more information, see: https://stackoverflow.com/questions/50329618/should-i-always-add-cancellationtoken-to-my-controller-actions.
+Cancellation Token will be added on every controller endpoint that has an I/O operation. Since we use _scoped_ database contexts and repository pattern, it should not be a problem if creating commands properly (i.e., wrap the commands on a single transaction; i.e., perform save changes only at the end of the request). For more information, see: https://stackoverflow.com/questions/50329618/should-i-always-add-cancellationtoken-to-my-controller-actions.
 
 Note that on the ErrorHandlingMiddleware we added a few lines to abort the request if the operation was cancelled. The reason for it is that since the client closed the connection (and that's how the Cancellation is triggered) there is no reason to return an HttpReponse.
 
@@ -69,7 +69,6 @@ I also plan to add Cache for this.
 ### Others
 
 * Add Https.
-* Add Health checks
 * Add rate limit
 * Review API documentation.
 * Review ALL middlewares and configure as needed in the app.
@@ -123,5 +122,6 @@ Other interesting topics that may come in the future:
 * Think about reusing validating rules in DTOs.
 * Benchmarks & Performance Tests.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
+* Add Health checks
 * Add Constants for string lengths
 * Read about Event Driven design and decide if it's worth applying it in here.

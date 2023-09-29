@@ -16,20 +16,22 @@ public class UserService : IUserService
     public async Task<GetUserDto> GetUserAsync(int userId, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);
-        return user == null
-            ? throw new ResourceNotFoundException()
-            : user.ToGetUserDto();
+
+        if (user is null)
+            throw new ResourceNotFoundException();
+
+        return user.ToGetUserDto();
     }
 
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync(CancellationToken token)
     {
         var users = await _userRepository.GetAllAsync(token);
         List<GetUserDto> getUserDtos = new List<GetUserDto>();
-        users.ToList().ForEach(user => getUserDtos.Add(user.ToGetUserDto()));
+        users.ForEach(user => getUserDtos.Add(user.ToGetUserDto()));
         return getUserDtos;
     }
 
-    //need to hash password before storing into DB.
+    //TODO: perform validations. need to hash password before storing into DB.
     public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
     {
         var user = userDto.ToUser(true);
@@ -48,7 +50,7 @@ public class UserService : IUserService
         await _userRepository.EditAsync(user, token);
     }
 
-    //need to do hashing to compare passwords.
+    //TODO: perform validations. need to do hashing to compare passwords.
     public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);
@@ -68,7 +70,7 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetAsync(userId, token);
 
-        if (user == null)
+        if (user is null)
             throw new ResourceNotFoundException();
 
         await _userRepository.LogicalExclusionAsync(user, token);

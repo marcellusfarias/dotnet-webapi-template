@@ -20,7 +20,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
     {
         try
         {
-            return await _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
+            return await _context.Set<TEntity>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            //return await _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -32,11 +35,13 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
-            var entities = await _context.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
+            var entities = await _context.Set<TEntity>()
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
             return entities;
         }
         catch(OperationCanceledException)
@@ -53,8 +58,10 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
     {
         try
         {
-            var savedEntity = _context.Set<TEntity>().Add(entity).Entity; //if in the future it makes sense to, create a new method that uses AddAsync
-            await _context.SaveChangesAsync();
+            var savedEntity = _context.Set<TEntity>()
+                .Add(entity)
+                .Entity; //if in the future it makes sense to, create a new method that uses AddAsync
+            await _context.SaveChangesAsync(cancellationToken);
 
             return savedEntity.Id;
         }
@@ -73,7 +80,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         try
         {
             _context.Set<TEntity>().AddRange(entities);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -90,7 +97,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         try
         {
             _context.Set<TEntity>().Remove(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -107,7 +114,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         try
         {
             _context.Set<TEntity>().RemoveRange(entities);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -124,7 +131,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         try
         {
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
