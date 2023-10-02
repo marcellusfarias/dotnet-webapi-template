@@ -15,11 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Application.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{7327D7B2-D1E5-46A4-A451-EBF93ED6555B}"
 	ProjectSection(SolutionItems) = preProject
-		.dockerignore = .dockerignore
-		docker-compose.yml = docker-compose.yml
-		Dockerfile = Dockerfile
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{837E4160-E6E3-41B2-B73B-CF2E9BF83026}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +46,10 @@ Global
 		{4924AB00-E1C3-4F4D-9243-07788B642022}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4924AB00-E1C3-4F4D-9243-07788B642022}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4924AB00-E1C3-4F4D-9243-07788B642022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{837E4160-E6E3-41B2-B73B-CF2E9BF83026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{837E4160-E6E3-41B2-B73B-CF2E9BF83026}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{837E4160-E6E3-41B2-B73B-CF2E9BF83026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{837E4160-E6E3-41B2-B73B-CF2E9BF83026}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

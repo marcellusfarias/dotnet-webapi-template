@@ -7,7 +7,7 @@
 		<UserSecretsId>9ebcf68a-7550-436e-8dc1-661f8dfa1a6f</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
-		<WarningsAsErrors>Nullable</WarningsAsErrors>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>

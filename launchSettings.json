@@ -1,0 +1,25 @@
+{
+  "profiles": {
+    "docker-compose: Postgres": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "db": "StartWithoutDebugging",
+        "db_admin": "StartWithoutDebugging",
+        "mybuyinglist.web": "DoNotStart"
+      }
+    },
+    "docker-compose: API": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "mybuyinglist.web",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}",
+      "serviceActions": {
+        "db": "DoNotStart",
+        "db_admin": "DoNotStart",
+        "mybuyinglist.web": "StartDebugging"
+      }
+    }
+  }
+}

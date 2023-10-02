@@ -60,12 +60,6 @@ Note that on the ErrorHandlingMiddleware we added a few lines to abort the reque
 
 This list is orderned by priority.
 
-### Session and cache
-
-As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism. Create docker secret for JWT key.
-
-I also plan to add Cache for this. 
-
 ### Others
 
 * Add Https.
@@ -85,6 +79,10 @@ Do proper logging.
 
 Research where I can return IAsyncEnumerator/Enumerable instead of task. 
 
+### Unit tests
+
+Write unit tests for services.
+
 ### Integration Testing
 
 Will add integration testing. I'm willing to use TestContainers.
@@ -92,6 +90,8 @@ Will add integration testing. I'm willing to use TestContainers.
 ### Docker
 
 Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
+
+Create docker secret for JWT key.
 
 ### EFCore
 
@@ -113,7 +113,9 @@ Configure Github actions pipeline.
 
 ### Frontend
 
-Planning to add an UI that will be a separated project, since I want to keep the API and the Interface project's separated. Not convinced yet if I should choose Blazor over React.
+When the backend is done, I will start creating the UI. Probably using React and Typescript, but will consider Blazor.
+
+When doint it, need to implement further Authentication pieces. As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  I also plan to add Cache for storing the refresh token.
 
 ### Others
 

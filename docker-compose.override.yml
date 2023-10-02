@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  mybuyinglist.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - db
+    networks:
+      - buyinglist-db
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "55432:5432"
+    networks:
+      - buyinglist-db
+  db_admin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - buyinglist-db
+volumes:
+  # Persist contents of the DB outside of the container
+    #- type: bind
+    #  source: /mnt/shared_docker/dc-postgres
+    #  target: /var/lib/postgresql/data
+  postgres_data:
+  
+networks:
+  buyinglist-db:
+    external: true
+        
