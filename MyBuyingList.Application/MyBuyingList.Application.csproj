@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="11.6.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\MyBuyingList.Domain\MyBuyingList.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Features\Login\DTOs\" />
+		<Folder Include="Features\Login\Mappers\" />
+		<Folder Include="Features\Login\Validators\" />
+		<Folder Include="Features\Example\DTOs\" />
+		<Folder Include="Features\Example\Mappers\" />
+		<Folder Include="Features\Example\Services\" />
+		<Folder Include="Features\Example\Validators\" />
+	</ItemGroup>
+
+</Project>
