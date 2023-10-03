@@ -21,6 +21,8 @@ internal class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
             .WithMany(role => role.UserRoles)
             .HasForeignKey(userRole => userRole.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasData(new UserRole { Id = 1, RoleId = 1, UserId = 1 });
     }
 }
 
