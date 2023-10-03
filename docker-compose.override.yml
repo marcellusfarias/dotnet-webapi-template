@@ -2,13 +2,14 @@ version: '3.4'
 
 services:
   mybuyinglist.web:
+    # image: mybuyinglistweb
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=https://+:443 #;http://+:80
     ports:
-      - "80"
       - "443"
-    volumes:
+      # - "80"
+    volumes: # data for HTTPS certs
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:

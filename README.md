@@ -56,16 +56,28 @@ Cancellation Token will be added on every controller endpoint that has an I/O op
 
 Note that on the ErrorHandlingMiddleware we added a few lines to abort the request if the operation was cancelled. The reason for it is that since the client closed the connection (and that's how the Cancellation is triggered) there is no reason to return an HttpReponse.
 
+### 9. HTTPS
+
+According to [Microsoft](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-7.0&tabs=visual-studio%2Clinux-ubuntu), APIs should either:
+* Not listen on HTTP
+* Close the connection with status code 400 (Bad Request) and not serve the request.
+
+Therefore, we set our application to not listen on HTTP. One can check it in three different places: _launchSettings.json_, _Dockerfile_ and on _docker compose_. We did it reading [this](https://andrewlock.net/5-ways-to-set-the-urls-for-an-aspnetcore-app/) article.
+
+We are using a _self-signed_ certificate for development. When moving into production, we plan to add a valid one.
+
+When moving into a Web App, Microsoft recommends adding  HttpsRedirection middleware and Hsts middleware.
+
 ## TODOs
 
 This list is orderned by priority.
 
 ### Others
 
-* Add Https.
 * Add rate limit
 * Review API documentation.
 * Review ALL middlewares and configure as needed in the app.
+* Research best way to configure which environment is running: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime, https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese
 
 ### Try-Catch
 
@@ -74,10 +86,6 @@ Research how to resue Try Catch blocks. Specially for repository classes.
 ### Logging
 
 Do proper logging.
-
-### Async support
-
-Research where I can return IAsyncEnumerator/Enumerable instead of task. 
 
 ### Unit tests
 
@@ -115,7 +123,11 @@ Configure Github actions pipeline.
 
 When the backend is done, I will start creating the UI. Probably using React and Typescript, but will consider Blazor.
 
-When doint it, need to implement further Authentication pieces. As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  I also plan to add Cache for storing the refresh token.
+When doint it, need to implement further Authentication pieces. As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  I also plan to add Cache for storing the refresh token. Need also to add http redirection.
+
+### Production
+
+When moving into production, must set a secure HTTPS certificate.
 
 ### Others
 
