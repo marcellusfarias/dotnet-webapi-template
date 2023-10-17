@@ -34,19 +34,19 @@ For this topic, there was the option to use Microsoft ASP.NET Identity.
 
 Since the main goal for this application is learning, I chosed to implement my own authentication and authorization mechanisms. For authentication, we leverage from JwtBearer lib to use JWT tokens. One can check the implementation on the _Infrastructure_ project.
 
-One important point to mention is where to store Jwt's token. After some research, decided to store in a cookie according to [this article](https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914).
+Note for when creating the front-end: one important point to mention is where to store Jwt's token. After some research, decided to store in a cookie according to [this article](https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914).
 
 For Authorization, I created an elegant way that uses Attributes and overrides the PolicyProvider. It relies on Constants that are also used on the migrations for automatically adding new Roles and Policies into the database. The custom AuthorizationHandler checks if the required policy is attached on the JWT token.
 
 ### 6. Database
 
-Chosed Postgres over MSSQL because it's free. Using a code-first because I already have previous experience with database-first and I prefer it when using DDD. Migration's support is great on EF Core and the deployment process is also facilitated since it runs the migrations automatically. 
+Chosed Postgres over MSSQL because it's free. Using a code-first because I already have previous experience with database-first and migrations facilitates life. Migration's support is great on EF Core and the deployment process is also facilitated since it runs the migrations automatically. 
 
 ### 7. EFCore
 
 Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. I sticked with EFCore for this one.
 
-This project uses _Eager loading_. I believe _lazy loading_ is prone to causing performance issues, since it increases database round trips if not properly used. Also, it is prone to breaking single responsability principle, since one could perform queries in the Application project, for example. With _eager loading_ we have more control over both things.
+For loading data, there are three possibilities: _Eager loading_, _Lazy loading_ and _Explicit loading_ This project uses _Eager loading_. I believe _lazy loading_ is prone to causing performance issues, since it increases database round trips if not properly used. Also, it is prone to breaking single responsability principle, since one could perform queries in the Application project, for example. With _eager loading_ we have more control over both things. Similarly, we are not using _explicit loading_ to keep all db operations in the _Infrastructure_ project. I'm not sure if there may be cases in the future where _explicit loading_ would be a good fit.
 
 _Tracking_ vs _no-tracking_: this [Microsoft's article](https://learn.microsoft.com/en-us/ef/core/querying/tracking) is very informative. In a nutshell, _tracking_ persists changes to the entity in the SaveChanges method and can improve performance if an entity is already in the context (meaning one less trip to the database). _No-tracking_ doesn't keep state, so it uses less memory and is faster in general, being great for _readonly_ operations, but one need to manually set the entity as _modified_. Furthermore, there is still _No-Tracking with Identity Resolution_ ([check example](https://macoratti.net/22/05/ef_asnoidresol1.htm)). It's good for relationship "one-to-many" for memory optimization, since it keep the repeated entity in the context. The default on this project is to _not_ track: since the Tracking context is in the dbContext, and we are setting it to be _scoped_, it wouldn't make sense for having the changing tracker in most of the operations (even inserts/updates).
 
