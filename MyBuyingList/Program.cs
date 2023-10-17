@@ -2,12 +2,13 @@ using MyBuyingList.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var logFactory = new LoggerFactory();
-var logger = logFactory.CreateLogger<Program>();
-builder.Services.AddServices(logger, builder.Configuration);
+// tried to use LoggerFactory, but it did not work properly.
+// Will try another way for logging the startup.
+var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!;
+var isDevelopment = builder.Environment.IsDevelopment();
+builder.Services.AddServices(logger, builder.Configuration, isDevelopment);
 
 var app = builder.Build();
-
-app.StartApplication(logger);
+await app.StartApplication(logger);
 logger.LogInformation("Running app...");
 app.Run();

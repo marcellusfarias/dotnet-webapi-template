@@ -68,24 +68,59 @@ We are using a _self-signed_ certificate for development. When moving into produ
 
 When moving into a Web App, Microsoft recommends adding  HttpsRedirection middleware and Hsts middleware.
 
+### 10. Middlewares
+
+Middlewares are a useful way for handling requests and responses in .Net. Each component:
+* Chooses whether to pass the request to the next component in the pipeline.
+* Can perform work before and after the next component in the pipeline.
+
+For adding middleware to the pipeline, one can use [Run](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.runextensions.run?view=aspnetcore-7.0), [Map](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapextensions.map?view=aspnetcore-7.0) and [Use](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.useextensions.use?view=aspnetcore-7.0) extensions, and one can pass an _in-line delegates_ or a _reusable class_ as a parameter. In a nutshell, Run and Use add a middleware to the pipeline. The difference is that Run adds a terminator middleware (i.e., it won't call any further middleware in the pipeline, short-circuiting it) while Use can call the next one. The _Map_ is used for _branching_ the pipeline, and can be useful for handling specific use cases. See an example [here](https://www.codeproject.com/Tips/1069790/Understand-Run-Use-Map-and-MapWhen-to-Hook-Middl-2).
+
+In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) available to use. In the following table, we list the available middlewares and check if we use them:
+
+| Middlewares						| Used	|  Commentary	|
+|-----------------------------------|:-----:|---------------|
+| Authentication & Authorization	|  Yes	|				|
+| Cookie Policy						|  No	|   			|
+| CORS								|  No	| Haven't identified the need for CORS on this API yet.|
+| Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
+| MVC & Static Files				|  No	| Still only an API. |
+| Routing & Endpoint				|  No	| We haven't identified the need to change the order these are executed. |
+
+Other middlewares: DeveloperExceptionPage, Diagnostics, Forwarded Headers, Health Check, Header Propagation, HTTP Logging, HTTP Method Override, OWIN, OutputCaching, ResponseCaching, Request Decompression, Request Localization, Endpoint Routing, SPA, Session, URL Rewrite, W3C Logging, Web Sockets.
+
+Others: Rate Limiting, Test middleware, Write Middleware, Factory Based Middleware.
+
 ## TODOs
 
 This list is orderned by priority.
 
 ### Others
 
+* Review ALL [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app.
 * Add rate limit
+* Routing
 * Review API documentation.
-* Review ALL [middlewares](https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0) and configure as needed in the app.
 * Research best way to configure which environment is running: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime, https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese
+
+### Logging
+
+Do proper logging. Change logging level according to environment. Create logger properly on startup.
+
+### Security
+
+Store the user passwords using hash function.
+TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
+
+### Docker
+
+Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
+
+Create docker secret for JWT key.
 
 ### Try-Catch
 
 Research how to resue Try Catch blocks. Specially for repository classes.
-
-### Logging
-
-Do proper logging.
 
 ### Unit tests
 
@@ -95,21 +130,14 @@ Write unit tests for services.
 
 Will add integration testing. I'm willing to use TestContainers.
 
-### Docker
+### Caching
 
-Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
-
-Create docker secret for JWT key.
+Output caching. Redis.
 
 ### EFCore
 
 Do deeper research on EFCore features.
 "In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
-
-### Security
-
-Store the user passwords using hash function.
-TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
 ### Minimal API
 

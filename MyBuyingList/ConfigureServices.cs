@@ -8,51 +8,56 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureServices
 {
-    internal static IServiceCollection AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration, bool isDevelopment)
     {
-        // check for the best way for handling environments.... add this only if not production
-        services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
+        // insert the AnalysisStartupFilter as the first IStartupFilter in the container
+        if(isDevelopment)
+            services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
 
+        // check for the best way for handling environments.... add this only if not production
         services.AddExternalServices(logger, configuration);
-        
+
         //builder.Services.AddControllersWithViews();
         services.AddControllers(options => { options.Filters.Add(typeof(RequestBodyValidationFilter)); });
         services.AddLogging();
-        services.AddSwaggerGen(c =>
+        if (isDevelopment)
         {
-            c.SwaggerDoc("v1", new OpenApiInfo
+            services.AddSwaggerGen(c =>
             {
-                Title = "MyBuyingList API",
-                Version = "v1",
-            });
-
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Here enter JWT Token with bearer format like bearer[space] token"
-            });
-
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-        });
+                    Title = "MyBuyingList API",
+                    Version = "v1",
+                });
 
-        return services;
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Here enter JWT Token with bearer format like bearer[space] token"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
+        }
+            
+        //services.AddRateLimiter(options => options.RejectionStatusCode = StatusCodes.Status429TooManyRequests);
     }
 
     // Add services from other projects.
@@ -61,7 +66,7 @@ internal static class ConfigureServices
         services.AddInfrastructureServices(logger, configuration);
         services.AddApplicationServices(logger);
     }
-    
+
     // will use this when changing this from API to APP
     private static void AddServicesForWebApp(this IServiceCollection services)
     {
