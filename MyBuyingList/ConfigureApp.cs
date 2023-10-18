@@ -8,21 +8,22 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureApp
 {
-    internal async static Task<WebApplication> StartApplication(this WebApplication app, ILogger logger)
+    internal async static Task<WebApplication> StartApplication(this WebApplication app)
     {
         bool isDevelopment = app.Environment.IsDevelopment();
-        if (isDevelopment)
-            app.AddDebuggingMiddlewareLogic();
-
+        
         try
         {
-            app.RunDatabaseMigrations(logger);
+            app.RunDatabaseMigrations();
         }
         catch (Exception ex)
         {
-            logger.LogError($"Failed running migrations. Err: {ex.Message}, Exception: {ex.InnerException}");
+            app.Logger.LogError($"Failed running migrations. Err: {ex.Message}, Exception: {ex.InnerException}");
             await app.StopAsync();
         }
+
+        //if (isDevelopment)
+        //    app.AddDebuggingMiddlewareLogic();
 
         app.AddMiddlewares(isDevelopment);
 
@@ -30,7 +31,7 @@ internal static class ConfigureApp
     }
 
     // Call this on the StartApplication method if you want to log the custom added middlewares.
-    private static void PrintListOfCustomMiddlewares(this WebApplication app, ILogger logger)
+    private static void PrintListOfCustomMiddlewares(this WebApplication app)
     {
         //var sb = new StringBuilder();\
         FieldInfo applicationBuilderFieldInfo = app.GetType()
@@ -76,7 +77,7 @@ internal static class ConfigureApp
                                         Type middlewareType = middlewareValue.GetType();
                                         PropertyInfo nameInfo = middlewareType.GetProperty("Name")!;
                                         object nameValue = nameInfo.GetValue(middlewareValue)!;
-                                        logger.LogInformation($"Middleware: {nameValue}");
+                                        app.Logger.LogInformation($"Middleware: {nameValue}");
                                     }
                                 }
                             }
@@ -101,7 +102,7 @@ internal static class ConfigureApp
         listener.SubscribeWithAdapter(observer);
     }
 
-    private static void RunDatabaseMigrations(this WebApplication app, ILogger logger)
+    private static void RunDatabaseMigrations(this WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
@@ -112,23 +113,12 @@ internal static class ConfigureApp
 
     private static void AddMiddlewares(this WebApplication app, bool isDevelopment)
     {
-        //app.UseRouting();
         //app.UseRateLimiter();
-        app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-
-        // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
-        app.Use((context, next) =>
-        {
-            context.Request.EnableBuffering();
-            return next();
-        });
+        //app.UseRouting();
+        app.UseMiddleware(typeof(ErrorHandlingMiddleware));        
 
         app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.MapControllerRoute(
-            name: "default",
-            pattern: "{controller=Home}/{action=Index}/{id?}");
+        app.UseAuthorization();        
                 
         if(isDevelopment)
         {
@@ -139,7 +129,19 @@ internal static class ConfigureApp
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = string.Empty;
             });
-        }        
+        }
+
+        // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
+        app.Use((context, next) =>
+        {
+            context.Request.EnableBuffering();
+            return next();
+        });
+
+        app.MapControllers();
+        //app.MapControllerRoute(
+        //    name: "default",
+        //    pattern: "{controller=Home}/{action=Index}/{id?}");
     }
     //Not needed for now, as this project is still only an API.
     private static void ApplyWebConfigs(this WebApplication app)

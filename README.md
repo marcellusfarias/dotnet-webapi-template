@@ -74,28 +74,61 @@ Middlewares are a useful way for handling requests and responses in .Net. Each c
 * Chooses whether to pass the request to the next component in the pipeline.
 * Can perform work before and after the next component in the pipeline.
 
-For adding middleware to the pipeline, one can use [Run](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.runextensions.run?view=aspnetcore-7.0), [Map](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapextensions.map?view=aspnetcore-7.0) and [Use](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.useextensions.use?view=aspnetcore-7.0) extensions, and one can pass an _in-line delegates_ or a _reusable class_ as a parameter. In a nutshell, Run and Use add a middleware to the pipeline. The difference is that Run adds a terminator middleware (i.e., it won't call any further middleware in the pipeline, short-circuiting it) while Use can call the next one. The _Map_ is used for _branching_ the pipeline, and can be useful for handling specific use cases. See an example [here](https://www.codeproject.com/Tips/1069790/Understand-Run-Use-Map-and-MapWhen-to-Hook-Middl-2).
+For adding middleware to the pipeline, one can use [Run](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.runextensions.run?view=aspnetcore-7.0), [Map](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapextensions.map?view=aspnetcore-7.0) and [Use](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.useextensions.use?view=aspnetcore-7.0) extensions, and one can pass an _in-line delegates_ or a _reusable class_ as a parameter. In a nutshell, Run and Use add a middleware to the pipeline. The difference is that Run adds a terminator middleware (i.e., it won't call any further middleware in the pipeline, short-circuiting it) while Use can call the next one. 
 
-In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) available to use. In the following table, we list the available middlewares and check if we use them:
+The _Map_ is used for _branching_ the pipeline. [Branching](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#branch-the-middleware-pipeline) is useful if we want to run a different pipeline based on the request path. The methods used for it are Map and [MapWhen](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.mapwhenextensions.mapwhen?view=aspnetcore-7.0). One can also use [UseWhen](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.builder.usewhenextensions.usewhen) for it. Unlike with MapWhen, this branch is rejoined to the main pipeline if it doesn't short-circuit or contain a terminal middleware
+
+See an example of all methods [here](https://www.codeproject.com/Tips/1069790/Understand-Run-Use-Map-and-MapWhen-to-Hook-Middl-2).
+
+
+
+In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) available to use. In the following table, we list the most common middlewares and check if we use them:
 
 | Middlewares						| Used	|  Commentary	|
 |-----------------------------------|:-----:|---------------|
 | Authentication & Authorization	|  Yes	|				|
-| Cookie Policy						|  No	|   			|
-| CORS								|  No	| Haven't identified the need for CORS on this API yet.|
+| [Cookie Policy](https://learn.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-7.0)						|  No	| Not using Cookies.  			|
+| CORS								|  No	| Haven't identified the need for [Cross-Origin Resource Sharing](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/CORS) on this API yet.|
 | Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
-| MVC & Static Files				|  No	| Still only an API. |
-| Routing & Endpoint				|  No	| We haven't identified the need to change the order these are executed. |
+| Routing							|  Yes*	|   |
+| Endpoint							|  Yes*	| It's automatically executed after the custom middlewares and executes the filter pipeline. It's a terminal middleware.  |
+| Rate Limiter						|		| UseRateLimiter must be called after UseRouting when rate limiting endpoint specific APIs are used. For example, if the [EnableRateLimiting] attribute is used, UseRateLimiter must be called after UseRouting. When calling only global limiters, UseRateLimiter can be called before UseRouting. |
+| Static Files						|  No	| Not using yet since we don't have static files. This middleware is used to short-circuit requests, and provides no Authorization checks (if wanted, check [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0)). |
+| Session							|		| | 
 
-Other middlewares: DeveloperExceptionPage, Diagnostics, Forwarded Headers, Health Check, Header Propagation, HTTP Logging, HTTP Method Override, OWIN, OutputCaching, ResponseCaching, Request Decompression, Request Localization, Endpoint Routing, SPA, Session, URL Rewrite, W3C Logging, Web Sockets.
+'* Not being called explicitily on the app's config. Being set by the framework.
 
-Others: Rate Limiting, Test middleware, Write Middleware, Factory Based Middleware.
+Here is a list of middlewares that we don't use because it's not required (at least not yet). Most of them are related to this project still being only an API and specifics on HTTP. Some of them are just not necessary or are not worth.
+* Forwarded Headers: forwards proxied headers onto the current request.
+* DeveloperExceptionPage
+* Header propagation: propagates HTTP headers from the incoming request to the outgoing HTTP Client requests.
+* Http Logging: logs HTTP Requests and Responses. 
+* Http Method Override: Allows an incoming POST request to override the method.
+* OWIN: interop with OWIN-based apps, servers, and middleware.
+* Request Localization: provides localization support (usually for multilingual websites). 
+* Single Page Application (SPA): handles all requests from this point in the middleware chain by returning the default page
+* W3CLogging: generates server access logs in the W3C Extended Log File Format
+* WebSockets: not using any library that needs it.
+
+Planning to add:
+*  [Health Checks](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-7.0)
+* Output Caching & Response Caching 
+
+Investigate further in the future:
+* Diagnostics: several separate middlewares that provide a developer exception page, exception handling, status code pages, and the default web page for new apps.
+* Response compression & decompression
+* [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
+
+
+Rate Limiting, Routing, Session, Auths, Endpoint
 
 ## TODOs
 
 This list is orderned by priority.
 
-### Others
+### Before releasing
+
+#### Others
 
 * Review ALL [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app.
 * Add rate limit
@@ -103,64 +136,77 @@ This list is orderned by priority.
 * Review API documentation.
 * Research best way to configure which environment is running: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime, https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese
 
-### Logging
+#### Logging
 
 Do proper logging. Change logging level according to environment. Create logger properly on startup.
 
-### Security
+#### Security
 
 Store the user passwords using hash function.
 TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
-### Docker
+#### Docker
 
 Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
 
 Create docker secret for JWT key.
 
-### Try-Catch
-
-Research how to resue Try Catch blocks. Specially for repository classes.
-
-### Unit tests
+#### Unit tests
 
 Write unit tests for services.
 
-### Integration Testing
+#### Integration Testing
 
 Will add integration testing. I'm willing to use TestContainers.
 
-### Caching
+#### Production
+
+When moving into production, must set a secure HTTPS certificate.
+
+### After releasing 
+
+#### Caching
 
 Output caching. Redis.
 
-### EFCore
+#### Try-Catch
+
+Research how to resue Try Catch blocks. Specially for repository classes.
+
+#### EFCore
 
 Do deeper research on EFCore features.
 "In case of tracking queries, results of Filtered Include may be unexpected due to navigation fixup. All relevant entities that have been queried for previously and have been stored in the Change Tracker will be present in the results of Filtered Include query, even if they don't meet the requirements of the filter. Consider using NoTracking queries or re-create the DbContext when using Filtered Include in those situations." (https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager)
 
-### Minimal API
-
-Planning to move on to Minimal APIs.
-
-### Github Actions
+#### Github Actions
 
 Configure Github actions pipeline.
 
-### Frontend
+#### Middleware
+
+Finish reading middleware documentation.
+
+* How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares
+* Read about [factory based middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/extensibility?view=aspnetcore-7.0) and [convention based](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-7.0) middleware.
+* Read [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/request-response?view=aspnetcore-7.0).
+
+#### Frontend
 
 When the backend is done, I will start creating the UI. Probably using React and Typescript, but will consider Blazor.
 
 When doint it, need to implement further Authentication pieces. As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  I also plan to add Cache for storing the refresh token. Need also to add http redirection.
 
-### Production
+React [docs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-7.0&tabs=visual-studio), Angular [docs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/angular?view=aspnetcore-7.0&tabs=visual-studio)
 
-When moving into production, must set a secure HTTPS certificate.
+#### Minimal API
 
-### Others
+Planning to move on to Minimal APIs.
+
+#### Others
 
 Other interesting topics that may come in the future:
 * AOT: test and play with it, specially do a comparison on the Docker image footprint.
+* Read further about Routing
 * Think about reusing validating rules in DTOs.
 * Benchmarks & Performance Tests.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?

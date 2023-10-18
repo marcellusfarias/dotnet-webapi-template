@@ -9,6 +9,6 @@ var isDevelopment = builder.Environment.IsDevelopment();
 builder.Services.AddServices(logger, builder.Configuration, isDevelopment);
 
 var app = builder.Build();
-await app.StartApplication(logger);
+await app.StartApplication();
 logger.LogInformation("Running app...");
 app.Run();
