@@ -130,11 +130,9 @@ This list is orderned by priority.
 
 #### Others
 
-* Review ALL [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app.
-* Add rate limit
-* Routing
+* Review [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app. Left: Rate Limiting, Routing, Session, Auths, Endpoint.
 * Review API documentation.
-* Research best way to configure which environment is running: https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime, https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese
+* Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
 #### Logging
 
@@ -145,19 +143,19 @@ Do proper logging. Change logging level according to environment. Create logger 
 Store the user passwords using hash function.
 TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
-#### Docker
+#### Docker & Hosting
 
-Complete Docker support on this application. Since I already previous experience on it, it's not my most urgent goal. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
+Complete Docker support on this application. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
 
-Create docker secret for JWT key.
+Create docker secret for JWT key and HTTPs certs. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
 
 #### Unit tests
 
-Write unit tests for services.
+Write unit tests for services. How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares.
 
 #### Integration Testing
 
-Will add integration testing. I'm willing to use TestContainers.
+Will add integration testing. I'm willing to use TestContainers. Test EFCore.
 
 #### Production
 
@@ -168,10 +166,6 @@ When moving into production, must set a secure HTTPS certificate.
 #### Caching
 
 Output caching. Redis.
-
-#### Try-Catch
-
-Research how to resue Try Catch blocks. Specially for repository classes.
 
 #### EFCore
 
@@ -186,30 +180,36 @@ Configure Github actions pipeline.
 
 Finish reading middleware documentation.
 
-* How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares
 * Read about [factory based middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/extensibility?view=aspnetcore-7.0) and [convention based](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/write?view=aspnetcore-7.0) middleware.
 * Read [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/request-response?view=aspnetcore-7.0).
 
 #### Frontend
 
-When the backend is done, I will start creating the UI. Probably using React and Typescript, but will consider Blazor.
+When migrating to WebApp:
+* Choose between React/Angular with Typescript or Blazor.
+* Implement related auth pieces. 
+When doint it, need to implement further Authentication pieces. 
+    * As mentioned on "Authentication and authorization", [Cookie implementation](https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0) will be added.
+    * Create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  
+    * Cache for storing the refresh token. 
+    * Add http redirection.
 
-When doint it, need to implement further Authentication pieces. As mentioned on "Authentication and authorization", Cookie implementation will be added (https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0). Need to create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  I also plan to add Cache for storing the refresh token. Need also to add http redirection.
+Useful docs: 
+* [React](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-7.0&tabs=visual-studio)
+* [Angular](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/angular?view=aspnetcore-7.0&tabs=visual-studio)
 
-React [docs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-7.0&tabs=visual-studio), Angular [docs](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/angular?view=aspnetcore-7.0&tabs=visual-studio)
+#### General (not priority orderned)
 
-#### Minimal API
+ASP.NET Interesting topics:
 
-Planning to move on to Minimal APIs.
+* Routing: [read](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-7.0) further about it. 
+* Health checks.
+* Minimal APIs
 
-#### Others
-
-Other interesting topics that may come in the future:
+Other topics:
 * AOT: test and play with it, specially do a comparison on the Docker image footprint.
-* Read further about Routing
-* Think about reusing validating rules in DTOs.
 * Benchmarks & Performance Tests.
+* THINK about reusing validating rules in DTOs.
+* THINK: constants for string lengths.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
-* Add Health checks
-* Add Constants for string lengths
-* Read about Event Driven design and decide if it's worth applying it in here.
+* THINK: research how to resue Try Catch blocks. Specially for repository classes.
