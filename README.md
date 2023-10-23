@@ -26,23 +26,49 @@ According to the [docs](https://docs.fluentvalidation.net/en/latest/advanced.htm
 
 For testing: according to the [docs](https://docs.fluentvalidation.net/en/latest/testing.html) one should not mock it, but treat it as a black box.
 
-### 5. Authentication and authorization
+### 5. Authentication
 
-For this topic, there was the option to use Microsoft ASP.NET Identity. 
+Authentication is handled by the authentication service (_IAuthenticationService_), which is used by authentication middleware. The authentication service uses registered _authentication handlers_ to complete authentication-related actions. The registered authentication handlers and their configuration options are called "_schemes_" (bearer, cookie, etc). It's important to know that _Microsoft.AspNetCore.Authentication.JwtBearer_ already implements the whole scheme.
 
-> ASP.NET Identity is a feature-rich membership system by Microsoft for authentication and authorization in ASP.NET applications. It includes user registration, login, password recovery, account confirmation, supports database storage, offers flexible authentication options (windows and external providers), but can be complex and add unnecessary functionallity for the application.
+Authentication handlers return _AuthenticationTicket_ if authentication is successful, and return "no result" or "failure" if not.
 
-Since the main goal for this application is learning, I chosed to implement my own authentication and authorization mechanisms. For authentication, we leverage from JwtBearer lib to use JWT tokens. One can check the implementation on the _Infrastructure_ project.
+For this topic, there was the option to use [Microsoft ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-7.0). 
 
-Note for when creating the front-end: one important point to mention is where to store Jwt's token. After some research, decided to store in a cookie according to [this article](https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914).
+> ASP.NET Core Identity is a feature-rich membership system by Microsoft for authentication and authorization in ASP.NET applications. It includes user registration, login, password recovery, MFA, account confirmation, supports database storage, offers flexible authentication options (windows and external providers), but can be complex and add unnecessary functionallity for the application.
 
-For Authorization, I created an elegant way that uses Attributes and overrides the PolicyProvider. It relies on Constants that are also used on the migrations for automatically adding new Roles and Policies into the database. The custom AuthorizationHandler checks if the required policy is attached on the JWT token.
+This project is starting as an API, so there is no need for all of these features. Also, for learning purposes, I decided to not go in that direction. For authentication, we leverage from JwtBearer lib to use JWT tokens. One can check the implementation on the _Infrastructure_ project. The lib already implements all we need for handling authentication, and we provide the configurations properly (check the Auth/JwtSetup folder).
 
-### 6. Database
+### 6. Authorization
+
+There are two approaches for authorization: a simple [Role-based](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-7.0) and a rich [Policy-based](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-7.0), which we use. Note that there is also support for Claims and Resource-based authorization in combination with the above mentioned.
+
+The primary service is the _IAuthorizationService_. It requires an user, a resource and a list of requirements/name of the policy. 
+* The user: represented by ClaimsPrincipal class, it has a list of claims it owns.
+* The resource: [in our case](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-7.0#access-mvc-request-context-in-handlers), it's a _HttpContext_. The use of the Resource property is framework-specific. 
+* The requirements. It can be a list of _IAuthorizationRequirement_ or a _policy_ name, which represents a collection of authorization requirements and the scheme or schemes they are evaluated against.
+
+The _IAuthorizationHandler_ is responsible for handling it, and setting in the _AuthorizationHandlerContext_ if it succeded or not. For applying policies in the controllers, we can create a custom _PermissionAttribute_. One can add more than one handler (not our case).
+
+Normally, one register the handler and also the list of policies on the startup. We did a bit different:
+
+* We first created a PermissionRequirement, which has a string property called Permission. 
+* Created a PermissionAttribute that expects a string (the policy name).
+* Our handler is of generic type _PermissionRequirement_. Since we use JWT, it basically checks if the token has a Claims for the policies, and checks it has the required policy name.
+* The last step is creating a PolicyProvider. Since we don't want to add all the policies in the startup (we already keep them in memory using the Policies class), a more elegant way is to create a PolicyProvider which will provide as required.
+
+For better illustration, when we get a request:
+* Controller checks if a specific policy is required and calls the PolicyProvider to get the policy.
+* PolicyProvider return the Policy required, creating the PermissionRequirement.
+* Handler checks if token has the required policy, represented by the PermissionRequirement.
+* Handler sets the context as succeded or not.
+
+The policies on this application rely on Constants that are also used on the migrations for automatically adding new Roles and Policies into the database. 
+
+### 7. Database
 
 Chosed Postgres over MSSQL because it's free. Using a code-first because I already have previous experience with database-first and migrations facilitates life. Migration's support is great on EF Core and the deployment process is also facilitated since it runs the migrations automatically. 
 
-### 7. EFCore
+### 8. EFCore
 
 Before choosing EFCore, I did a research on Dapper. I see the performance difference currently is huge. On the other hand, EFCore offers tons of functionalities. I sticked with EFCore for this one.
 
@@ -50,13 +76,13 @@ For loading data, there are three possibilities: _Eager loading_, _Lazy loading_
 
 _Tracking_ vs _no-tracking_: this [Microsoft's article](https://learn.microsoft.com/en-us/ef/core/querying/tracking) is very informative. In a nutshell, _tracking_ persists changes to the entity in the SaveChanges method and can improve performance if an entity is already in the context (meaning one less trip to the database). _No-tracking_ doesn't keep state, so it uses less memory and is faster in general, being great for _readonly_ operations, but one need to manually set the entity as _modified_. Furthermore, there is still _No-Tracking with Identity Resolution_ ([check example](https://macoratti.net/22/05/ef_asnoidresol1.htm)). It's good for relationship "one-to-many" for memory optimization, since it keep the repeated entity in the context. The default on this project is to _not_ track: since the Tracking context is in the dbContext, and we are setting it to be _scoped_, it wouldn't make sense for having the changing tracker in most of the operations (even inserts/updates).
 
-### 8. Cancellation Token
+### 9. Cancellation Token
 
 Cancellation Token will be added on every controller endpoint that has an I/O operation. Since we use _scoped_ database contexts and repository pattern, it should not be a problem if creating commands properly (i.e., wrap the commands on a single transaction; i.e., perform save changes only at the end of the request). For more information, see [this](https://stackoverflow.com/questions/50329618/should-i-always-add-cancellationtoken-to-my-controller-actions).
 
 Note that on the ErrorHandlingMiddleware we added a few lines to abort the request if the operation was cancelled. The reason for it is that since the client closed the connection (and that's how the Cancellation is triggered) there is no reason to return an HttpReponse.
 
-### 9. HTTPS
+### 10. HTTPS
 
 According to [Microsoft](https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-7.0&tabs=visual-studio%2Clinux-ubuntu), APIs should either:
 * Not listen on HTTP
@@ -68,7 +94,7 @@ We are using a _self-signed_ certificate for development. When moving into produ
 
 When moving into a Web App, Microsoft recommends adding  HttpsRedirection middleware and Hsts middleware.
 
-### 10. Middlewares
+### 11. Middlewares
 
 Middlewares are a useful way for handling requests and responses in .Net. Each component:
 * Chooses whether to pass the request to the next component in the pipeline.
@@ -80,23 +106,21 @@ The _Map_ is used for _branching_ the pipeline. [Branching](https://learn.micros
 
 See an example of all methods [here](https://www.codeproject.com/Tips/1069790/Understand-Run-Use-Map-and-MapWhen-to-Hook-Middl-2).
 
-
-
 In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) available to use. In the following table, we list the most common middlewares and check if we use them:
 
 | Middlewares						| Used	|  Commentary	|
 |-----------------------------------|:-----:|---------------|
-| Authentication & Authorization	|  Yes	|				|
+| Authentication					|  Yes	|	Using "Bearer" schema with Jwt.			|
+| Authorization						|  Yes	| We use our custom [policy-based authorization](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/policies?view=aspnetcore-7.0) and our own [policy provider](https://learn.microsoft.com/en-us/aspnet/core/security/authorization/iauthorizationpolicyprovider?view=aspnetcore-7.0).
 | [Cookie Policy](https://learn.microsoft.com/en-us/aspnet/core/security/gdpr?view=aspnetcore-7.0)						|  No	| Not using Cookies.  			|
 | CORS								|  No	| Haven't identified the need for [Cross-Origin Resource Sharing](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/CORS) on this API yet.|
 | Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
-| Routing							|  Yes*	|   |
-| Endpoint							|  Yes*	| It's automatically executed after the custom middlewares and executes the filter pipeline. It's a terminal middleware.  |
+| Routing							|  Yes	| Not customizing it. Adding after the ErrorHandlingMiddleware.  |
+| Endpoint							|  Yes	| This middleware is automatically added at the end of the pipeline as a terminal middleware. It's role is to register the endpoints that are going to be matched by the Routing, and when the endpoint is invoked it also is responsible for executing the _filter_ pipeline. For registering endpoint, we use MapControllers. |
 | Rate Limiter						|		| UseRateLimiter must be called after UseRouting when rate limiting endpoint specific APIs are used. For example, if the [EnableRateLimiting] attribute is used, UseRateLimiter must be called after UseRouting. When calling only global limiters, UseRateLimiter can be called before UseRouting. |
 | Static Files						|  No	| Not using yet since we don't have static files. This middleware is used to short-circuit requests, and provides no Authorization checks (if wanted, check [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0)). |
-| Session							|		| | 
+| Session							|	No	| Not being used while just an API. | 
 
-'* Not being called explicitily on the app's config. Being set by the framework.
 
 Here is a list of middlewares that we don't use because it's not required (at least not yet). Most of them are related to this project still being only an API and specifics on HTTP. Some of them are just not necessary or are not worth.
 * Forwarded Headers: forwards proxied headers onto the current request.
@@ -119,18 +143,17 @@ Investigate further in the future:
 * Response compression & decompression
 * [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
 
+Rate Limiting, HostFiltering
 
-Rate Limiting, Routing, Session, Auths, Endpoint
-
-## TODOs
-
-This list is orderned by priority.
+## Backlog
 
 ### Before releasing
 
-#### Others
+This list is orderned by priority.
 
-* Review [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app. Left: Rate Limiting, Routing, Session, Auths, Endpoint.
+#### General
+
+* Review [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app. Left: Rate Limiting, Auths.
 * Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
@@ -151,7 +174,9 @@ Create docker secret for JWT key and HTTPs certs. .Net [Host](https://learn.micr
 
 #### Unit tests
 
-Write unit tests for services. How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares.
+Write unit tests for services. How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
+
+Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
 
 #### Integration Testing
 
@@ -188,11 +213,15 @@ Finish reading middleware documentation.
 When migrating to WebApp:
 * Choose between React/Angular with Typescript or Blazor.
 * Implement related auth pieces. 
+
 When doint it, need to implement further Authentication pieces. 
-    * As mentioned on "Authentication and authorization", [Cookie implementation](https://learn.microsoft.com/pt-br/aspnet/core/fundamentals/app-state?view=aspnetcore-7.0) will be added.
-    * Create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  
-    * Cache for storing the refresh token. 
-    * Add http redirection.
+* As mentioned on "Authentication and authorization", [cookie implementation](https://learn.microsoft.com/pt-br/aspnet/core/undamentals/app-state?view=aspnetcore-7.0) will be added.
+* Configure properly where to store the JWT token. Chosed options [here](https://medium.com/swlh/whats-the-secure-way-to-store-jwt-dd362f5b7914).
+* Create refresh token mechanism (https://www.youtube.com/watch?v=HsypCNm56zs).  
+* Cache for storing the refresh token. 
+* Add MFA.
+* Add http redirection.
+* Read [ASP.NET Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-7.0&tabs=visual-studio)
 
 Useful docs: 
 * [React](https://learn.microsoft.com/en-us/aspnet/core/client-side/spa/react?view=aspnetcore-7.0&tabs=visual-studio)

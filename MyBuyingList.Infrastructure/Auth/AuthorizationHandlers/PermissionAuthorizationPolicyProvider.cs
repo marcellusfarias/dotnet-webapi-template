@@ -9,7 +9,6 @@ internal class PermissionAuthorizationPolicyProvider : DefaultAuthorizationPolic
     {
     }
 
-    // Im not sure how to use this yet. Got from Milan's video: https://www.youtube.com/watch?v=SUyFPp6BPV0
     public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
         AuthorizationPolicy? policy = await base.GetPolicyAsync(policyName);

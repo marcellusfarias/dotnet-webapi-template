@@ -27,24 +27,26 @@ public static class Policies
     public const string GroupUpdate = "GroupUpdate";
     public const string GroupDelete = "GroupDelete";
 
-    private static Dictionary<int, string> _ordernedDictionary = new Dictionary<int, string>()
-    {
-        {1, CreateUser},
-        {2, UpdateUser},
-        {3, DeleteUser},
-        {4, GetAllUsers},
-        {5, BuyingListGet},
-        {6, BuyingListCreate},
-        {7, BuyingListUpdate},
-        {8, BuyingListDelete},
-        {9, GroupGet},
-        {10, GroupCreate},
-        {11, GroupUpdate},
-        {12, GroupDelete},
-    };
-
     public static IEnumerable<Policy> GetValues()
     {
+        var _ordernedDictionary = new Dictionary<int, string>()
+        {
+            #region Items
+            {1, CreateUser},
+            {2, UpdateUser},
+            {3, DeleteUser},
+            {4, GetAllUsers},
+            {5, BuyingListGet},
+            {6, BuyingListCreate},
+            {7, BuyingListUpdate},
+            {8, BuyingListDelete},
+            {9, GroupGet},
+            {10, GroupCreate},
+            {11, GroupUpdate},
+            {12, GroupDelete},
+            #endregion
+        };
+
         List<Policy> policies = new List<Policy>();
 
         // doing this, because one can not guarantee order using reflection.
@@ -53,14 +55,6 @@ public static class Policies
         {
             policies.Add(new Policy { Id = item.Key, Name = item.Value });
         }
-
-        //FieldInfo[] fieldInfos = typeof(Policies).GetFields(BindingFlags.Public |
-        //    BindingFlags.Static | BindingFlags.FlattenHierarchy);
-        //fieldInfos
-        //    .Where(fi => fi.IsLiteral && !fi.IsInitOnly)
-        //    .ToList()
-        //    //.OrderBy(x => x.Name) order not guarenteed
-        //    .ForEach(x => policies.Add(new Policy { Id = currentId++, Name = (string)x.GetRawConstantValue()! }));
 
         return policies;
     }
