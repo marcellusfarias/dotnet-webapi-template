@@ -1,10 +1,10 @@
 # Shared Buying List
 
-This is a side project I created for practing .Net. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
+This is a side project I created for practing .Net. The final goal for this project is to become a "template" for new projects. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
 
 Other than Asp.Net, we currently use Postgres, EFCore, Docker, Swagger, JWT, xUnit and FluentValidation.
 
-Current state: we currently have finished most of the basic functionalities: added/configured EFCore, Postgres, JWT, Swagger, FluentValidation and xUnit. Check the backlog for the next steps, but in a nutshell I am reviewing logs, API documentation and configuring Docker/environments properly. We will start adding a bunch of tests. Normally, I would do tests _*while*_ programming, but since I was having a lot of different perspectives while creating this (and this is also for practing) I decided to postpone the tests until I was sure about how I wanted to do things. After finishing it, I will consider it a MVP.
+Current state: we currently have finished most of the basic functionalities: added/configured EFCore, Postgres, JWT, Swagger, FluentValidation and xUnit. Check the backlog for the next steps, but in a nutshell I am reviewing logs, API documentation and configuring Docker/environments properly. We will start adding a bunch of tests. Normally, I would do tests _*while*_ programming, but since I was having a lot of different perspectives while creating this (and this is also for practing) I decided to postpone the tests until I was sure about how I wanted to do things. After finishing it, I will consider it a MVP. 
 
 ## Topics I've researched and conclusions
 
@@ -121,7 +121,7 @@ In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-
 | Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
 | Routing							|  Yes	| Not customizing it. Adding after the ErrorHandlingMiddleware.  |
 | Endpoint							|  Yes	| This middleware is automatically added at the end of the pipeline as a terminal middleware. It's role is to register the endpoints that are going to be matched by the Routing, and when the endpoint is invoked it also is responsible for executing the _filter_ pipeline. For registering endpoint, we use MapControllers. |
-| Rate Limiter						|		| Added a simple FixedWindowLimiter rate limiter just for the authentication endpoint. The middleware must be added after UseRouting on this case. |
+| Rate Limiter						|	Yes	| Added a simple FixedWindowLimiter rate limiter just for the authentication endpoint. The middleware must be added after UseRouting on this case. |
 | Static Files						|  No	| Not using yet since we don't have static files. This middleware is used to short-circuit requests, and provides no Authorization checks (if wanted, check [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0)). |
 | Session							|	No	| Not being used while just an API. | 
 
