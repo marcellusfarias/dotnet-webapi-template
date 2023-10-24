@@ -156,32 +156,33 @@ This list is orderned by priority.
 
 #### Logging
 
-Do proper logging. Change logging level according to environment. Create logger properly on startup.
+* Do proper logging. 
+* Change logging level according to environment. 
+* Create logger properly on startup.
 
 #### Security
 
-Store the user passwords using hash function.
-TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
-
-#### Docker & Hosting
-
-Complete Docker support on this application. I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
-
-Create docker secret for JWT key and HTTPs certs. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
+* Store the user passwords using hash function + salt.
+* When moving into production, must set a secure HTTPS certificate.
+* TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
 #### Unit tests
 
-Write unit tests for services. How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
-
-Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
+* Write unit tests for services. 
+* How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
+* Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
 
 #### Integration Testing
 
-Will add integration testing. I'm willing to use TestContainers. Test EFCore.
+* Will add integration testing. 
+* I'm willing to use TestContainers. 
+* Test EFCore.
 
-#### Production
+#### Docker & Hosting
 
-When moving into production, must set a secure HTTPS certificate.
+* Complete Docker support on this application. 
+* I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
+* Create docker secret for JWT key and HTTPs certs. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
 
 ### After releasing 
 
