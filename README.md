@@ -2,6 +2,10 @@
 
 This is a side project I created for practing .Net. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
 
+Other than Asp.Net, we currently use Postgres, EFCore, Docker, Swagger, JWT, xUnit and FluentValidation.
+
+Current state: we currently have finished most of the basic functionalities: added/configured EFCore, Postgres, JWT, Swagger, FluentValidation and xUnit. Check the backlog for the next steps, but in a nutshell I am reviewing logs, API documentation and configuring Docker/environments properly. We will start adding a bunch of tests. Normally, I would do tests _*while*_ programming, but since I was having a lot of different perspectives while creating this (and this is also for practing) I decided to postpone the tests until I was sure about how I wanted to do things. After finishing it, I will consider it a MVP.
+
 ## Topics I've researched and conclusions
 
 ### 1. DTOs and Mappings
@@ -151,6 +155,7 @@ This list is orderned by priority.
 
 #### General
 
+* Test rate limiting
 * Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
@@ -240,4 +245,4 @@ Other topics:
 * THINK about reusing validating rules in DTOs.
 * THINK: constants for string lengths.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
-* THINK: research how to resue Try Catch blocks. Specially for repository classes.
+* THINK: research how to resue (if possible?) Try Catch blocks. Specially for repository classes.
