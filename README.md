@@ -158,6 +158,8 @@ This list is orderned by priority.
 * Test rate limiting
 * Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
+* Pagination
+* Review controllers and TODOs
 
 #### Logging
 
