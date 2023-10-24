@@ -30,6 +30,74 @@ internal static class ConfigureApp
         return app;
     }
 
+    private static void RunDatabaseMigrations(this WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
+            db.Database.Migrate();
+        }
+    }
+
+    private static void AddMiddlewares(this WebApplication app, bool isDevelopment)
+    {
+        app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+        app.UseRouting();
+        app.UseRateLimiter();
+
+        if (isDevelopment)
+        {
+            // Don't require authentication for this.
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = string.Empty;
+            });
+        }
+
+        app.UseAuthentication();
+        app.UseAuthorization();              
+
+        // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
+        app.Use((context, next) =>
+        {
+            context.Request.EnableBuffering();
+            return next();
+        });
+
+        app.MapControllers();
+    }
+
+    #region UsefulFunctions
+
+    //Not needed for now, as this project is still only an API.
+    private static void ApplyWebConfigs(this WebApplication app)
+    {
+        // Configure the HTTP request pipeline.
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts(); // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
+            //builder.Services.AddHsts(options =>
+            //{
+            //    options.Preload = true;
+            //    options.IncludeSubDomains = true;
+            //    options.MaxAge = TimeSpan.FromDays(60);
+            //    options.ExcludedHosts.Add("example.com");
+            //    options.ExcludedHosts.Add("www.example.com");
+            //});
+        }
+        else
+        {
+            app.UseDeveloperExceptionPage();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+    }
+
     // Call this on the StartApplication method if you want to log the custom added middlewares.
     private static void PrintListOfCustomMiddlewares(this WebApplication app)
     {
@@ -102,73 +170,5 @@ internal static class ConfigureApp
         listener.SubscribeWithAdapter(observer);
     }
 
-    private static void RunDatabaseMigrations(this WebApplication app)
-    {
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
-            db.Database.Migrate();
-        }
-    }
-
-    private static void AddMiddlewares(this WebApplication app, bool isDevelopment)
-    {
-        //app.UseRateLimiter();
-        //
-        app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-        app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();        
-                
-        if(isDevelopment)
-        {
-            // why is this added as a middleware? Not sure.
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                options.RoutePrefix = string.Empty;
-            });
-        }
-
-        // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
-        app.Use((context, next) =>
-        {
-            context.Request.EnableBuffering();
-            return next();
-        });
-
-        app.MapControllers();
-        //app.MapControllerRoute(
-        //    name: "default",
-        //    pattern: "{controller=Home}/{action=Index}/{id?}");
-    }
-    //Not needed for now, as this project is still only an API.
-    private static void ApplyWebConfigs(this WebApplication app)
-    {
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Home/Error");
-            app.UseHsts(); // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-
-            //builder.Services.AddHsts(options =>
-            //{
-            //    options.Preload = true;
-            //    options.IncludeSubDomains = true;
-            //    options.MaxAge = TimeSpan.FromDays(60);
-            //    options.ExcludedHosts.Add("example.com");
-            //    options.ExcludedHosts.Add("www.example.com");
-            //});
-        }
-        else
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-    }
-
+    #endregion
 }

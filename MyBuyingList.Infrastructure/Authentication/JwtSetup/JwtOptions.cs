@@ -1,4 +1,4 @@
-﻿namespace MyBuyingList.Infrastructure.Auth.JwtSetup;
+﻿namespace MyBuyingList.Infrastructure.Authentication.JwtSetup;
 
 public class JwtOptions
 {

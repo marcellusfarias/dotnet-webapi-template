@@ -2,16 +2,15 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Repositories;
-using MyBuyingList.Infrastructure.Auth.JwtSetup;
-using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+using MyBuyingList.Infrastructure.Authentication.JwtSetup;
 using MyBuyingList.Application.Common.Interfaces;
-using MyBuyingList.Infrastructure.Auth.Services;
+using MyBuyingList.Infrastructure.Authentication.Services;
 using MyBuyingList.Application.Features.BuyingLists;
 using MyBuyingList.Application.Features.Groups;
 using MyBuyingList.Application.Features.Users;
+
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -23,8 +22,7 @@ public static class ConfigureServices
         services.CreateDbContext(connectionString);
         services.AddRepositores();
 
-        services.AddJwtAuthentication();
-        services.AddAuthorizationConfiguration();        
+        services.AddJwtAuthentication();    
 
         return services;
     }
@@ -36,12 +34,6 @@ public static class ConfigureServices
         services.ConfigureOptions<JwtOptionsSetup>();
         services.ConfigureOptions<JwtBearerOptionsSetup>();
         services.AddTransient<IJwtProvider, JwtProvider>();
-    }
-
-    private static void AddAuthorizationConfiguration(this IServiceCollection services)
-    {
-        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
     }
 
     private static void CreateDbContext(this IServiceCollection services, string connectionString)

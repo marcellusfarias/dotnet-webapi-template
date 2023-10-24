@@ -2,13 +2,13 @@
 using Microsoft.IdentityModel.Tokens;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Users;
-using MyBuyingList.Infrastructure.Auth.Constants;
-using MyBuyingList.Infrastructure.Auth.JwtSetup;
+using MyBuyingList.Infrastructure.Authentication.Constants;
+using MyBuyingList.Infrastructure.Authentication.JwtSetup;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace MyBuyingList.Infrastructure.Auth.Services;
+namespace MyBuyingList.Infrastructure.Authentication.Services;
 
 internal class JwtProvider : IJwtProvider
 {

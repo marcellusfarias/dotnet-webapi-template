@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+namespace MyBuyingList.Web.Middlewares.Authorization;
 
 internal class PermissionRequirement : IAuthorizationRequirement
 {

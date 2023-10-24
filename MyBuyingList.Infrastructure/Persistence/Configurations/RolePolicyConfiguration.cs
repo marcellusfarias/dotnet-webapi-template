@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Domain.Entities;
-using MyBuyingList.Infrastructure.Auth.Constants;
+using MyBuyingList.Domain.Constants;
 
 namespace MyBuyingList.Infrastructure.Persistence.Configurations;
 

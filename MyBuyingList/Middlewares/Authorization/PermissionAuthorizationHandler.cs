@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
-using MyBuyingList.Infrastructure.Auth.Constants;
+using MyBuyingList.Infrastructure.Authentication.Constants;
 
-namespace MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+namespace MyBuyingList.Web.Middlewares.Authorization;
 
 internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionRequirement>
 {

@@ -3,6 +3,9 @@ using MyBuyingList.Web.Filters;
 using MyBuyingList.Application;
 using Microsoft.AspNetCore.MiddlewareAnalysis;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
+using MyBuyingList.Web.Middlewares.Authorization;
+using MyBuyingList.Web.Middlewares.RateLimiting;
 
 namespace MyBuyingList.Web;
 
@@ -10,16 +13,25 @@ internal static class ConfigureServices
 {
     internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration, bool isDevelopment)
     {
-        // insert the AnalysisStartupFilter as the first IStartupFilter in the container
-        if(isDevelopment)
-            services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
+        // Insert the AnalysisStartupFilter as the first IStartupFilter in the container
+        //if (isDevelopment) services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
 
-        // check for the best way for handling environments.... add this only if not production
+        // Check for the best way for handling environments.... add this only if not production
         services.AddExternalServices(logger, configuration);
 
-        //builder.Services.AddControllersWithViews();
+        // Rate limiter added just for the authentication endpoint
+        services.Configure<CustomRateLimiterOptions>(configuration.GetSection("CustomRateLimiterOptions"));
+        services.AddRateLimiter(options => 
+        {
+            options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>("Authentication");
+        });
+
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
         services.AddControllers(options => { options.Filters.Add(typeof(RequestBodyValidationFilter)); });
         services.AddLogging();
+
         if (isDevelopment)
         {
             services.AddSwaggerGen(c =>
@@ -56,8 +68,6 @@ internal static class ConfigureServices
                 });
             });
         }
-            
-        //services.AddRateLimiter(options => options.RejectionStatusCode = StatusCodes.Status429TooManyRequests);
     }
 
     // Add services from other projects.

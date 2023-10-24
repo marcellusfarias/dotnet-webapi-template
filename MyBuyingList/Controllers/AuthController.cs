@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using MyBuyingList.Application.Features.Login.Services;
 
 namespace MyBuyingList.Web.Controllers;
@@ -10,6 +11,7 @@ public class AuthController : ApiControllerBase
         _loginService = loginService;
     }
 
+    [EnableRateLimiting("Authentication")]
     [HttpPost]
     public async Task<IActionResult> Authenticate(string username, string password, CancellationToken token)
     {

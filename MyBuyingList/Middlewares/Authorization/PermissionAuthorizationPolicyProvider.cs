@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
+namespace MyBuyingList.Web.Middlewares.Authorization;
 
 internal class PermissionAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
 {

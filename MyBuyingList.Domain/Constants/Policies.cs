@@ -1,15 +1,7 @@
 ﻿using MyBuyingList.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyBuyingList.Infrastructure.Auth.Constants;
+namespace MyBuyingList.Domain.Constants;
 
-//maybe this should be on the Domain project
 public static class Policies
 {
     public const string CreateUser = "CreateUser";

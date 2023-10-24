@@ -1,4 +1,4 @@
-﻿namespace MyBuyingList.Infrastructure.Auth.Constants;
+﻿namespace MyBuyingList.Infrastructure.Authentication.Constants;
 
 public static class CustomClaims
 {

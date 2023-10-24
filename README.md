@@ -117,7 +117,7 @@ In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-
 | Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
 | Routing							|  Yes	| Not customizing it. Adding after the ErrorHandlingMiddleware.  |
 | Endpoint							|  Yes	| This middleware is automatically added at the end of the pipeline as a terminal middleware. It's role is to register the endpoints that are going to be matched by the Routing, and when the endpoint is invoked it also is responsible for executing the _filter_ pipeline. For registering endpoint, we use MapControllers. |
-| Rate Limiter						|		| UseRateLimiter must be called after UseRouting when rate limiting endpoint specific APIs are used. For example, if the [EnableRateLimiting] attribute is used, UseRateLimiter must be called after UseRouting. When calling only global limiters, UseRateLimiter can be called before UseRouting. |
+| Rate Limiter						|		| Added a simple FixedWindowLimiter rate limiter just for the authentication endpoint. The middleware must be added after UseRouting on this case. |
 | Static Files						|  No	| Not using yet since we don't have static files. This middleware is used to short-circuit requests, and provides no Authorization checks (if wanted, check [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0)). |
 | Session							|	No	| Not being used while just an API. | 
 
@@ -143,8 +143,6 @@ Investigate further in the future:
 * Response compression & decompression
 * [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
 
-Rate Limiting, HostFiltering
-
 ## Backlog
 
 ### Before releasing
@@ -153,7 +151,6 @@ This list is orderned by priority.
 
 #### General
 
-* Review [middlewares](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-7.0#built-in-middleware) and configure as needed in the app. Left: Rate Limiting, Auths.
 * Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
@@ -231,7 +228,8 @@ Useful docs:
 
 ASP.NET Interesting topics:
 
-* Routing: [read](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-7.0) further about it. 
+* Routing: [read](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-7.0) further about it.
+* Rate limiting: investigate if need more complex rate limiting. 
 * Health checks.
 * Minimal APIs
 

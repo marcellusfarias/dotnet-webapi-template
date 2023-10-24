@@ -1,9 +1,7 @@
 ﻿using MyBuyingList.Domain.Entities;
-using System.Reflection;
 
-namespace MyBuyingList.Infrastructure.Auth.Constants;
+namespace MyBuyingList.Domain.Constants;
 
-//maybe this should be on the Domain project
 public static class Roles
 {
     public const string Administrator = "Administrator";

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Features.BuyingLists.DTOs;
 using MyBuyingList.Application.Features.BuyingLists.Services;
-using MyBuyingList.Infrastructure.Auth.AuthorizationHandlers;
-using MyBuyingList.Infrastructure.Auth.Constants;
+using MyBuyingList.Domain.Constants;
+using MyBuyingList.Web.Middlewares.Authorization;
 using NuGet.Protocol;
 using System.IdentityModel.Tokens.Jwt;
 
