@@ -147,6 +147,14 @@ Investigate further in the future:
 * Response compression & decompression
 * [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
 
+### Logging
+
+ASP.NET logging [documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0). There are four logging providers on the generic host: Console, Debug, EventSource and EventLog. We added only console for this API.
+
+Log configuration can be set on appsettings.{ENVIRONMENT}.json. Check a table for the [Microsoft logs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0#aspnet-core-and-ef-core-categories).
+
+For debugging in the future, one may also want to use [HttpLogging](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-logging/?view=aspnetcore-7.0).
+
 ## Backlog
 
 ### Before releasing
@@ -155,16 +163,9 @@ This list is orderned by priority.
 
 #### General
 
-* Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 * Pagination
 * Review controllers and TODOs
-
-#### Logging
-
-* Do proper logging. 
-* Change logging level according to environment. 
-* Create logger properly on startup.
 
 #### Security
 
@@ -195,6 +196,15 @@ This list is orderned by priority.
 #### Caching
 
 Output caching. Redis.
+
+#### API Documentation
+
+Add deeper level of details in the API documentation. Add sections like
+* Authentication
+* Rate Limits
+* [ProblemDetails](https://code-maze.com/using-the-problemdetails-class-in-asp-net-core-web-api/) 
+
+Read articles about how to create a great API documentation. [Example](https://swagger.io/blog/api-documentation/best-practices-in-api-documentation/).
 
 #### EFCore
 
@@ -243,7 +253,9 @@ ASP.NET Interesting topics:
 Other topics:
 * AOT: test and play with it, specially do a comparison on the Docker image footprint.
 * Benchmarks & Performance Tests.
+* Create logger properly on startup.
 * THINK about reusing validating rules in DTOs.
 * THINK: constants for string lengths.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
 * THINK: research how to resue (if possible?) Try Catch blocks. Specially for repository classes.
+* THINK: Good idea in the future to set eventIDs when logging?
