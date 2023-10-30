@@ -21,7 +21,7 @@ internal static class ConfigureServices
 
         // Rate limiter added just for the authentication endpoint
         services.Configure<CustomRateLimiterOptions>(configuration.GetSection("CustomRateLimiterOptions"));
-        services.AddRateLimiter(options => 
+        services.AddRateLimiter(options =>
         {
             options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>("Authentication");
         });

@@ -121,7 +121,7 @@ In .Net 7, there are many built-in [middlewares](https://learn.microsoft.com/en-
 | Hsts & Https Redirection			|  No	| Not being used. We simply don't listen on HTTP. |
 | Routing							|  Yes	| Not customizing it. Adding after the ErrorHandlingMiddleware.  |
 | Endpoint							|  Yes	| This middleware is automatically added at the end of the pipeline as a terminal middleware. It's role is to register the endpoints that are going to be matched by the Routing, and when the endpoint is invoked it also is responsible for executing the _filter_ pipeline. For registering endpoint, we use MapControllers. |
-| Rate Limiter						|	Yes	| Added a simple FixedWindowLimiter rate limiter just for the authentication endpoint. The middleware must be added after UseRouting on this case. |
+| Rate Limiter						|	Yes	| Added a simple FixedWindowLimiter rate limiter just for the authentication endpoint. The middleware must be added after UseRouting on this case. Currently no queuing, 1 request per 5 seconds. |
 | Static Files						|  No	| Not using yet since we don't have static files. This middleware is used to short-circuit requests, and provides no Authorization checks (if wanted, check [this](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-7.0)). |
 | Session							|	No	| Not being used while just an API. | 
 
@@ -155,7 +155,6 @@ This list is orderned by priority.
 
 #### General
 
-* Test rate limiting
 * Review API documentation.
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 * Pagination

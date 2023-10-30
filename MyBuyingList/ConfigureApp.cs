@@ -22,8 +22,7 @@ internal static class ConfigureApp
             await app.StopAsync();
         }
 
-        //if (isDevelopment)
-        //    app.AddDebuggingMiddlewareLogic();
+        //if (isDevelopment) app.AddDebuggingMiddlewareLogic();
 
         app.AddMiddlewares(isDevelopment);
 
