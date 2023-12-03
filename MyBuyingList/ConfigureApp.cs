@@ -41,6 +41,7 @@ internal static class ConfigureApp
     private static void AddMiddlewares(this WebApplication app, bool isDevelopment)
     {
         app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+        //app.UseHttpLogging();
         app.UseRouting();
         app.UseRateLimiter();
 

@@ -1,4 +1,5 @@
 ﻿using MyBuyingList.Application.Common.Exceptions;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Application.Features.Users.Mappers;
 
@@ -7,10 +8,11 @@ namespace MyBuyingList.Application.Features.Users.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-
-    public UserService(IUserRepository userRepository)
+    private readonly IPasswordEncryptionService _passwordEncryptionService;
+    public UserService(IUserRepository userRepository, IPasswordEncryptionService passwordEncryptionService)
     {
         _userRepository = userRepository;
+        _passwordEncryptionService = passwordEncryptionService;
     }
 
     public async Task<GetUserDto> GetUserAsync(int userId, CancellationToken token)
@@ -31,11 +33,11 @@ public class UserService : IUserService
         return getUserDtos;
     }
 
-    //TODO: perform validations. need to hash password before storing into DB.
     public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
     {
-        var user = userDto.ToUser(true);
-        
+        var user = userDto.ToUser(active: true);
+        user.Password = _passwordEncryptionService.HashPassword(userDto.Password); ;
+
         return await _userRepository.AddAsync(user, token);
     }
 
@@ -50,28 +52,30 @@ public class UserService : IUserService
         await _userRepository.EditAsync(user, token);
     }
 
-    //TODO: perform validations. need to do hashing to compare passwords.
     public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);
         if (user is null)
             throw new ResourceNotFoundException();
 
-        if (user.Password != oldPassword)
+        bool checkOldPassword = _passwordEncryptionService.VerifyPasswordsAreEqual(oldPassword, user.Password);
+        if (!checkOldPassword)
             throw new BusinessLogicException("Old password does not match current one.");
 
-        user.Password = newPassword;
+        user.Password = _passwordEncryptionService.HashPassword(newPassword);
 
         await _userRepository.EditAsync(user, token);
     }
 
-    // must perform validations
     public async Task DeleteAsync(int userId, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);
 
         if (user is null)
             throw new ResourceNotFoundException();
+
+        if (user.UserName.Equals("admin"))
+            throw new BusinessLogicException("Can't disable user admin.");
 
         await _userRepository.LogicalExclusionAsync(user, token);
     }

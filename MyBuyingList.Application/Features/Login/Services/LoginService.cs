@@ -9,26 +9,27 @@ public class LoginService : ILoginService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
-    public LoginService(IUserRepository userRepository, IJwtProvider jwtProvider)
+    private readonly IPasswordEncryptionService _passwordEncryptionService;
+
+    public LoginService(IUserRepository userRepository, IJwtProvider jwtProvider, IPasswordEncryptionService passwordEncryptionService)
     {
         _userRepository = userRepository;
         _jwtProvider = jwtProvider;
+        _passwordEncryptionService = passwordEncryptionService;
     }
 
     public async Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password, CancellationToken token)
     {
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            throw new AuthenticationException(new Exception("Empty username or password"), username);
+            throw new AuthenticationException(username, "Empty username or password.");
 
-        //should I create a repository method?
-        var users = await _userRepository.GetActiveUsersAsync(token);
-        User? user = users.Where(x => x.UserName == username).FirstOrDefault();
-        if (user == null)
-            throw new AuthenticationException(new Exception("Invalid credentials"), username);
+        User? user = await _userRepository.GetActiveUserByUsername(username, token);
+        if (user is null)
+            throw new AuthenticationException(username, "Invalid username or password.");
 
-        var unhashedPassword = user.Password; //TODO !
-        if (password != unhashedPassword)
-            throw new AuthenticationException(new Exception("Invalid credentials"), username);
+        bool verification = _passwordEncryptionService.VerifyPasswordsAreEqual(password, user.Password);
+        if (!verification)
+            throw new AuthenticationException(username, "Invalid username or password.");
 
         return await _jwtProvider.GenerateTokenAsync(user.Id, token);
     }

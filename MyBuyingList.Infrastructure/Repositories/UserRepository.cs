@@ -9,6 +9,29 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
 {
     public UserRepository(ApplicationDbContext context) : base(context) { }
 
+    public async Task<User?> GetActiveUserByUsername(string username, CancellationToken token)
+    {
+        try
+        {
+            //if you want to use Dapper for performance issues, see below
+            //_context.QueryAsync(ct, "SELECT * FROM users WHERE Active = 'true';");
+            var result = await _context.Set<User>()
+                .Where(x => x.Active && x.UserName.Equals(username, StringComparison.OrdinalIgnoreCase))
+                .AsNoTracking()
+                .FirstOrDefaultAsync(token);
+
+            return result;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new DatabaseException(ex);
+        }
+    }
+
     public async Task<IEnumerable<User>> GetActiveUsersAsync(CancellationToken token)
     {
         try

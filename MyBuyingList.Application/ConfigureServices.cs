@@ -6,6 +6,8 @@ using MyBuyingList.Application.Features.Login.Services;
 using MyBuyingList.Application.Features.Users.Services;
 using MyBuyingList.Application.Features.BuyingLists.Services;
 using MyBuyingList.Application.Features.Groups.Services;
+using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Application.Common.Services;
 
 namespace MyBuyingList.Application;
 
@@ -32,5 +34,6 @@ public static class ConfigureServices
         services.AddScoped<ILoginService, LoginService>();
         services.AddScoped<IBuyingListService, BuyingListService>();
         services.AddScoped<IGroupService, GroupService>();
+        services.AddTransient<IPasswordEncryptionService, PasswordEncryptionService>();
     }
 }

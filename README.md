@@ -1,4 +1,4 @@
-# Shared Buying List
+# Dotnet WebAPI Template
 
 This is a side project I created for practing .Net. The final goal for this project is to become a "template" for new projects. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
 
@@ -147,9 +147,9 @@ Investigate further in the future:
 * Response compression & decompression
 * [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
 
-### Logging
+### 12. Logging
 
-ASP.NET logging [documentation](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0). There are four logging providers on the generic host: Console, Debug, EventSource and EventLog. We added only console for this API.
+ASP.NET logging documentation [here](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0) and [here](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line). There are four logging providers on the generic host: Console, Debug, EventSource and EventLog. We added only console for this API.
 
 Log configuration can be set on appsettings.{ENVIRONMENT}.json. Check a table for the [Microsoft logs](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0#aspnet-core-and-ef-core-categories).
 
@@ -243,12 +243,13 @@ Useful docs:
 
 #### General (not priority orderned)
 
-ASP.NET Interesting topics:
+ASP.NET Interesting topics/can go deeper:
 
 * Routing: [read](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-7.0) further about it.
 * Rate limiting: investigate if need more complex rate limiting. 
 * Health checks.
 * Minimal APIs
+* Logging
 
 Other topics:
 * AOT: test and play with it, specially do a comparison on the Docker image footprint.

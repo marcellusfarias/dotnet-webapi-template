@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyBuyingList.Application.Common.Services;
 using MyBuyingList.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(p => p.Id).UseIdentityAlwaysColumn();
         builder.Property(p => p.UserName).HasMaxLength(256).IsRequired();
         builder.Property(p => p.Email).IsRequired().HasMaxLength(256);
-        builder.Property(p => p.Password).IsRequired().HasMaxLength(32);
+        builder.Property(p => p.Password).IsRequired().HasMaxLength(72);
         builder.Property(p => p.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(p => p.Active).IsRequired().HasDefaultValueSql("FALSE");
 
@@ -34,7 +35,8 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(bl => bl.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
 
+        PasswordEncryptionService passwordEncryptionService = new PasswordEncryptionService();
         builder.HasData(
-            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = "123", Active = true });
+            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = passwordEncryptionService.HashPassword("123"), Active = true });
     }
 }
