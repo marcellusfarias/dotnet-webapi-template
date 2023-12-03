@@ -24,9 +24,9 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers(CancellationToken token)
+    public async Task<IActionResult> GetAllUsers(CancellationToken token, [FromQuery] int page = 1)
     {
-        var users = await _userService.GetAllUsersAsync(token);
+        var users = await _userService.GetAllUsersAsync(page, token);
         return Ok(users);
     }
 

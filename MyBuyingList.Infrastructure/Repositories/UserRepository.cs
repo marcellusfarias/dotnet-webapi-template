@@ -16,7 +16,7 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
             //if you want to use Dapper for performance issues, see below
             //_context.QueryAsync(ct, "SELECT * FROM users WHERE Active = 'true';");
             var result = await _context.Set<User>()
-                .Where(x => x.Active && x.UserName.Equals(username, StringComparison.OrdinalIgnoreCase))
+                .Where(x => x.Active && x.UserName.Equals(username))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(token);
 

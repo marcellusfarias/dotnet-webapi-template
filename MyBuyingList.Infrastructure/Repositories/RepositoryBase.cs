@@ -10,6 +10,8 @@ namespace MyBuyingList.Infrastructure.Repositories;
 
 public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
+    private const int PAGE_SIZE = 50;
+
     public ApplicationDbContext _context { get; protected set; }
     protected RepositoryBase(ApplicationDbContext context)
     {
@@ -35,13 +37,17 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken = default(CancellationToken))
     {
         try
         {
-            var entities = await _context.Set<TEntity>()
+            var entities = await _context
+                .Set<TEntity>()
                 .AsNoTracking()
+                .Skip((page - 1) * PAGE_SIZE)
+                .Take(PAGE_SIZE)
                 .ToListAsync(cancellationToken);
+
             return entities;
         }
         catch(OperationCanceledException)

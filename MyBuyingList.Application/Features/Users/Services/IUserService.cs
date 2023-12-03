@@ -6,7 +6,7 @@ namespace MyBuyingList.Application.Features.Users.Services;
 public interface IUserService
 {
     Task<GetUserDto> GetUserAsync(int id, CancellationToken token);
-    Task<IEnumerable<GetUserDto>> GetAllUsersAsync(CancellationToken token);
+    Task<IEnumerable<GetUserDto>> GetAllUsersAsync(int page, CancellationToken token);
 
     /// <summary>
     /// Creates a new user asyncronously.

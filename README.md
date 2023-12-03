@@ -164,12 +164,10 @@ This list is orderned by priority.
 #### General
 
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
-* Pagination
 * Review controllers and TODOs
 
 #### Security
 
-* Store the user passwords using hash function + salt.
 * When moving into production, must set a secure HTTPS certificate.
 * TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
 
