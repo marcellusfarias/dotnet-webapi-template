@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyBuyingList.Domain.Constants;
 using MyBuyingList.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ internal class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.ToTable("groups");
 
         builder.Property(g => g.Id).UseIdentityAlwaysColumn();
-        builder.Property(g => g.GroupName).HasMaxLength(256).IsRequired();
+        builder.Property(g => g.GroupName).HasMaxLength(FieldLengths.GROUP_NAME_MAX_LENGTH).IsRequired();
         builder.Property(g => g.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(g => g.CreatedBy).IsRequired();
 

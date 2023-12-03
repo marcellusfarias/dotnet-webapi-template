@@ -1,6 +1,7 @@
 ﻿using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Features.BuyingLists.DTOs;
 using MyBuyingList.Application.Features.BuyingLists.Mappers;
+using MyBuyingList.Application.Features.Groups;
 using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Features.BuyingLists.Services;
@@ -8,10 +9,12 @@ namespace MyBuyingList.Application.Features.BuyingLists.Services;
 public class BuyingListService : IBuyingListService
 {
     private readonly IBuyingListRepository _buyingListRepository;
+    private readonly IGroupRepository _groupRepository;
 
-    public BuyingListService(IBuyingListRepository buyingListRepository)
+    public BuyingListService(IBuyingListRepository buyingListRepository, IGroupRepository groupRepository)
     {
         _buyingListRepository = buyingListRepository;
+        _groupRepository = groupRepository;
     }
 
     public async Task<GetBuyingListDto?> GetByIdAsync(int id, CancellationToken token)
@@ -24,15 +27,18 @@ public class BuyingListService : IBuyingListService
         return buyingList.ToGetBuyingListDto();
     }
 
-    //TODO: perform validations
     public async Task<int> CreateAsync(CreateBuyingListDto createBuyingListDto, int currentUserId, CancellationToken token)
     {
         var buyingList = createBuyingListDto.ToBuyingList(currentUserId, DateTime.Now);
 
+        var group = await _groupRepository.GetAsync(buyingList.GroupId, token);
+
+        if (group is null)
+            throw new BusinessLogicException("Cannot create buying list. Invalid group.");
+
         return await _buyingListRepository.AddAsync(buyingList, token);
     }
 
-    //TODO: perform validations
     public async Task ChangeNameAsync(UpdateBuyingListNameDto dto, CancellationToken token)
     {
         var buyingList = await _buyingListRepository.GetAsync(dto.Id, token);

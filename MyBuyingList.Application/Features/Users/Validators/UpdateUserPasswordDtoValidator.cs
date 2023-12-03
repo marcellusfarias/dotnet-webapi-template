@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MyBuyingList.Application.Common.Constants;
 using MyBuyingList.Application.Common.Helpers;
 using MyBuyingList.Application.Features.Users.DTOs;
 
@@ -9,7 +10,17 @@ public class UpdateUserPasswordDtoValidator : AbstractValidator<UpdateUserPasswo
     public UpdateUserPasswordDtoValidator()
     {
         RuleFor(x => x.Id).NotEmpty().GreaterThan(0);
-        RuleFor(x => x.OldPassword).NotEmpty().Must(PasswordHelper.IsValidPassword);
-        RuleFor(x => x.NewPassword).NotEmpty().Must(PasswordHelper.IsValidPassword);
+
+        RuleFor(x => x.OldPassword)
+            .NotEmpty()
+            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
+            .Must(PasswordHelper.IsValidPassword)
+            .WithMessage(ValidationMessages.INVALID_VALUE);
+
+        RuleFor(x => x.NewPassword)
+            .NotEmpty()
+            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
+            .Must(PasswordHelper.IsValidPassword)
+            .WithMessage(ValidationMessages.INVALID_VALUE);
     }
 }

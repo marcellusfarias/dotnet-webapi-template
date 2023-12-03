@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using MyBuyingList.Application.Common.Constants;
 using MyBuyingList.Application.Features.BuyingLists.DTOs;
+using MyBuyingList.Domain.Constants;
 
 namespace MyBuyingList.Application.Features.BuyingLists.Validators;
 
@@ -9,8 +11,8 @@ public class UpdateBuyingListNameValidator : AbstractValidator<UpdateBuyingListN
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Please specify a name.")
-            .MaximumLength(256)
-            .WithMessage("Name length shoulb be less or equal to 256.");
+            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
+            .MaximumLength(FieldLengths.BUYINGLIST_NAME_MAX_LENGTH)
+            .WithMessage(ValidationMessages.MAX_LENGTH_ERROR);
     }
 }

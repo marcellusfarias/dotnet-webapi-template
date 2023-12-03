@@ -16,7 +16,6 @@ internal static class ConfigureServices
         // Insert the AnalysisStartupFilter as the first IStartupFilter in the container
         //if (isDevelopment) services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
 
-        // Check for the best way for handling environments.... add this only if not production
         services.AddExternalServices(logger, configuration);
 
         // Rate limiter added just for the authentication endpoint

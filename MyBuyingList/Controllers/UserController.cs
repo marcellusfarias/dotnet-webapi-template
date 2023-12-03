@@ -18,7 +18,6 @@ public class UserController : ApiControllerBase
         _logger = logger;
     }
 
-    //TODO: pagination
     [HasPermission(Policies.GetAllUsers)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

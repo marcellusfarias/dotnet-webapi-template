@@ -18,7 +18,6 @@ public class BuyingListController : ApiControllerBase
         _logger = logger;
     }
 
-    //TODO: pagination
     [HasPermission(Policies.BuyingListGet)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

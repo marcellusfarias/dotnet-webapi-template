@@ -23,7 +23,6 @@ public class GroupService : IGroupService
         return group.ToGetGroupDto();
     }
 
-    //TODO: perform validations
     public async Task<int> CreateAsync(CreateGroupDto groupDto, int currentUserId, CancellationToken token)
     {
         var buyingList = groupDto.ToGroup(currentUserId, DateTime.Now);
@@ -31,7 +30,6 @@ public class GroupService : IGroupService
         return await _groupRepository.AddAsync(buyingList, token);
     }
 
-    //TODO: perform validations
     public async Task ChangeNameAsync(UpdateGroupNameDto dto, CancellationToken token)
     {
         var buyingList = await _groupRepository.GetAsync(dto.Id, token);

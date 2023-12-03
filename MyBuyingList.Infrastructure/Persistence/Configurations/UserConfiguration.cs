@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyBuyingList.Application.Common.Services;
+using MyBuyingList.Domain.Constants;
 using MyBuyingList.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyBuyingList.Infrastructure.Persistence.Configurations;
 
@@ -17,9 +13,9 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users");
 
         builder.Property(p => p.Id).UseIdentityAlwaysColumn();
-        builder.Property(p => p.UserName).HasMaxLength(256).IsRequired();
-        builder.Property(p => p.Email).IsRequired().HasMaxLength(256);
-        builder.Property(p => p.Password).IsRequired().HasMaxLength(72);
+        builder.Property(p => p.UserName).HasMaxLength(FieldLengths.USER_USERNAME_MAX_LENGTH).IsRequired();
+        builder.Property(p => p.Email).IsRequired().HasMaxLength(FieldLengths.USER_EMAIL_MAX_LENGTH);
+        builder.Property(p => p.Password).IsRequired().HasMaxLength(FieldLengths.USER_PASSWORD_MAX_LENGTH);
         builder.Property(p => p.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(p => p.Active).IsRequired().HasDefaultValueSql("FALSE");
 
@@ -35,8 +31,19 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(bl => bl.CreatedBy)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.ToTable(t => 
+            t.HasCheckConstraint("CHK_Username_MinLength", 
+            $"(length(user_name) >= {FieldLengths.USER_USERNAME_MIN_LENGTH})"));
+
         PasswordEncryptionService passwordEncryptionService = new PasswordEncryptionService();
         builder.HasData(
-            new User { Id = 1, UserName = "admin", Email = "marcelluscfarias@gmail.com", Password = passwordEncryptionService.HashPassword("123"), Active = true });
+            new User 
+            { 
+                Id = 1, 
+                UserName = "admin", 
+                Email = "marcelluscfarias@gmail.com", 
+                Password = "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe", 
+                Active = true 
+            });
     }
 }

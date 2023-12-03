@@ -18,7 +18,6 @@ public class GroupController : ApiControllerBase
         _logger = logger;
     }
 
-    //TODO: pagination
     [HasPermission(Policies.GroupGet)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
