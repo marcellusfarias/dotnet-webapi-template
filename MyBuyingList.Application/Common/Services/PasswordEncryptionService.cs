@@ -6,7 +6,7 @@ namespace MyBuyingList.Application.Common.Services;
 
 public class PasswordEncryptionService : IPasswordEncryptionService
 {
-    private const int _workingFactor = 16;
+    private const int _workingFactor = 12;
 
     public PasswordEncryptionService() { }
 

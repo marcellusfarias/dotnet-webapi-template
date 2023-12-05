@@ -6,36 +6,17 @@ using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
 using MyBuyingList.Application.Common.Exceptions;
 
-
 namespace MyBuyingList.Application.Tests.UnitTests;
 
 /// <summary>
-/// Casos de uso
-/// [OK] GetUserAsync:
-///     * UserID existe
-///     * UserID não existe
-/// [OK] GetAllUsersAsync:
-///     * Repositorio não tem usuário
-///     * Repositório tem até 1 página
+/// TODO para os de integracao
+/// GetAllUsersAsync:
 ///     [INTEGRATION] * Repositório tem mais de 1 página e retorna a 2
-/// [OK] CreateAsync:
-///     [OK] * Inseriu certinho.
+///  CreateAsync:
 ///     [INTEGRATION] Conferir valores (inclusive senha)
-/// ChangeActiveStatusAsync: 
-///     * UserID não existe
-///     * UserID existe
-/// ChangeUserPasswordAsync:
-///     * UserID não existe
-///     * UserID existe
-///     * Senhas não batem
-///     * Senhas batem
-/// DeleteAsync:
-///     * UserID não existe
-///     * UserID existe
-///     * Usuário diferente de admin
 /// 
-/// Testar operações canceladas?
-/// Testar exception no database?
+/// [INTEGRATION] Testar operações canceladas?
+/// [INTEGRATION] Testar exception no database?
 /// </summary>
 public class UserServiceTests
 {
@@ -168,33 +149,165 @@ public class UserServiceTests
 
     }
 
-    //[Theory]
-    //[MemberData(nameof(ValidDtos))]
-    //public void Update_ShouldHaveNoErrors_WhenDtoIsValid(User user, UserDto userDto)
-    //{
-    //    //Arrange
-    //    _userRepositoryMock
-    //        .Setup(x => x.Edit(user));
+    [Fact]
+    public async void ChangeActiveStatusAsync_ShouldReturnVoid_WhenSucceded()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;
+        bool activeStatus = !user.Active;
 
-    //    //Act
-    //    //_sut.Update(userDto);
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .Returns(user);
 
-    //    //// Assert
-    //    //_userRepositoryMock.Verify(r => r.Edit(It.IsAny<User>()), Times.Once);
-    //}
+        //Act
+        await _sut.ChangeActiveStatusAsync(userId, activeStatus, default);
 
-    //[Theory]
-    //[MemberData(nameof(ValidDtos))]
-    //public void Delete_ShouldHaveNoErrors_WhenDtoIsValid(User user, UserDto userDto)
-    //{
-    //    //Arrange
-    //    _userRepositoryMock
-    //        .Setup(x => x.Delete(user));
+        //Assert
+        #pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
+        _userRepositoryMock.Received(1).EditAsync(Arg.Any<User>(), default);
+        #pragma warning restore 4014
+    }
 
-    //    ////Act
-    //    //_sut.Delete(userDto);
+    [Fact]
+    public async void ChangeActiveStatusAsync_ShouldThrowException_WhenUserDoesNotExist()
+    {
+        //Arrange
+        int userId = _fixture.Create<int>();
 
-    //    //// Assert
-    //    //_userRepositoryMock.Verify(r => r.Delete(It.IsAny<User>()), Times.Once);
-    //}
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .ReturnsNull();
+
+        //Act
+        var act = async () => await _sut.ChangeActiveStatusAsync(userId, false, default);
+
+        //Assert
+        await act.Should().ThrowAsync<ResourceNotFoundException>();
+    }
+
+    [Fact]
+    public async void ChangeUserPasswordAsync_ShouldReturnVoid_WhenSucceded()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;                
+        string oldPassoword = "12345678";
+        string newPassword = _fixture.Create<string>();
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .Returns(user);
+
+        _passwordEncryptionService
+            .VerifyPasswordsAreEqual(oldPassoword, user.Password)
+            .Returns(true);
+
+        //Act
+        await _sut.ChangeUserPasswordAsync(userId, oldPassoword, newPassword, default);
+
+        //Assert
+#pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
+        _userRepositoryMock.Received(1).EditAsync(Arg.Any<User>(), default);
+#pragma warning restore 4014
+    }
+
+    [Fact]
+    public async void ChangeUserPasswordAsync_ShouldThrowBusinessLogicException_WhenPasswordsDontMatch()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;
+        string oldPassoword = "12345678";
+        string newPassword = _fixture.Create<string>();
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .Returns(user);
+
+        _passwordEncryptionService
+            .VerifyPasswordsAreEqual(oldPassoword, user.Password)
+            .Returns(false);
+
+        //Act
+        var act = async () => await _sut.ChangeUserPasswordAsync(userId, oldPassoword, newPassword, default);
+
+        //Assert
+        await act.Should().ThrowAsync<BusinessLogicException>();
+    }
+
+    [Fact]
+    public async void ChangeUserPasswordAsync_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .ReturnsNull();
+
+        //Act
+        var act = async () => await _sut.ChangeUserPasswordAsync(userId, "", "", default);
+
+        //Assert
+        await act.Should().ThrowAsync<ResourceNotFoundException>();
+    }
+
+    [Fact]
+    public async void DeleteAsync_ShouldReturnVoid_WhenSucceded()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .Returns(user);
+
+        //Act
+        await _sut.DeleteAsync(userId, default);
+
+        //Assert
+#pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
+        _userRepositoryMock.Received(1).LogicalExclusionAsync(Arg.Any<User>(), default);
+#pragma warning restore 4014
+    }
+
+    [Fact]
+    public async void DeleteAsync_ShouldThrowException_WhenUserDoesNotExist()
+    {
+        //Arrange
+        int userId = _fixture.Create<int>();
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .ReturnsNull();
+
+        //Act
+        var act = async () => await _sut.DeleteAsync(userId, default);
+
+        //Assert
+        await act.Should().ThrowAsync<ResourceNotFoundException>();
+    }
+
+    [Fact]
+    public async void DeleteAsync_ShouldThrowException_WhenUserIsAdmin()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        int userId = user.Id;
+        user.UserName = "admin";
+
+        _userRepositoryMock
+            .GetAsync(userId, default)
+            .Returns(user);
+
+        //Act
+        var act = async () => await _sut.DeleteAsync(userId, default);
+
+        //Assert
+        await act.Should().ThrowAsync<BusinessLogicException>();
+    }
 }
