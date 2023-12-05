@@ -1,128 +1,141 @@
-﻿using FluentAssertions;
-using MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Login.Services;
 using MyBuyingList.Application.Features.Users;
+using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Domain.Entities;
-using NSubstitute;
+using System.Net.Mail;
 
 namespace MyBuyingList.Application.Tests.UnitTests;
 
 public class LoginServiceTests
 {
     private LoginService _sut;
+    private IFixture _fixture;
     private readonly IUserRepository _userRepositoryMock = Substitute.For<IUserRepository>();
     private readonly IJwtProvider _jwtProviderMock = Substitute.For<IJwtProvider>();
     private readonly IPasswordEncryptionService _passwordEncryptionService = Substitute.For<IPasswordEncryptionService>();
     public LoginServiceTests()
     {
         _sut = new LoginService(_userRepositoryMock, _jwtProviderMock, _passwordEncryptionService);
+        _fixture = new Fixture();//.Customize(new AutoNSubstituteCustomization());
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+        _fixture.Customize<User>(c => c
+            .With(x =>
+                x.Email,
+                _fixture.Create<MailAddress>().Address));
+
+        _fixture.Customize<CreateUserDto>(c => c
+            .With(x =>
+                x.Email,
+                _fixture.Create<MailAddress>().Address));
     }
 
-    public static IEnumerable<User> MockerUsers =>
-        new List<User>()
-        {
-            new User()
-            {
-                Id = 1,
-                Email = "marcellus@hotmail.com",
-                UserName = "marcellus",
-                Password = "123",
-                CreatedAt = DateTime.Now,
-                Active = true,
-            },
-            new User()
-            {
-                Id =2,
-                Email = "raffael@hotmail.com",
-                UserName = "raffael",
-                Password = "321",
-                CreatedAt = DateTime.Now,
-                Active = true,
-            }
-        };
-
     [Fact]
-    public async void AuthenticateAndReturnJwtToken_ReturnsToken_WhenAuthenticationIsValid()
+    public async void AuthenticateAndReturnJwtToken_ShouldReturnToken_WhenAuthenticationIsValid()
     {
         //Arrange
-        var user = new User()
-        {
-            Id = 1,
-            Email = "marcellus@hotmail.com",
-            UserName = "marcellus",
-            Password = "123",
-            CreatedAt = DateTime.Now,
-            Active = true,
-        };
+        var user = _fixture.Create<User>();
+        var attemptingPassword = _fixture.Create<string>();
 
         _userRepositoryMock
-            .GetAllAsync(1, default)
-            .Returns(MockerUsers.ToList());
+            .GetActiveUserByUsername(user.UserName, default)
+            .Returns(user);
+
+        _passwordEncryptionService
+            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .Returns(true);
 
         _jwtProviderMock
             .GenerateTokenAsync(user.Id, default)
             .Returns("custom_token");
 
         //Act
-        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, user.Password, default);
+        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
 
         //Assert
         token.Should().BeEquivalentTo("custom_token");
     }
 
-    //[Fact]
-    //public async void AuthenticateAndReturnJwtToken_WhenUserDoesNotExist_ShouldThrowException()
-    //{
-    //    //Arrange
-    //    var user = new User()
-    //    {
-    //        Id = 3,
-    //        Email = "bob@hotmail.com",
-    //        UserName = "bob",
-    //        Password = "123",
-    //        CreatedAt = DateTime.Now,
-    //        Active = true,
-    //    };
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("", "12345678")]
+    [InlineData("username", "")]
+    public async void AuthenticateAndReturnJwtToken_ShouldThrowException_WhenMissingUsernameOrPassword(string username, string attemptingPassword)
+    {
+        //Arrange
 
-    //    _userRepositoryMock
-    //        .Setup(x => x.GetAllAsync().Result)
-    //        .Returns(MockerUsers);
+        //Act
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(username, attemptingPassword, default);
 
-    //    //Act
-    //    var action =  _sut.Invoking(x => _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, user.Password));
-        
-    //    // Assert
-    //    action.Should()
-    //        .Throw<AuthenticationException>()
-    //        .WithMessage("An error occured when authenticating user bob.");
-    //}
+        //Assert
+        await act.Should().ThrowAsync<AuthenticationException>();
+    }
 
-    //[Fact]
-    //public void AuthenticateAndReturnJwtToken_WhenWrongPassword_ShouldThrowException()
-    //{
-    //    //Arrange
-    //    var user = new User()
-    //    {
-    //        Id = 1,
-    //        Email = "marcellus@hotmail.com",
-    //        UserName = "marcellus",
-    //        Password = "wrong_password",
-    //        CreatedAt = DateTime.Now,
-    //        Active = true,
-    //    };
+    [Fact]
+    public async void AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenUserDoesNotExist()
+    {
+        //Arrange
+       var attemptingPassword = _fixture.Create<string>();
+       var attemptingUserName = _fixture.Create<string>();
 
-    //    _userRepositoryMock
-    //        .Setup(x => x.GetAllAsync().Result)
-    //        .Returns(MockerUsers);
+        _userRepositoryMock
+            .GetActiveUserByUsername(attemptingUserName, default)
+            .ReturnsNull();
 
-    //    //Act
-    //    var action = _sut.Invoking(x => _sut.AuthenticateAndReturnJwtToken(user.UserName, user.Password));
+        //Act
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(attemptingUserName, attemptingPassword, default);
 
-    //    //Assert
-    //    action.Should()
-    //       .Throw<AuthenticationException>()
-    //       .WithMessage("An error occured when authenticating user marcellus.");
+        //Assert
+        await act.Should().ThrowAsync<AuthenticationException>();
+    }
 
-    //}
+    [Fact]
+    public async void AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenPasswordsDontMatch()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        var attemptingPassword = _fixture.Create<string>();
+
+        _userRepositoryMock
+            .GetActiveUserByUsername(user.UserName, default)
+            .Returns(user);
+
+        _passwordEncryptionService
+            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .Returns(false);
+
+        //Act
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
+
+        //Assert
+        await act.Should().ThrowAsync<AuthenticationException>();
+    }
+
+    [Fact]
+    public async void AuthenticateAndReturnJwtToken_ShouldThrowException_WhenFailsToGenerateJwtToken()
+    {
+        //Arrange
+        var user = _fixture.Create<User>();
+        var attemptingPassword = _fixture.Create<string>();
+
+        _userRepositoryMock
+            .GetActiveUserByUsername(user.UserName, default)
+            .Returns(user);
+
+        _passwordEncryptionService
+            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .Returns(true);
+
+        _jwtProviderMock
+            .GenerateTokenAsync(user.Id, default)
+            .Throws(new DatabaseException(new Exception()));
+
+        //Act
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
+
+        //Assert
+        await act.Should().ThrowAsync<DatabaseException>();
+    }
 }
