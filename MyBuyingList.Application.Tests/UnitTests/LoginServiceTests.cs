@@ -1,21 +1,22 @@
 ﻿using FluentAssertions;
-using Moq;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Login.Services;
 using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Domain.Entities;
+using NSubstitute;
 
 namespace MyBuyingList.Application.Tests.UnitTests;
 
 public class LoginServiceTests
 {
     private LoginService _sut;
-    private readonly Mock<IUserRepository> _userRepositoryMock = new Mock<IUserRepository>();
-    private readonly Mock<IJwtProvider> _jwtProviderMock = new Mock<IJwtProvider>();
+    private readonly IUserRepository _userRepositoryMock = Substitute.For<IUserRepository>();
+    private readonly IJwtProvider _jwtProviderMock = Substitute.For<IJwtProvider>();
+    private readonly IPasswordEncryptionService _passwordEncryptionService = Substitute.For<IPasswordEncryptionService>();
     public LoginServiceTests()
     {
-        _sut = new LoginService(_userRepositoryMock.Object, _jwtProviderMock.Object);
+        _sut = new LoginService(_userRepositoryMock, _jwtProviderMock, _passwordEncryptionService);
     }
 
     public static IEnumerable<User> MockerUsers =>
@@ -56,11 +57,11 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .Setup(x => x.GetAllAsync(default).Result)
+            .GetAllAsync(1, default)
             .Returns(MockerUsers.ToList());
 
         _jwtProviderMock
-            .Setup(x => x.GenerateTokenAsync(user.Id, default).Result)
+            .GenerateTokenAsync(user.Id, default)
             .Returns("custom_token");
 
         //Act

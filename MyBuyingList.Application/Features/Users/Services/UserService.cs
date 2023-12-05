@@ -36,7 +36,7 @@ public class UserService : IUserService
     public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
     {
         var user = userDto.ToUser(active: true);
-        user.Password = _passwordEncryptionService.HashPassword(userDto.Password); ;
+        user.Password = _passwordEncryptionService.HashPassword(userDto.Password);
 
         return await _userRepository.AddAsync(user, token);
     }

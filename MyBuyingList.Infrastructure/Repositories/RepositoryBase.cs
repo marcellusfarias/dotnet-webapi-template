@@ -11,8 +11,7 @@ namespace MyBuyingList.Infrastructure.Repositories;
 public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
     private const int PAGE_SIZE = 50;
-
-    public ApplicationDbContext _context { get; protected set; }
+    protected ApplicationDbContext _context { get; set; }
     protected RepositoryBase(ApplicationDbContext context)
     {
         _context = context;

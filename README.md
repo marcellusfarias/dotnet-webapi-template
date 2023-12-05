@@ -161,12 +161,6 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 
 This list is orderned by priority.
 
-#### Security
-
-* When moving into production, must set a secure HTTPS certificate.
-* TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
-* Remove sensitive information from logging
-
 #### Unit tests
 
 * Write unit tests for services. 
@@ -178,6 +172,12 @@ This list is orderned by priority.
 * Will add integration testing. 
 * I'm willing to use TestContainers. 
 * Test EFCore.
+
+#### Security
+
+* When moving into production, must set a secure HTTPS certificate.
+* TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
+* Remove sensitive information from logging
 
 #### Docker & Hosting
 
@@ -251,7 +251,7 @@ Other topics:
 * Benchmarks & Performance Tests.
 * Create logger properly on startup.
 * THINK about reusing validating rules in DTOs.
-* THINK: constants for string lengths.
 * THINK: Should put testing project inside app project so I can make the classes internal instead of public?
 * THINK: research how to resue (if possible?) Try Catch blocks. Specially for repository classes.
 * THINK: Good idea in the future to set eventIDs when logging?
+* StringLength attribute on Domain classes?
