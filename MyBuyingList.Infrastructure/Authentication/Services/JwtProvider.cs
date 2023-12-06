@@ -10,7 +10,7 @@ using System.Text;
 
 namespace MyBuyingList.Infrastructure.Authentication.Services;
 
-internal class JwtProvider : IJwtProvider
+public class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
     private readonly IUserRepository _userRepository;
