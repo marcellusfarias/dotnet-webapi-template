@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B43C338-586
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EA8D2936-F3EE-431E-95C1-445BA153829A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Infrastructure.Tests", "..\MyBuyingList.Infrastructure.Tests\MyBuyingList.Infrastructure.Tests.csproj", "{A7261498-4A33-4B3E-AE59-637409B0A760}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Infrastructure.Tests", "MyBuyingList.Infrastructure.Tests\MyBuyingList.Infrastructure.Tests.csproj", "{A7261498-4A33-4B3E-AE59-637409B0A760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
