@@ -16,3 +16,7 @@ var app = builder.Build();
 await app.StartApplication();
 logger.LogInformation("Running app...");
 app.Run();
+
+// This class exists for the Integration Tests.
+// TODO: read and check if there is a better approach https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0
+public partial class Program { }

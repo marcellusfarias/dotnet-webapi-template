@@ -30,7 +30,7 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
 
     private bool ValidEmail(string email)
     {
-        Regex rxEmail = new Regex("/^[a-z0-9.]+@[a-z0-9]+\\.[a-z]+\\.([a-z]+)?$/i");
+        Regex rxEmail = new Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
         return rxEmail.IsMatch(email);
     }
 }

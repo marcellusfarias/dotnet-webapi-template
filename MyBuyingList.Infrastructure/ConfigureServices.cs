@@ -22,7 +22,7 @@ public static class ConfigureServices
         services.CreateDbContext(connectionString);
         services.AddRepositores();
 
-        services.AddJwtAuthentication();    
+        services.AddJwtAuthentication();
 
         return services;
     }
@@ -39,8 +39,12 @@ public static class ConfigureServices
     private static void CreateDbContext(this IServiceCollection services, string connectionString)
     {
         services.AddDbContext<ApplicationDbContext>(
-                options => options.UseNpgsql(connectionString)
-                .UseSnakeCaseNamingConvention()
+                options =>
+                {
+                    options
+                        .UseNpgsql(connectionString)
+                        .UseSnakeCaseNamingConvention();
+                }
             );
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddScoped<ApplicationDbContext>();
