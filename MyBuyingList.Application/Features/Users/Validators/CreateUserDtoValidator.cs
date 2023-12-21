@@ -12,24 +12,21 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
     public CreateUserDtoValidator()
     {
         RuleFor(x => x.Email)
-            .Must(ValidEmail)
-            .WithMessage(ValidationMessages.INVALID_VALUE)
+            .NotEmpty()
             .MaximumLength(FieldLengths.USER_EMAIL_MAX_LENGTH)
-            .WithMessage(ValidationMessages.MAX_LENGTH_ERROR);
+            .Must(ValidEmail)
+            .WithMessage(ValidationMessages.INVALID_EMAIL);            
 
         RuleFor(x => x.UserName)
             .NotEmpty()
-            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
             .MinimumLength(FieldLengths.USER_USERNAME_MIN_LENGTH)
-            .WithMessage(ValidationMessages.MIN_LENGTH_ERROR)
             .MaximumLength(FieldLengths.USER_USERNAME_MAX_LENGTH)
-            .WithMessage(ValidationMessages.MAX_LENGTH_ERROR)
             .Must(ValidUsername)
-            .WithMessage(ValidationMessages.INVALID_VALUE);
+            .WithMessage(ValidationMessages.INVALID_USERNAME);
 
         RuleFor(x => x.Password)
             .Must(PasswordHelper.IsValidPassword)
-            .WithMessage(ValidationMessages.INVALID_VALUE);
+            .WithMessage(ValidationMessages.INVALID_PASSWORD);
     }
 
     private bool ValidEmail(string email)

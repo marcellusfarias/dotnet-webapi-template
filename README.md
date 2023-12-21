@@ -247,6 +247,8 @@ Other topics:
 * THINK: research how to resue (if possible?) Try Catch blocks. Specially for repository classes.
 * THINK: Good idea in the future to set eventIDs when logging?
 * StringLength attribute on Domain classes?
+* Research how to change language of fluent validation.
+* Research if it's possible to use data annotations for string length
 
 Testing:
 * Research how to make current integration tests faster.
