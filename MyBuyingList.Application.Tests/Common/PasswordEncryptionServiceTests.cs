@@ -2,7 +2,7 @@
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Services;
 
-namespace MyBuyingList.Application.Tests.UnitTests;
+namespace MyBuyingList.Application.Tests.Common;
 
 public class PasswordEncryptionServiceTests
 {

@@ -6,7 +6,7 @@ using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
 using MyBuyingList.Application.Common.Exceptions;
 
-namespace MyBuyingList.Application.Tests.UnitTests;
+namespace MyBuyingList.Application.Tests.Features.Users;
 
 /// <summary>
 /// TODO para os de integracao
@@ -26,18 +26,18 @@ public class UserServiceTests
     private readonly IPasswordEncryptionService _passwordEncryptionService = Substitute.For<IPasswordEncryptionService>();
 
     private const int DEFAULT_PAGE = 1;
-    
+
     public UserServiceTests()
     {
         _sut = new UserService(_userRepositoryMock, _passwordEncryptionService);
         _fixture = new Fixture();//.Customize(new AutoNSubstituteCustomization());
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        
+
         _fixture.Customize<User>(c => c
             .With(x =>
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
-        
+
         _fixture.Customize<CreateUserDto>(c => c
             .With(x =>
                 x.Email,
@@ -93,18 +93,18 @@ public class UserServiceTests
 
         _userRepositoryMock
             .GetAsync(searchingUserId, default)
-            .Returns(user);        
+            .Returns(user);
 
         //Act
         var returnUser = await _sut.GetUserAsync(searchingUserId, default);
 
         //Assert
-        GetUserDto userDto2 = new GetUserDto() 
-        { 
-            Id = searchingUserId, 
-            UserName = user.UserName, 
-            Email = user.Email, 
-            Active = user.Active 
+        GetUserDto userDto2 = new GetUserDto()
+        {
+            Id = searchingUserId,
+            UserName = user.UserName,
+            Email = user.Email,
+            Active = user.Active
         };
 
         returnUser.Should().BeEquivalentTo(userDto2);
@@ -122,7 +122,7 @@ public class UserServiceTests
 
         //Act
         var act = async () => await _sut.GetUserAsync(randomId, default);
-        
+
         //Assert
         await act.Should().ThrowAsync<ResourceNotFoundException>();
     }
@@ -141,9 +141,9 @@ public class UserServiceTests
         var createdId = await _sut.CreateAsync(createUser, default);
 
         // Assert
-        #pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
+#pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
         _userRepositoryMock.Received(1).AddAsync(Arg.Any<User>(), default);
-        #pragma warning restore 4014
+#pragma warning restore 4014
 
         createdId.Should().Be(randomId);
 
@@ -165,9 +165,9 @@ public class UserServiceTests
         await _sut.ChangeActiveStatusAsync(userId, activeStatus, default);
 
         //Assert
-        #pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
+#pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
         _userRepositoryMock.Received(1).EditAsync(Arg.Any<User>(), default);
-        #pragma warning restore 4014
+#pragma warning restore 4014
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class UserServiceTests
     {
         //Arrange
         var user = _fixture.Create<User>();
-        int userId = user.Id;                
+        int userId = user.Id;
         string oldPassoword = "12345678";
         string newPassword = _fixture.Create<string>();
 

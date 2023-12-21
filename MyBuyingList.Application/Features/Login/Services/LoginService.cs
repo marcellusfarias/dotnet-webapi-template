@@ -20,8 +20,10 @@ public class LoginService : ILoginService
 
     public async Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password, CancellationToken token)
     {
+        username = username.ToLower();
+
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            throw new AuthenticationException(username, "Empty username or password.");
+            throw new AuthenticationException(username, "Empty username or password.");        
 
         User? user = await _userRepository.GetActiveUserByUsername(username, token);
         if (user is null)

@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using MyBuyingList.Application.Common.Helpers;
 
-namespace MyBuyingList.Application.Tests.UnitTests;
+namespace MyBuyingList.Application.Tests.Common;
 
 public class PasswordHelperTests
 {
@@ -24,7 +24,7 @@ public class PasswordHelperTests
     [Theory]
     [InlineData("password")]
     [InlineData("P@0^pas")] // doesnt have 8 chars min
-    [InlineData("")] 
+    [InlineData("")]
     [InlineData("Password123")] // no special character
     [InlineData("password123!")] // no upper case
     [InlineData("PASSWORD123!")] // no lower case

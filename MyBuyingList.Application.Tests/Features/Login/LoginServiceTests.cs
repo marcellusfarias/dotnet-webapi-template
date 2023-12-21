@@ -6,7 +6,7 @@ using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Domain.Entities;
 using System.Net.Mail;
 
-namespace MyBuyingList.Application.Tests.UnitTests;
+namespace MyBuyingList.Application.Tests.Features.Login;
 
 public class LoginServiceTests
 {
@@ -77,8 +77,8 @@ public class LoginServiceTests
     public async void AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenUserDoesNotExist()
     {
         //Arrange
-       var attemptingPassword = _fixture.Create<string>();
-       var attemptingUserName = _fixture.Create<string>();
+        var attemptingPassword = _fixture.Create<string>();
+        var attemptingUserName = _fixture.Create<string>();
 
         _userRepositoryMock
             .GetActiveUserByUsername(attemptingUserName, default)

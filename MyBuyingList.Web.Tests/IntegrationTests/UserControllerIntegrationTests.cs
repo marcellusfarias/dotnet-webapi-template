@@ -1,5 +1,4 @@
 using MyBuyingList.Application.Features.Users.DTOs;
-using MyBuyingList.Domain.Entities;
 using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -57,7 +56,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     [Fact]
     public async void CreateUserAsync_ShouldReturnCreated_WhenDtoIsGood()
     {
-        //Arrange
+        // Arrange
         var newUser = new CreateUserDto
         {
             Email = "newemail@gmail.com",
@@ -68,14 +67,17 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         var jsonBody = JsonSerializer.Serialize(newUser);
         var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-        //Act
+        // Act
         var token = await this.GetJwtToken();
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await _client.PostAsync("api/user", httpContent);
 
-        //Assert
+        // Assert
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+
+        var responseContent = await response.Content.ReadFromJsonAsync<CreateUserDto>();
+        responseContent.Should().BeEquivalentTo(newUser);
     }
 }

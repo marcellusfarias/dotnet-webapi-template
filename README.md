@@ -1,10 +1,8 @@
 # Dotnet WebAPI Template
 
-This is a side project I created for practing .Net. The final goal for this project is to become a "template" for new projects. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
+The final goal for this project is to become a template for new projects. It's inspired on Jason's clean architecture, but I'm adjusting how it's built doing some research and changing things based on my conclusions and preferences.
 
-Other than Asp.Net, we currently use Postgres, EFCore, Docker, Swagger, JWT, xUnit and FluentValidation.
-
-Current state: we currently have finished most of the basic functionalities: added/configured EFCore, Postgres, JWT, Swagger, FluentValidation and xUnit. Check the backlog for the next steps, but in a nutshell I am reviewing logs, API documentation and configuring Docker/environments properly. We will start adding a bunch of tests. Normally, I would do tests _*while*_ programming, but since I was having a lot of different perspectives while creating this (and this is also for practing) I decided to postpone the tests until I was sure about how I wanted to do things. After finishing it, I will consider it a MVP. 
+Other than Asp.Net, we currently use Postgres, EFCore, Docker, Swagger, JWT, xUnit, TestContainers, FluentValidation.
 
 ## Topics I've researched and conclusions
 
@@ -161,17 +159,11 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 
 This list is orderned by priority.
 
-#### Unit tests
+#### Tests
 
-* Write unit tests for services. 
+* Finish writing tests.
 * How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
-* Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
-
-#### Integration Testing
-
-* Will add integration testing. 
-* I'm willing to use TestContainers. 
-* Test EFCore.
+* On integration test, create a user for testing with admin rights separated from migrations.
 
 #### Security
 
@@ -255,3 +247,8 @@ Other topics:
 * THINK: research how to resue (if possible?) Try Catch blocks. Specially for repository classes.
 * THINK: Good idea in the future to set eventIDs when logging?
 * StringLength attribute on Domain classes?
+
+Testing:
+* Research how to make current integration tests faster.
+* Research if there is any specific EFCore feature that should be tested.
+* Research how to create E2E tests. Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
