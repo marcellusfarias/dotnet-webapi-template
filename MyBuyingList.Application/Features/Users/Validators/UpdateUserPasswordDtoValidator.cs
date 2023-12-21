@@ -9,18 +9,18 @@ public class UpdateUserPasswordDtoValidator : AbstractValidator<UpdateUserPasswo
 {
     public UpdateUserPasswordDtoValidator()
     {
-        RuleFor(x => x.Id).NotEmpty().GreaterThan(0);
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .GreaterThan(0);
 
         RuleFor(x => x.OldPassword)
             .NotEmpty()
-            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
             .Must(PasswordHelper.IsValidPassword)
-            .WithMessage(ValidationMessages.INVALID_VALUE);
+            .WithMessage(ValidationMessages.INVALID_PASSWORD);
 
         RuleFor(x => x.NewPassword)
             .NotEmpty()
-            .WithMessage(ValidationMessages.EMPTY_VALUE_ERROR)
             .Must(PasswordHelper.IsValidPassword)
-            .WithMessage(ValidationMessages.INVALID_VALUE);
+            .WithMessage(ValidationMessages.INVALID_PASSWORD);
     }
 }
