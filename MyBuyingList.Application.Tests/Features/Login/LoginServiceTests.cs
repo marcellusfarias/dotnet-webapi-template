@@ -37,6 +37,8 @@ public class LoginServiceTests
     {
         //Arrange
         var user = _fixture.Create<User>();
+        user.UserName = user.UserName.ToLower();
+
         var attemptingPassword = _fixture.Create<string>();
 
         _userRepositoryMock
@@ -118,6 +120,8 @@ public class LoginServiceTests
     {
         //Arrange
         var user = _fixture.Create<User>();
+        user.UserName = user.UserName.ToLower();
+
         var attemptingPassword = _fixture.Create<string>();
 
         _userRepositoryMock
