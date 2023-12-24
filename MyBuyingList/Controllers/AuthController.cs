@@ -14,7 +14,7 @@ public class AuthController : ApiControllerBase
     [EnableRateLimiting("Authentication")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [HttpGet]
+    [HttpGet, Produces("text/plain")]
     public async Task<IActionResult> Authenticate(string username, string password, CancellationToken token)
     {
         var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(username, password, token);

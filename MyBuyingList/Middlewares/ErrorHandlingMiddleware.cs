@@ -47,7 +47,7 @@ public class ErrorHandlingMiddleware
         }
 
         logger.LogError($"StatusCode: {code}");
-        logger.LogError($"Message: {errorModel}");
+        logger.LogError($"Error Model: {errorModel}");
         logger.LogError($"Exception: {exception}");
 
         context.Response.ContentType = "application/json";

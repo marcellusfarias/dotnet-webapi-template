@@ -252,7 +252,8 @@ Other topics:
 * StringLength attribute on Domain classes?
 * Research how to change language of fluent validation.
 * Research if it's possible to use data annotations for string length
-* Swagger: change from camelCase to PascalCase
+* Swagger: change from camelCase to PascalCase on the response objects
+* Swagger: routing change from PascalCase to lowercase
 
 Testing:
 * Research how to make current integration tests faster.
