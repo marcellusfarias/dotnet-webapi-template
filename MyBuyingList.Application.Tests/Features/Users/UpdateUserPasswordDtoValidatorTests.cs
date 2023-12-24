@@ -15,11 +15,10 @@ public class UpdateUserPasswordDtoValidatorTests
         _sut = new UpdateUserPasswordDtoValidator();
     }
 
-    private static UpdateUserPasswordDto CreateDto(int id, string oldPassword, string newPassword)
+    private static UpdateUserPasswordDto CreateDto(string oldPassword, string newPassword)
     {
         return new UpdateUserPasswordDto()
         {
-            Id = id,
             OldPassword = oldPassword,
             NewPassword = newPassword
         };
@@ -27,48 +26,33 @@ public class UpdateUserPasswordDtoValidatorTests
 
     public static IEnumerable<object[]> ValidDtos()
     {
-        // Testing id
-        yield return new object[] { CreateDto(1, VALID_PASSWORD, VALID_PASSWORD), };
-        yield return new object[] { CreateDto(99999999, VALID_PASSWORD, VALID_PASSWORD), };
+        yield return new object[] { CreateDto(VALID_PASSWORD, VALID_PASSWORD), };
     }
 
     public static IEnumerable<object[]> InvalidDtos()
     {
-        // Testing id
-        yield return new object[]
-        {
-            CreateDto(0, VALID_PASSWORD, VALID_PASSWORD),
-            FluentValidationHelper.GetNotEmptyFieldMessage("Id")
-        };
-
-        yield return new object[]
-        {
-            CreateDto(-1, VALID_PASSWORD, VALID_PASSWORD),
-            FluentValidationHelper.GetFieldGreaterThanMessage("Id", 0)
-        };
-
         // Testing passwords
         yield return new object[]
         {
-            CreateDto(1, "", VALID_PASSWORD),
+            CreateDto("", VALID_PASSWORD),
             FluentValidationHelper.GetNotEmptyFieldMessage("Old Password")
         };
 
         yield return new object[]
         {
-            CreateDto(1, VALID_PASSWORD, ""),
+            CreateDto(VALID_PASSWORD, ""),
             FluentValidationHelper.GetNotEmptyFieldMessage("New Password")
         };
 
         yield return new object[]
         {
-            CreateDto(1, "1234", VALID_PASSWORD),
+            CreateDto("1234", VALID_PASSWORD),
             ValidationMessages.INVALID_PASSWORD
         };
 
         yield return new object[]
         {
-            CreateDto(1, VALID_PASSWORD, "12345"),
+            CreateDto(VALID_PASSWORD, "12345"),
             ValidationMessages.INVALID_PASSWORD
         };
     }

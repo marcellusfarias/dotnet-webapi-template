@@ -21,27 +21,33 @@ public class UserController : ApiControllerBase
     [HasPermission(Policies.GetAllUsers)]
     [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers(
+        CancellationToken token,
+        [FromQuery] int page = 1)
+    {
+        _logger.LogInformation($"Starting request. Page = {page}");
+
+        var users = await _userService.GetAllUsersAsync(page, token);
+        return Ok(users);
+    }
+
+    [HasPermission(Policies.GetUser)]
+    [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpGet("{id}")]
-    [HttpGet]
-    public async Task<IActionResult> GetAllUsers(
-        CancellationToken token, 
-        int? id = null, 
+    public async Task<IActionResult> GetUserById(
+        CancellationToken token,
+        int id,
         [FromQuery] int page = 1)
     {
         _logger.LogInformation($"Starting request. Id = {id}, Page = {page}");
 
-        if (id is not null)
-        {
-            var user = await _userService.GetUserAsync((int)id, token);
-            return Ok(new List<GetUserDto>() { user });
-        }
-        else
-        {
-            var users = await _userService.GetAllUsersAsync(page, token);
-            return Ok(users);
-        }
+        var user = await _userService.GetUserAsync((int)id, token);
+        return Ok(new List<GetUserDto>() { user });
     }
 
     [HasPermission(Policies.CreateUser)]
@@ -51,7 +57,7 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<IActionResult> Create(
-        CreateUserDto createUserDto, 
+        CreateUserDto createUserDto,
         CancellationToken token)
     {
         await _userService.CreateAsync(createUserDto, token);
@@ -63,10 +69,10 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    [HttpPut("{id}/ChangeActiveStatus")]
+    [HttpPut("{id}/status")]
     public async Task<IActionResult> ChangeActiveStatus(
-        [FromRoute] int id, 
-        bool activeStatus, 
+        [FromRoute] int id,
+        bool activeStatus,
         CancellationToken token)
     {
         await _userService.ChangeActiveStatusAsync(id, activeStatus, token);
@@ -80,12 +86,13 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    [HttpPut("ChangePassword")]
+    [HttpPut("{id}/password")]
     public async Task<IActionResult> ChangePassword(
+        [FromRoute] int id,
         UpdateUserPasswordDto updateUserPasswordDto,
         CancellationToken token)
     {
-        await _userService.ChangeUserPasswordAsync(updateUserPasswordDto.Id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
+        await _userService.ChangeUserPasswordAsync(id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
         return NoContent();
     }
 
@@ -96,7 +103,7 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(
-        [FromRoute] int id, 
+        [FromRoute] int id,
         CancellationToken token)
     {
         await _userService.DeleteAsync(id, token);

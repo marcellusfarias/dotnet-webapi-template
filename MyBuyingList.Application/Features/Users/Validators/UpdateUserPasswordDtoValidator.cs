@@ -9,10 +9,6 @@ public class UpdateUserPasswordDtoValidator : AbstractValidator<UpdateUserPasswo
 {
     public UpdateUserPasswordDtoValidator()
     {
-        RuleFor(x => x.Id)
-            .NotEmpty()
-            .GreaterThan(0);
-
         RuleFor(x => x.OldPassword)
             .NotEmpty()
             .Must(PasswordHelper.IsValidPassword)
