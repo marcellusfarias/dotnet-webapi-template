@@ -8,6 +8,7 @@ public static class Policies
     public const string UpdateUser = "UpdateUser";
     public const string DeleteUser = "DeleteUser";
     public const string GetAllUsers = "GetAllUsers";
+    public const string GetUser = "GetUser";
 
     public const string BuyingListGet = "BuyingListGet";
     public const string BuyingListCreate = "BuyingListCreate";
@@ -28,14 +29,15 @@ public static class Policies
             {2, UpdateUser},
             {3, DeleteUser},
             {4, GetAllUsers},
-            {5, BuyingListGet},
-            {6, BuyingListCreate},
-            {7, BuyingListUpdate},
-            {8, BuyingListDelete},
-            {9, GroupGet},
-            {10, GroupCreate},
-            {11, GroupUpdate},
-            {12, GroupDelete},
+            {5, GetUser},
+            {6, BuyingListGet},
+            {7, BuyingListCreate},
+            {8, BuyingListUpdate},
+            {9, BuyingListDelete},
+            {10, GroupGet},
+            {11, GroupCreate},
+            {12, GroupUpdate},
+            {13, GroupDelete},
             #endregion
         };
 

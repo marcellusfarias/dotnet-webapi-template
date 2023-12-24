@@ -159,6 +159,9 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 
 This list is orderned by priority.
 
+Remove BuyingList, BuyingListItems and Groups from template.
+Reset migrations
+
 #### Tests
 
 * Finish writing tests.
@@ -249,6 +252,7 @@ Other topics:
 * StringLength attribute on Domain classes?
 * Research how to change language of fluent validation.
 * Research if it's possible to use data annotations for string length
+* Swagger: change from camelCase to PascalCase
 
 Testing:
 * Research how to make current integration tests faster.

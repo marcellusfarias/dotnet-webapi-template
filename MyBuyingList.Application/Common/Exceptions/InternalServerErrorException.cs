@@ -1,14 +1,17 @@
-﻿namespace MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Web;
+using System.Net;
 
-// Use this exception when an unexpected error happened.
-public class InternalServerErrorException : Exception, ICustomHttpException
+namespace MyBuyingList.Application.Common.Exceptions;
+
+public class InternalServerErrorException : Exception, IFormattedResponseException
 {
-    private static string defaultErrorMessage = "{0}";
-    private string _httpResponseMessage;
-    public int HttpResponseCode => 500; //Internal Server Error
-    public string HttpResponseMessage => _httpResponseMessage;
-    public InternalServerErrorException(Exception inner, string message) : base(string.Format(defaultErrorMessage, inner.Message), inner)
+    private readonly static string _responseTitle = "An unexpected error occured.";
+    
+    public int StatusCode => (int)HttpStatusCode.InternalServerError;
+    public ErrorModel Error { get; private set; }
+    
+    public InternalServerErrorException(Exception inner, string details) : base(_responseTitle, inner)
     {
-        _httpResponseMessage = string.Format(defaultErrorMessage, message);
+        Error = ErrorModel.CreateSingleErrorDetailsModel(_responseTitle, details);
     }
 }

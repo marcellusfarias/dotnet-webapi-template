@@ -15,7 +15,7 @@ public class ErrorHandlingMiddleware
         _logger = loggerFactory.CreateLogger<ErrorHandlingMiddleware>();
     }
 
-    public async Task Invoke(HttpContext context /* other dependencies */)
+    public async Task Invoke(HttpContext context)
     {
         try
         {
@@ -34,25 +34,34 @@ public class ErrorHandlingMiddleware
             logger.LogInformation("Aborting request because it was cancelled");
             context.Abort();
             return Task.CompletedTask;
-        }           
-
-        int code = (int) HttpStatusCode.InternalServerError; // 500 if unhandled
-        string message = exception.Message;
-        string contentType = "application/json";
-
-        var customException = exception as ICustomHttpException;
-        if (customException is not null)
-        {
-            message = customException.HttpResponseMessage;
-            code = customException.HttpResponseCode;
         }
 
-        logger.LogError(message);
-        logger.LogError(exception.ToString());
+        int code = (int)HttpStatusCode.InternalServerError;
+        ErrorModel? errorModel = null;
 
-        context.Response.ContentType = contentType;
+        var formattedException = exception as IFormattedResponseException;
+        if (formattedException is not null)
+        {
+            code = formattedException.StatusCode;
+            errorModel = formattedException.Error;
+        }
+
+        logger.LogError($"StatusCode: {code}");
+        logger.LogError($"Message: {errorModel}");
+        logger.LogError($"Exception: {exception}");
+
+        context.Response.ContentType = "application/json";
         context.Response.StatusCode = code;
-        var result = JsonConvert.SerializeObject(new { error = message });
-        return context.Response.WriteAsync(result);
+
+        if (errorModel is not null)
+        {
+            var result = JsonConvert.SerializeObject(errorModel);
+
+            return context.Response.WriteAsync(result);
+        }
+        else
+        {
+            return Task.CompletedTask;
+        }
     }
 }

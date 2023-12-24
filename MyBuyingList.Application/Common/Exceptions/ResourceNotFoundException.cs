@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyBuyingList.Web;
+using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 
-public class ResourceNotFoundException : Exception, ICustomHttpException
+public class ResourceNotFoundException : Exception, IFormattedResponseException
 {
-    private static string defaultErrorMessage = "Resource not found.";
-    public int HttpResponseCode => 404; // Not found
-    public string HttpResponseMessage => defaultErrorMessage;
-    public ResourceNotFoundException() : base(defaultErrorMessage) { }    
+    public int StatusCode => (int)HttpStatusCode.NotFound;
+    public ErrorModel? Error => null;
+    public ResourceNotFoundException() : base() { }    
 }

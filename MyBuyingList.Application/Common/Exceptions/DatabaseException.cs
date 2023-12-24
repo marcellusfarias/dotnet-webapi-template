@@ -1,14 +1,17 @@
-﻿namespace MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Web;
+using System.Net;
 
-//should this kind of exception be on Domain or Application layer?
-public class DatabaseException : Exception, ICustomHttpException
+namespace MyBuyingList.Application.Common.Exceptions;
+
+public class DatabaseException : Exception, IFormattedResponseException
 {
-    private static string defaultErrorMessage = "An database operation error occured. Message: {0}";
-    private string _httpResponseMessage;
-    public int HttpResponseCode => 500; //Internal Server Error
-    public string HttpResponseMessage => _httpResponseMessage;
-    public DatabaseException(Exception inner) : base(string.Format(defaultErrorMessage, inner.Message), inner)
-    { 
-        _httpResponseMessage = string.Format(defaultErrorMessage, inner.Message); 
+    private readonly static string _responseTitle = "An database operation error occured.";
+    
+    public int StatusCode => (int)HttpStatusCode.InternalServerError;
+    public ErrorModel Error { get; private set; }
+
+    public DatabaseException(Exception inner) : base(string.Format(_responseTitle), inner)
+    {
+        Error = ErrorModel.CreateSingleErrorDetailsModel(_responseTitle, "Please, contact administrator");
     }
 }

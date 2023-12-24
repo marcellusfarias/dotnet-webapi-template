@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using MyBuyingList.Application.Common.Exceptions;
 using Newtonsoft.Json;
 
 namespace MyBuyingList.Web.Filters;
@@ -30,7 +30,7 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
         try
         {
             Type? modelType = context.ActionDescriptor.Parameters
-            .FirstOrDefault(p => p.BindingInfo?.BindingSource == BindingSource.Body && p.ParameterType.IsClass)?.ParameterType;
+                .FirstOrDefault(p => p.BindingInfo?.BindingSource == BindingSource.Body && p.ParameterType.IsClass)?.ParameterType;
 
             if (modelType is not null)
             {
@@ -44,8 +44,7 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
 
                     if (!httpRequestBody.CanSeek)
                     {
-                        LogAndReturnError(context, "Cannot seek request body.");
-                        return;
+                        throw new Exception("Cannot seek request body.");
                     }
 
                     httpRequestBody.Seek(0, SeekOrigin.Begin); // Rewind the stream
@@ -65,33 +64,22 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
                         var validationResult = await validationResultTask;
                         if (!validationResult.IsValid)
                         {
-                            var validationErrors = string.Join(", ", validationResult.Errors);
-                            context.Result = new BadRequestObjectResult(validationErrors); //context.Result = new BadRequestObjectResult(validationResult.Errors);
-                            return;
+                            throw new BadRequestException(validationResult);
                         }
                     }
                 }
             }
         }
+        catch(BadRequestException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
-            LogAndReturnError(context, ex.Message);
-            return;
+            _logger.LogError($"Unexpected error while validating user input. Ex: {ex.Message}");
+            throw new InternalServerErrorException(ex, "Error while validating user input.");
         }
 
         await next();
-    }
-
-    private void LogAndReturnError(ActionExecutingContext context, string message)
-    {
-        _logger.LogError($"Unexpected error while validating user input. Ex: {message}");
-
-        var errorResponse = new ContentResult
-        {
-            StatusCode = 500,
-            Content = "An error happened while validating user input.",
-            ContentType = "text/plain",
-        };
-        context.Result = errorResponse;
     }
 }

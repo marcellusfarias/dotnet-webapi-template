@@ -18,7 +18,7 @@ public class PasswordEncryptionService : IPasswordEncryptionService
         }
         catch (Exception ex)
         {
-            throw new InternalServerErrorException(ex, "Unexpected failure while creating password. Please, contact administrator.");
+            throw new InternalServerErrorException(ex, "Failure while creating password. Please, contact administrator.");
         }
         
     }
@@ -31,7 +31,7 @@ public class PasswordEncryptionService : IPasswordEncryptionService
         }
         catch (Exception ex)
         {
-            throw new InternalServerErrorException(ex, "Unexpected failure while validating passwords. Please, contact administrator.");
+            throw new InternalServerErrorException(ex, "Failure while validating passwords. Please, contact administrator.");
         }
     }
 }

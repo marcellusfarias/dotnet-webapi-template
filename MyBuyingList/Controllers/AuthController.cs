@@ -12,8 +12,8 @@ public class AuthController : ApiControllerBase
     }
 
     [EnableRateLimiting("Authentication")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [HttpGet]
     public async Task<IActionResult> Authenticate(string username, string password, CancellationToken token)
     {

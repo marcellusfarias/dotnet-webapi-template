@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyBuyingList.Web;
+using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 
-// generic one. Think about this in the future.
-public  class BusinessLogicException : Exception, ICustomHttpException
+public  class BusinessLogicException : Exception, IFormattedResponseException
 {
-    private static string defaultErrorMessage = "An error occured while processing the request. Message: {0}";
-    private string _httpResponseMessage;
-    public int HttpResponseCode => 422; //UnprocessableEntity
-    public string HttpResponseMessage => _httpResponseMessage;
-    public BusinessLogicException(string message) : base(string.Format(defaultErrorMessage, message)) { _httpResponseMessage = string.Format(defaultErrorMessage, message); }
+    private readonly static string _responseTitle = "An error occured while processing the request.";
+    public int StatusCode => (int)HttpStatusCode.UnprocessableEntity;
+    public ErrorModel Error { get; private set; }
+    public BusinessLogicException(string details) : base(_responseTitle) 
+    {
+        Error = ErrorModel.CreateSingleErrorDetailsModel(_responseTitle, details);
+    }
 }

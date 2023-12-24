@@ -8,16 +8,6 @@ using MyBuyingList.Application.Common.Exceptions;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
-/// <summary>
-/// TODO para os de integracao
-/// GetAllUsersAsync:
-///     [INTEGRATION] * Repositório tem mais de 1 página e retorna a 2
-///  CreateAsync:
-///     [INTEGRATION] Conferir valores (inclusive senha)
-/// 
-/// [INTEGRATION] Testar operações canceladas?
-/// [INTEGRATION] Testar exception no database?
-/// </summary>
 public class UserServiceTests
 {
     private UserService _sut;

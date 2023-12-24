@@ -1,13 +1,15 @@
-﻿namespace MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Web;
+using System.Net;
 
-public class AuthenticationException : Exception, ICustomHttpException
+namespace MyBuyingList.Application.Common.Exceptions;
+
+public class AuthenticationException : Exception, IFormattedResponseException
 {
-    private static string defaultErrorMessage = "An error occured when authenticating user {0}. {1}";
-    private string _httpResponseMessage;
-    public int HttpResponseCode => 401; //Unauthorized
-    public string HttpResponseMessage => _httpResponseMessage;
-    public AuthenticationException(string username, string message) : base(string.Format(defaultErrorMessage, username, message))
+    private readonly static string _responseTitle = "An error occured when authenticating user {0}.";
+    public int StatusCode => (int)HttpStatusCode.Unauthorized;
+    public ErrorModel Error {  get; private set; }
+    public AuthenticationException(string username, string details) : base(string.Format(_responseTitle, username))
     {
-        _httpResponseMessage = string.Format(defaultErrorMessage, username, message);
-    }    
+        Error = ErrorModel.CreateSingleErrorDetailsModel(string.Format(_responseTitle, username), details);
+    }
 }

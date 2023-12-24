@@ -19,61 +19,85 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.GetAllUsers)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [HttpGet("{id}")]
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers(CancellationToken token, [FromQuery] int page = 1)
+    public async Task<IActionResult> GetAllUsers(
+        CancellationToken token, 
+        int? id = null, 
+        [FromQuery] int page = 1)
     {
-        var users = await _userService.GetAllUsersAsync(page, token);
-        return Ok(users);
+        _logger.LogInformation($"Starting request. Id = {id}, Page = {page}");
+
+        if (id is not null)
+        {
+            var user = await _userService.GetUserAsync((int)id, token);
+            return Ok(new List<GetUserDto>() { user });
+        }
+        else
+        {
+            var users = await _userService.GetAllUsersAsync(page, token);
+            return Ok(users);
+        }
     }
 
     [HasPermission(Policies.CreateUser)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> Create(CreateUserDto createUserDto, CancellationToken token)
+    public async Task<IActionResult> Create(
+        CreateUserDto createUserDto, 
+        CancellationToken token)
     {
         await _userService.CreateAsync(createUserDto, token);
         return new ObjectResult(createUserDto) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HasPermission(Policies.UpdateUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpPut("ChangeActiveStatus")]
-    public async Task<IActionResult> ChangeActiveStatus(int userId, bool activeStatus, CancellationToken token)
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [HttpPut("{id}/ChangeActiveStatus")]
+    public async Task<IActionResult> ChangeActiveStatus(
+        [FromRoute] int id, 
+        bool activeStatus, 
+        CancellationToken token)
     {
-        await _userService.ChangeActiveStatusAsync(userId, activeStatus, token);
+        await _userService.ChangeActiveStatusAsync(id, activeStatus, token);
         return NoContent();
     }
 
     [HasPermission(Policies.UpdateUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpPut("ChangePassword")]
-    public async Task<IActionResult> ChangePassword(UpdateUserPasswordDto updateUserPasswordDto, CancellationToken token)
+    public async Task<IActionResult> ChangePassword(
+        UpdateUserPasswordDto updateUserPasswordDto,
+        CancellationToken token)
     {
         await _userService.ChangeUserPasswordAsync(updateUserPasswordDto.Id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
         return NoContent();
     }
 
     [HasPermission(Policies.DeleteUser)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpDelete]
-    public async Task<IActionResult> Delete(int id, CancellationToken token)
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(
+        [FromRoute] int id, 
+        CancellationToken token)
     {
         await _userService.DeleteAsync(id, token);
         return NoContent();
