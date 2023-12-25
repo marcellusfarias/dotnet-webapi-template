@@ -22,14 +22,6 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(p => p.Id).HasName("PK_users_id");
         builder.HasIndex(p => p.Email).IsUnique(true);
         builder.HasIndex(p => p.UserName).IsUnique(true);
-        builder.HasMany(p => p.GroupsCreatedBy)
-            .WithOne(g => g.User)
-            .HasForeignKey(g => g.CreatedBy)
-            .OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.BuyingListCreatedBy)
-            .WithOne(bl => bl.UserCreated)
-            .HasForeignKey(bl => bl.CreatedBy)
-            .OnDelete(DeleteBehavior.Restrict);
 
         builder.ToTable(t => 
             t.HasCheckConstraint("CHK_Username_MinLength", 

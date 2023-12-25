@@ -159,9 +159,8 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 
 This list is orderned by priority.
 
-Remove BuyingList, BuyingListItems and Groups from template.
-Reset migrations
 Review TODOs
+Updgrade to .Net 8 
 
 #### Tests
 
@@ -257,6 +256,7 @@ Other topics:
 * Swagger: routing change from PascalCase to lowercase
 
 Testing:
-* Research how to make current integration tests faster.
 * Research if there is any specific EFCore feature that should be tested.
 * Research how to create E2E tests. Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
+* Research how to simulate a DatabaseException on IntegrationTests.
+* Research how to simulate a cancellation on IntegrationTests.

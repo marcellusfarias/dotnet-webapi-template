@@ -7,8 +7,6 @@ using MyBuyingList.Infrastructure.Repositories;
 using MyBuyingList.Infrastructure.Authentication.JwtSetup;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Infrastructure.Authentication.Services;
-using MyBuyingList.Application.Features.BuyingLists;
-using MyBuyingList.Application.Features.Groups;
 using MyBuyingList.Application.Features.Users;
 
 
@@ -53,8 +51,6 @@ public static class ConfigureServices
     private static void AddRepositores(this IServiceCollection services)
     {
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IBuyingListRepository, BuyingListRepository>();
-        services.AddScoped<IGroupRepository, GroupRepository>();
     }
 
     private static string GetConnectionString(IConfiguration configuration, ILogger logger)

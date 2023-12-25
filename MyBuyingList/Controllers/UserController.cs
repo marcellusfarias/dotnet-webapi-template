@@ -18,7 +18,7 @@ public class UserController : ApiControllerBase
         _logger = logger;
     }
 
-    [HasPermission(Policies.GetAllUsers)]
+    [HasPermission(Policies.UserGetAll)]
     [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -33,12 +33,12 @@ public class UserController : ApiControllerBase
         return Ok(users);
     }
 
-    [HasPermission(Policies.GetUser)]
+    [HasPermission(Policies.UserGet)]
     [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-    [HttpGet("~/api/user/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(
         [FromRoute] int id,
         CancellationToken token)
@@ -50,7 +50,7 @@ public class UserController : ApiControllerBase
     }
 
     // TODO: change return to GetUserDto
-    [HasPermission(Policies.CreateUser)]
+    [HasPermission(Policies.UserCreate)]
     [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -64,7 +64,7 @@ public class UserController : ApiControllerBase
         return new ObjectResult(createUserDto) { StatusCode = StatusCodes.Status201Created };
     }
 
-    [HasPermission(Policies.UpdateUser)]
+    [HasPermission(Policies.UserUpdate)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
@@ -81,7 +81,7 @@ public class UserController : ApiControllerBase
         return NoContent();
     }
 
-    [HasPermission(Policies.DeleteUser)]
+    [HasPermission(Policies.UserDelete)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]

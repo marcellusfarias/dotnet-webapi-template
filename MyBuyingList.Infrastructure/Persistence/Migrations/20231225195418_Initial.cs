@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace MyBuyingList.Infrastructure.Migrations
+namespace MyBuyingList.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_Roles_and_Policies : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +19,7 @@ namespace MyBuyingList.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
@@ -31,7 +32,7 @@ namespace MyBuyingList.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
@@ -40,11 +41,29 @@ namespace MyBuyingList.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
+                    user_name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    password = table.Column<string>(type: "character varying(72)", maxLength: 72, nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
+                    active = table.Column<bool>(type: "boolean", nullable: false, defaultValueSql: "FALSE")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users_id", x => x.id);
+                    table.CheckConstraint("CHK_Username_MinLength", "(length(user_name) >= 3)");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "role_policies",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     role_id = table.Column<int>(type: "integer", nullable: false),
                     policy_id = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -71,7 +90,7 @@ namespace MyBuyingList.Infrastructure.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     role_id = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -98,22 +117,43 @@ namespace MyBuyingList.Infrastructure.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1, "CreateUser" },
-                    { 2, "UpdateUser" },
-                    { 3, "DeleteUser" }
+                    { 1, "UserCreate" },
+                    { 2, "UserUpdate" },
+                    { 3, "UserDelete" },
+                    { 4, "UserGetAll" },
+                    { 5, "UserGet" }
                 });
 
             migrationBuilder.InsertData(
                 table: "roles",
                 columns: new[] { "id", "name" },
-                values: new object[] { 1, "Administrator" });
+                values: new object[,]
+                {
+                    { 1, "Administrator" },
+                    { 2, "RegularUser" }
+                });
 
-            migrationBuilder.UpdateData(
+            migrationBuilder.InsertData(
                 table: "users",
-                keyColumn: "id",
-                keyValue: 1,
-                column: "active",
-                value: true);
+                columns: new[] { "id", "active", "email", "password", "user_name" },
+                values: new object[] { 1, true, "marcelluscfarias@gmail.com", "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe", "admin" });
+
+            migrationBuilder.InsertData(
+                table: "role_policies",
+                columns: new[] { "id", "policy_id", "role_id" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 2, 1 },
+                    { 3, 3, 1 },
+                    { 4, 4, 1 },
+                    { 5, 5, 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "user_roles",
+                columns: new[] { "id", "role_id", "user_id" },
+                values: new object[] { 1, 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "ix_policies_name",
@@ -136,6 +176,18 @@ namespace MyBuyingList.Infrastructure.Migrations
                 name: "ix_user_roles_user_id",
                 table: "user_roles",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_email",
+                table: "users",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_users_user_name",
+                table: "users",
+                column: "user_name",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -153,12 +205,8 @@ namespace MyBuyingList.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "roles");
 
-            migrationBuilder.UpdateData(
-                table: "users",
-                keyColumn: "id",
-                keyValue: 1,
-                column: "active",
-                value: false);
+            migrationBuilder.DropTable(
+                name: "users");
         }
     }
 }
