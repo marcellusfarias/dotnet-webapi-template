@@ -44,17 +44,6 @@ public class UserService : IUserService
         return await _userRepository.AddAsync(user, token);
     }
 
-    public async Task ChangeActiveStatusAsync(int userId, bool activeStatus, CancellationToken token)
-    {
-        var user = await _userRepository.GetAsync(userId, token);
-        if (user is null)
-            throw new ResourceNotFoundException();
-
-        user.Active = activeStatus;
-
-        await _userRepository.EditAsync(user, token);
-    }
-
     public async Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);

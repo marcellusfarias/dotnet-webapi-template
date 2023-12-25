@@ -1,5 +1,4 @@
 ﻿using MyBuyingList.Application.Features.Users.DTOs;
-using MyBuyingList.Domain.Entities;
 
 namespace MyBuyingList.Application.Features.Users.Services;
 
@@ -23,12 +22,6 @@ public interface IUserService
     /// <param name="newPassword"></param>
     Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token);
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="activeStatus"></param>
-    Task ChangeActiveStatusAsync(int userId, bool activeStatus, CancellationToken token);
     /// <summary>
     /// Logical exclusion
     /// </summary>

@@ -32,8 +32,4 @@
     <ProjectReference Include="..\MyBuyingList\MyBuyingList.Web.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UnitTests\" />
-  </ItemGroup>
-
 </Project>

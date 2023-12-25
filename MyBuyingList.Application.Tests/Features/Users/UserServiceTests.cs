@@ -140,44 +140,6 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async void ChangeActiveStatusAsync_ShouldReturnVoid_WhenSucceded()
-    {
-        //Arrange
-        var user = _fixture.Create<User>();
-        int userId = user.Id;
-        bool activeStatus = !user.Active;
-
-        _userRepositoryMock
-            .GetAsync(userId, default)
-            .Returns(user);
-
-        //Act
-        await _sut.ChangeActiveStatusAsync(userId, activeStatus, default);
-
-        //Assert
-#pragma warning disable 4014 //for .Received await is not required, so suppress warning “Consider applying the 'await' operator”
-        _userRepositoryMock.Received(1).EditAsync(Arg.Any<User>(), default);
-#pragma warning restore 4014
-    }
-
-    [Fact]
-    public async void ChangeActiveStatusAsync_ShouldThrowException_WhenUserDoesNotExist()
-    {
-        //Arrange
-        int userId = _fixture.Create<int>();
-
-        _userRepositoryMock
-            .GetAsync(userId, default)
-            .ReturnsNull();
-
-        //Act
-        var act = async () => await _sut.ChangeActiveStatusAsync(userId, false, default);
-
-        //Assert
-        await act.Should().ThrowAsync<ResourceNotFoundException>();
-    }
-
-    [Fact]
     public async void ChangeUserPasswordAsync_ShouldReturnVoid_WhenSucceded()
     {
         //Arrange

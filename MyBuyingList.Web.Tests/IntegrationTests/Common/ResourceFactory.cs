@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Infrastructure;
+using System.Net.Http.Headers;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -51,11 +52,22 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     }
 
+    // TODO: change JWT expiring time to 10 minutes so tests does not expire.
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
 
-        HttpClient = CreateClient();
+        // Creates client and adds JWT so it doesnt need to authenticate
+        // on every test.
+
+        var client = CreateClient();
+
+        var response = await client.GetAsync("api/auth?username=admin&password=123");
+        var token = await response.Content.ReadAsStringAsync();
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        HttpClient = client;
     }
 
     public new async Task DisposeAsync()

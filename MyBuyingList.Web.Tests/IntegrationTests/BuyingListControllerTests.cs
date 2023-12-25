@@ -34,10 +34,6 @@ public class BuyingListControllerTests : BaseIntegrationTest
         };
 
         // Act
-        var token = await this.GetJwtToken();
-
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
         var response = await _client.GetAsync("api/buyinglist?buyingListId=1");
 
         // Assert

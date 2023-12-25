@@ -161,6 +161,7 @@ This list is orderned by priority.
 
 Remove BuyingList, BuyingListItems and Groups from template.
 Reset migrations
+Review TODOs
 
 #### Tests
 
