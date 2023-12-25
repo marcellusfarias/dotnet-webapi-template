@@ -41,7 +41,7 @@ public class JwtProvider : IJwtProvider
             _options.Audience,
             claims,
             null,
-            DateTime.UtcNow.AddMinutes(5),
+            DateTime.UtcNow.AddSeconds(_options.ExpirationTime),
             signingCredentials
             );
 

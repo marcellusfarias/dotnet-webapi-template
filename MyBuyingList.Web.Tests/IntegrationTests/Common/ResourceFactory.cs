@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Infrastructure;
+using MyBuyingList.Infrastructure.Authentication.JwtSetup;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using System.Net.Http.Headers;
 using Testcontainers.PostgreSql;
@@ -36,25 +37,29 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         builder.ConfigureTestServices(services =>
         {
-            // Remove AppDbContext
+            // Replace with proper DbContext
             var descriptor = services.Single(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
             services.Remove(descriptor);
 
-            // Add them changing the connection string
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options
                     .UseNpgsql(_dbContainer.GetConnectionString())
                     .UseSnakeCaseNamingConvention();
             });
-            //services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddScoped<ApplicationDbContext>();
-            
+
+            // Override configurations
             services.Configure<CustomRateLimiterOptions>(opts =>
             {
                 opts.PermitLimit = 1_000_000;
                 opts.QueueLimit = 0;
                 opts.Window = 5;
+            });
+
+            services.Configure<JwtOptions>(opts =>
+            {
+                opts.ExpirationTime = 600;
             });
         });
 
