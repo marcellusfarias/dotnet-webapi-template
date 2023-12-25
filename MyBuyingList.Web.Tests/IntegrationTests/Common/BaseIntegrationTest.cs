@@ -5,9 +5,9 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
 {
     private readonly Func<Task> ResetDatabaseAsync;
 
-    public BaseIntegrationTest(ResourceFactory appFactory)
+    public BaseIntegrationTest(ResourceFactory resourceFactory)
     {
-        ResetDatabaseAsync = appFactory.ResetDatabaseAsync;
+        ResetDatabaseAsync = resourceFactory.ResetDatabaseAsync;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;

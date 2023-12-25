@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Infrastructure;
+using MyBuyingList.Web.Middlewares.RateLimiting;
 using System.Net.Http.Headers;
 using Testcontainers.PostgreSql;
 
@@ -48,6 +49,13 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
             });
             //services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddScoped<ApplicationDbContext>();
+            
+            services.Configure<CustomRateLimiterOptions>(opts =>
+            {
+                opts.PermitLimit = 1_000_000;
+                opts.QueueLimit = 0;
+                opts.Window = 5;
+            });
         });
 
     }

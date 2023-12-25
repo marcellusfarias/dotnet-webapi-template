@@ -228,7 +228,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async void DeleteAsync_ShouldThrowException_WhenUserDoesNotExist()
+    public async void DeleteAsync_ShouldThrowResourceNotFoundException_WhenUserDoesNotExist()
     {
         //Arrange
         int userId = _fixture.Create<int>();
@@ -245,7 +245,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async void DeleteAsync_ShouldThrowException_WhenUserIsAdmin()
+    public async void DeleteAsync_ShouldThrowBusinessLogicException_WhenUserIsAdmin()
     {
         //Arrange
         var user = _fixture.Create<User>();

@@ -160,13 +160,18 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 This list is orderned by priority.
 
 Review TODOs
+
 Updgrade to .Net 8 
+
+Add more configuration: JWT Secret and time to expire. 
 
 #### Tests
 
 * Finish writing tests.
 * How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
 * On integration test, create a user for testing with admin rights separated from migrations.
+* Review integration test and check if operations were really done.
+* On test, change Time To Expire and Rate Limiting options
 
 #### Security
 

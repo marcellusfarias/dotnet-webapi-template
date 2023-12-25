@@ -19,10 +19,10 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
     private readonly string _validPassword = "Pa12345678!";
 
-    public UserControllerIntegrationTests(ResourceFactory webAppFactory)
-        : base(webAppFactory)
+    public UserControllerIntegrationTests(ResourceFactory resourceFactory)
+        : base(resourceFactory)
     {
-        _client = webAppFactory.HttpClient;
+        _client = resourceFactory.HttpClient;
 
         _fixture = new Fixture();
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
