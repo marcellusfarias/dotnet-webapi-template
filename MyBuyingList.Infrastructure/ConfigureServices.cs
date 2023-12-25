@@ -22,6 +22,8 @@ public static class ConfigureServices
 
         services.AddJwtAuthentication();
 
+        services.Configure<RepositorySettings>(configuration.GetSection("RepositorySettings"));
+
         return services;
     }
 

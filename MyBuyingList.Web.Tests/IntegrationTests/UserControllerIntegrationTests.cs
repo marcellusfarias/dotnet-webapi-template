@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net;
@@ -16,13 +17,15 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 {
     private readonly HttpClient _client;
     private readonly IFixture _fixture;
-
+    private readonly int _pageSize;
     private readonly string _validPassword = "Pa12345678!";
 
     public UserControllerIntegrationTests(ResourceFactory resourceFactory)
         : base(resourceFactory)
     {
         _client = resourceFactory.HttpClient;
+        
+        _pageSize = resourceFactory.Configuration.GetValue<int>("RepositorySettings:PageSize");
 
         _fixture = new Fixture();
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
@@ -88,14 +91,12 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    // TODO: change PAGE_SIZE to be an option so it's not hardcoded
     [Fact]
     public async void GetAllUsersAsync_ShouldReturnSecondPage_WhenPageTwoIsAsked()
     {
         // Arrange
-        var pageSize = 50;
         var extraSize = 5;
-        var createUsers = _fixture.CreateMany<CreateUserDto>(pageSize + extraSize).ToList();
+        var createUsers = _fixture.CreateMany<CreateUserDto>(_pageSize + extraSize).ToList();
         var tasks = new List<Task>();
 
         foreach (var user in createUsers)

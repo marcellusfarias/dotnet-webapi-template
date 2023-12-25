@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Authentication.JwtSetup;
+using MyBuyingList.Infrastructure.Repositories;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using System.Net.Http.Headers;
 using Testcontainers.PostgreSql;
@@ -17,6 +19,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private int ExposedPort = new Random().Next(1000, 10000);
 
+    public IConfiguration Configuration { get; private set; }
     public HttpClient HttpClient { get; private set; } = default!;
 
     public ResourceFactory()
@@ -35,6 +38,16 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((context, conf) =>
+        {
+            // expand default config with settings designed for Integration Tests
+            conf.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.IntegrationTests.json"));
+            conf.AddEnvironmentVariables();
+
+            // here we can "compile" the settings. Api.Setup will do the same, it doesn't matter.
+            Configuration = conf.Build();
+        });
+
         builder.ConfigureTestServices(services =>
         {
             // Replace with proper DbContext
@@ -48,19 +61,6 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
                     .UseSnakeCaseNamingConvention();
             });
             services.AddScoped<ApplicationDbContext>();
-
-            // Override configurations
-            services.Configure<CustomRateLimiterOptions>(opts =>
-            {
-                opts.PermitLimit = 1_000_000;
-                opts.QueueLimit = 0;
-                opts.Window = 5;
-            });
-
-            services.Configure<JwtOptions>(opts =>
-            {
-                opts.ExpirationTime = 600;
-            });
         });
 
     }

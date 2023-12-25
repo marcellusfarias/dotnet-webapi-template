@@ -12,7 +12,7 @@ public class PolicyConfiguration : IEntityTypeConfiguration<Policy>
         builder.ToTable("policies");
 
         builder.Property(x => x.Id).UseIdentityAlwaysColumn();
-        builder.Property(policy => policy.Name).HasMaxLength(256).IsRequired();
+        builder.Property(policy => policy.Name).HasMaxLength(FieldLengths.POLICY_NAME_MAX_LENGTH).IsRequired();
         builder.HasIndex(policy => policy.Name).IsUnique(true);
 
         builder.HasMany(policy => policy.RolePolicies)

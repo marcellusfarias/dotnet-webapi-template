@@ -1,20 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Domain.Common;
-using System.Data;
-using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace MyBuyingList.Infrastructure.Repositories;
 
 public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
-    private const int PAGE_SIZE = 50;
+    private readonly int _pageSize;
+
     protected ApplicationDbContext _context { get; set; }
-    protected RepositoryBase(ApplicationDbContext context)
+
+    protected RepositoryBase(ApplicationDbContext context, IOptions<RepositorySettings> options)
     {
         _context = context;
+        _pageSize = options.Value.PageSize;
     }
 
     public async Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
@@ -24,7 +25,6 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             return await _context.Set<TEntity>()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
-            //return await _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -43,8 +43,8 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             var entities = await _context
                 .Set<TEntity>()
                 .AsNoTracking()
-                .Skip((page - 1) * PAGE_SIZE)
-                .Take(PAGE_SIZE)
+                .Skip((page - 1) * _pageSize)
+                .Take(_pageSize)
                 .ToListAsync(cancellationToken);
 
             return entities;
@@ -147,5 +147,4 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             throw new DatabaseException(ex);
         }
     }
-
 }

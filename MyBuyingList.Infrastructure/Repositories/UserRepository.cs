@@ -2,47 +2,23 @@
 using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Features.Users;
+using Microsoft.Extensions.Options;
 
 namespace MyBuyingList.Infrastructure.Repositories;
 
 public class UserRepository : RepositoryBase<User>, IUserRepository
 {
-    public UserRepository(ApplicationDbContext context) : base(context) { }
+    public UserRepository(ApplicationDbContext context, IOptions<RepositorySettings> options) 
+        : base(context, options) { }
 
     public async Task<User?> GetActiveUserByUsername(string username, CancellationToken token)
     {
         try
         {
-            //if you want to use Dapper for performance issues, see below
-            //_context.QueryAsync(ct, "SELECT * FROM users WHERE Active = 'true';");
             var result = await _context.Set<User>()
                 .Where(x => x.Active && x.UserName.Equals(username))
                 .AsNoTracking()
                 .FirstOrDefaultAsync(token);
-
-            return result;
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            throw new DatabaseException(ex);
-        }
-    }
-
-    // TODO: add pagination
-    public async Task<IEnumerable<User>> GetActiveUsersAsync(CancellationToken token)
-    {
-        try
-        {
-            //if you want to use Dapper for performance issues, see below
-            //_context.QueryAsync(ct, "SELECT * FROM users WHERE Active = 'true';");
-            var result = await _context.Set<User>()
-                .Where(x => x.Active)
-                .AsNoTracking()
-                .ToListAsync(token);
 
             return result;
         }
@@ -119,7 +95,6 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         }
     }
 
-    //test this
     public async Task LogicalExclusionAsync(User user, CancellationToken token)
     {
         try
