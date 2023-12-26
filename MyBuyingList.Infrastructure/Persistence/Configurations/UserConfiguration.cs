@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyBuyingList.Application.Common.Services;
 using MyBuyingList.Domain.Constants;
 using MyBuyingList.Domain.Entities;
 
@@ -27,15 +26,6 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             t.HasCheckConstraint("CHK_Username_MinLength", 
             $"(length(user_name) >= {FieldLengths.USER_USERNAME_MIN_LENGTH})"));
 
-        PasswordEncryptionService passwordEncryptionService = new PasswordEncryptionService();
-        builder.HasData(
-            new User 
-            { 
-                Id = 1, 
-                UserName = "admin", 
-                Email = "marcelluscfarias@gmail.com", 
-                Password = "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe", 
-                Active = true 
-            });
+        builder.HasData(Users.GetValues());
     }
 }

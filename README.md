@@ -160,14 +160,7 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 This list is orderned by priority.
 
 Review TODOs
-
-#### Tests
-
-* Finish writing tests.
-* How to [test](https://learn.microsoft.com/en-us/aspnet/core/test/middleware?view=aspnetcore-7.0) middlewares. 
-* On integration test, create a user for testing with admin rights separated from migrations.
-* Review integration test and check if operations were really done.
-* On test, change Time To Expire and Rate Limiting options
+Create secret for admin password. Use it on integration tests.
 
 #### Security
 
@@ -195,7 +188,6 @@ Output caching. Redis.
 Add deeper level of details in the API documentation. Add sections like
 * Authentication
 * Rate Limits
-* [ProblemDetails](https://code-maze.com/using-the-problemdetails-class-in-asp-net-core-web-api/) 
 
 Read articles about how to create a great API documentation. [Example](https://swagger.io/blog/api-documentation/best-practices-in-api-documentation/).
 
@@ -263,3 +255,4 @@ Testing:
 * Research how to create E2E tests. Check if this [jwt tool](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0&tabs=windows) is useful.
 * Research how to simulate a DatabaseException on IntegrationTests.
 * Research how to simulate a cancellation on IntegrationTests.
+* Research how to test RateLimiting.

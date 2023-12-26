@@ -4,11 +4,15 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Authentication.JwtSetup;
 using MyBuyingList.Infrastructure.Repositories;
 using MyBuyingList.Web.Middlewares.RateLimiting;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -19,7 +23,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private int ExposedPort = new Random().Next(1000, 10000);
 
-    public IConfiguration Configuration { get; private set; }
+    public IConfiguration Configuration { get; private set; } = default!;
     public HttpClient HttpClient { get; private set; } = default!;
 
     public ResourceFactory()
@@ -65,7 +69,6 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     }
 
-    // TODO: change JWT expiring time to 10 minutes so tests does not expire.
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();

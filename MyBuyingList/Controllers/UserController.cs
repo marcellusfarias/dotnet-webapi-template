@@ -21,6 +21,7 @@ public class UserController : ApiControllerBase
     [HasPermission(Policies.UserGetAll)]
     [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpGet("~/api/users/")]
     public async Task<IActionResult> GetAllUsers(
@@ -34,8 +35,9 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserGet)]
-    [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetUserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpGet("{id}")]
@@ -46,13 +48,14 @@ public class UserController : ApiControllerBase
         _logger.LogInformation($"Starting request. Id = {id}");
 
         var user = await _userService.GetUserAsync((int)id, token);
-        return Ok(new List<GetUserDto>() { user });
+        return Ok(user);
     }
 
     // TODO: change return to GetUserDto
     [HasPermission(Policies.UserCreate)]
     [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
     [HttpPost]
@@ -60,14 +63,15 @@ public class UserController : ApiControllerBase
         CreateUserDto createUserDto,
         CancellationToken token)
     {
-        await _userService.CreateAsync(createUserDto, token);
-        return new ObjectResult(createUserDto) { StatusCode = StatusCodes.Status201Created };
+        var userId = await _userService.CreateAsync(createUserDto, token);
+        return new ObjectResult(userId) { StatusCode = StatusCodes.Status201Created };
     }
 
     [HasPermission(Policies.UserUpdate)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -84,6 +88,7 @@ public class UserController : ApiControllerBase
     [HasPermission(Policies.UserDelete)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]

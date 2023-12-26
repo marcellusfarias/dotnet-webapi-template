@@ -1,53 +1,28 @@
-﻿using MyBuyingList.Application.Features.Users.DTOs;
-using MyBuyingList.Web.Tests.IntegrationTests.Common;
+﻿using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net;
-using System.Text;
-using System.Text.Json;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests;
 
+// TODO: test RateLimiting
 public class AuthControllerIntegrationTests : BaseIntegrationTest
 {
     private readonly HttpClient _client;
-    private readonly IFixture _fixture;
-    private readonly string _validPassword = "Pa12345678!";
-
+    
     public AuthControllerIntegrationTests(ResourceFactory resourceFactory)
         : base(resourceFactory)
     {
         _client = resourceFactory.HttpClient;
-
-        _fixture = new Fixture();
-        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-    }
-
-    private async Task InsertTestUser()
-    {
-        var newUser = new CreateUserDto
-        {
-            Email = "newemail@gmail.com",
-            Password = _validPassword,
-            UserName = "user2"
-        };
-
-        var jsonBody = JsonSerializer.Serialize(newUser);
-        var httpContent = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("api/user", httpContent);
-
-        if (response.StatusCode != HttpStatusCode.Created)
-        {
-            throw new Exception("Could not create test user.");
-        }
     }
 
     [Fact]
     public async void Authenticate_ReturnsToken_WhenCredentialsAreValid()
     {
         // Arrange
-        await InsertTestUser();
+        await Utils.InsertTestUser(_client);
 
         // Act
-        var response = await _client.GetAsync($"api/auth?username=user2&password={_validPassword}");
+        var url = string.Format(Constants.AddressAuthenticationEndpoint, Utils.TESTUSER_USERNAME, Utils.TESTUSER_PASSWORD);
+        var response = await _client.GetAsync(url);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -59,10 +34,12 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
     public async void Authenticate_ReturnsUnauthorized_WhenCredentialsAreInvalid()
     {
         // Arrange
-        await InsertTestUser();
+        await Utils.InsertTestUser(_client);
 
         // Act
-        var response = await _client.GetAsync($"api/auth?username=user2&password={string.Concat(_validPassword, ".")}");
+        var invalidPassword = string.Concat(Utils.TESTUSER_PASSWORD, ".");
+        var url = string.Format(Constants.AddressAuthenticationEndpoint, Utils.TESTUSER_USERNAME, invalidPassword);
+        var response = await _client.GetAsync(url);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
