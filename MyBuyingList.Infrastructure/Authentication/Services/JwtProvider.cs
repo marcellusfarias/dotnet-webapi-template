@@ -35,7 +35,7 @@ public class JwtProvider : IJwtProvider
             );
 
         (await permissions).ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
-        
+
         var token = new JwtSecurityToken(
             _options.Issuer,
             _options.Audience,

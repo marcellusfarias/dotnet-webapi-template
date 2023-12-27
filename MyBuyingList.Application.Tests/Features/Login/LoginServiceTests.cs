@@ -1,5 +1,6 @@
 ﻿using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Login.Services;
 using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Application.Features.Users.DTOs;
@@ -41,6 +42,12 @@ public class LoginServiceTests
 
         var attemptingPassword = _fixture.Create<string>();
 
+        var dto = new LoginDto
+        {
+            Username = user.UserName,
+            Password = attemptingPassword
+        };
+
         _userRepositoryMock
             .GetActiveUserByUsername(user.UserName, default)
             .Returns(user);
@@ -54,25 +61,10 @@ public class LoginServiceTests
             .Returns("custom_token");
 
         //Act
-        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
+        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(dto, default);
 
         //Assert
         token.Should().BeEquivalentTo("custom_token");
-    }
-
-    [Theory]
-    [InlineData("", "")]
-    [InlineData("", "12345678")]
-    [InlineData("username", "")]
-    public async void AuthenticateAndReturnJwtToken_ShouldThrowException_WhenMissingUsernameOrPassword(string username, string attemptingPassword)
-    {
-        //Arrange
-
-        //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(username, attemptingPassword, default);
-
-        //Assert
-        await act.Should().ThrowAsync<AuthenticationException>();
     }
 
     [Fact]
@@ -82,15 +74,21 @@ public class LoginServiceTests
         var attemptingPassword = _fixture.Create<string>();
         var attemptingUserName = _fixture.Create<string>();
 
+        var loginDto = new LoginDto
+        {
+            Password = attemptingPassword,
+            Username = attemptingUserName
+        };
+
         _userRepositoryMock
             .GetActiveUserByUsername(attemptingUserName, default)
             .ReturnsNull();
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(attemptingUserName, attemptingPassword, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
 
         //Assert
-        await act.Should().ThrowAsync<AuthenticationException>();
+        await act.Should().ThrowAsync<AuthenticationException>($"An error occured when authenticating user {attemptingUserName}.");
     }
 
     [Fact]
@@ -99,6 +97,12 @@ public class LoginServiceTests
         //Arrange
         var user = _fixture.Create<User>();
         var attemptingPassword = _fixture.Create<string>();
+
+        var loginDto = new LoginDto
+        {
+            Password = attemptingPassword,
+            Username = user.UserName
+        };
 
         _userRepositoryMock
             .GetActiveUserByUsername(user.UserName, default)
@@ -109,10 +113,10 @@ public class LoginServiceTests
             .Returns(false);
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
 
         //Assert
-        await act.Should().ThrowAsync<AuthenticationException>();
+        await act.Should().ThrowAsync<AuthenticationException>().WithMessage($"An error occured when authenticating user {user.UserName.ToLower()}."); ;
     }
 
     [Fact]
@@ -123,6 +127,12 @@ public class LoginServiceTests
         user.UserName = user.UserName.ToLower();
 
         var attemptingPassword = _fixture.Create<string>();
+
+        var loginDto = new LoginDto
+        {
+            Password = attemptingPassword,
+            Username = user.UserName
+        };
 
         _userRepositoryMock
             .GetActiveUserByUsername(user.UserName, default)
@@ -137,7 +147,7 @@ public class LoginServiceTests
             .Throws(new DatabaseException(new Exception()));
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(user.UserName, attemptingPassword, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
 
         //Assert
         await act.Should().ThrowAsync<DatabaseException>();

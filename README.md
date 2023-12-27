@@ -249,6 +249,7 @@ Other topics:
 * Research if it's possible to use data annotations for string length
 * Swagger: change from camelCase to PascalCase on the response objects
 * Swagger: routing change from PascalCase to lowercase
+* Create constants for exception messages
 
 Testing:
 * Research if there is any specific EFCore feature that should be tested.

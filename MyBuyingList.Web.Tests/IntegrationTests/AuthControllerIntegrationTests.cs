@@ -1,4 +1,5 @@
-﻿using MyBuyingList.Web.Tests.IntegrationTests.Common;
+﻿using MyBuyingList.Application.Features.Login.DTOs;
+using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests;
@@ -20,9 +21,15 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
+        var loginDto = new LoginDto
+        {
+            Username = Utils.TESTUSER_USERNAME,
+            Password = Utils.TESTUSER_PASSWORD
+        };
+
         // Act
-        var url = string.Format(Constants.AddressAuthenticationEndpoint, Utils.TESTUSER_USERNAME, Utils.TESTUSER_PASSWORD);
-        var response = await _client.GetAsync(url);
+        var url = Constants.AddressAuthenticationEndpoint;
+        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -36,12 +43,40 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        // Act
         var invalidPassword = string.Concat(Utils.TESTUSER_PASSWORD, ".");
-        var url = string.Format(Constants.AddressAuthenticationEndpoint, Utils.TESTUSER_USERNAME, invalidPassword);
-        var response = await _client.GetAsync(url);
+
+        var loginDto = new LoginDto
+        {
+            Username = Utils.TESTUSER_USERNAME,
+            Password = invalidPassword
+        };
+
+        // Act        
+        var url = Constants.AddressAuthenticationEndpoint;
+        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto));
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Theory]
+    [InlineData("", "")]
+    [InlineData("", "12345678")]
+    [InlineData("username", "")]
+    public async void Authenticate_ReturnsBadRequest_WhenMissingUsernameOrPassword(string username, string password)
+    {
+        // Arrange
+        var loginDto = new LoginDto
+        {
+            Username = username,
+            Password = password
+        };
+
+        // Act        
+        var url = Constants.AddressAuthenticationEndpoint;
+        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto));
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

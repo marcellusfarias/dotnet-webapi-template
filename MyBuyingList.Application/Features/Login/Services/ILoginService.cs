@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyBuyingList.Application.Features.Login.DTOs;
 
 namespace MyBuyingList.Application.Features.Login.Services;
 
 public interface ILoginService
 {
-    Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password, CancellationToken cancellationToken);
+    Task<string> AuthenticateAndReturnJwtTokenAsync(LoginDto loginDto, CancellationToken cancellationToken);
 }

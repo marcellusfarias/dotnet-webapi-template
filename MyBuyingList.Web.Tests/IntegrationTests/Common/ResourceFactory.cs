@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Authentication.JwtSetup;
@@ -78,7 +79,13 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         var client = CreateClient();
 
-        var response = await client.GetAsync("api/auth?username=admin&password=123");
+        var loginDto = new LoginDto
+        {
+            Username = "admin",
+            Password = "123"
+        };
+
+        var response = await client.PostAsync("api/auth", Utils.GetJsonContentFromObject(loginDto));
         var token = await response.Content.ReadAsStringAsync();
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);

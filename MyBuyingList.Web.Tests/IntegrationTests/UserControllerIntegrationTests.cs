@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using MyBuyingList.Application.Common.Constants;
+using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net;
@@ -89,8 +90,14 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        var url = string.Format(Constants.AddressAuthenticationEndpoint, Utils.TESTUSER_USERNAME, Utils.TESTUSER_PASSWORD);
-        var tokenResponse = await _client.GetAsync(url);
+        LoginDto dto = new() 
+        {
+            Username = Utils.TESTUSER_USERNAME,
+            Password = Utils.TESTUSER_PASSWORD
+        };
+
+        var url = Constants.AddressAuthenticationEndpoint;
+        var tokenResponse = await _client.PostAsync(url, Utils.GetJsonContentFromObject(dto));
         var token = await tokenResponse.Content.ReadAsStringAsync();
 
         var auth = _client.DefaultRequestHeaders.Authorization;

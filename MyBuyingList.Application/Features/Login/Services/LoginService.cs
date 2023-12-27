@@ -2,6 +2,7 @@
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Features.Users;
+using MyBuyingList.Application.Features.Login.DTOs;
 
 namespace MyBuyingList.Application.Features.Login.Services;
 
@@ -18,13 +19,11 @@ public class LoginService : ILoginService
         _passwordEncryptionService = passwordEncryptionService;
     }
 
-    public async Task<string> AuthenticateAndReturnJwtTokenAsync(string username, string password, CancellationToken token)
+    public async Task<string> AuthenticateAndReturnJwtTokenAsync(LoginDto loginDto, CancellationToken token)
     {
-        username = username.ToLower();
-
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            throw new AuthenticationException(username, "Empty username or password.");        
-
+        var username = loginDto.Username.ToLower();
+        var password = loginDto.Password;
+     
         User? user = await _userRepository.GetActiveUserByUsername(username, token);
         if (user is null)
             throw new AuthenticationException(username, "Invalid username or password.");
