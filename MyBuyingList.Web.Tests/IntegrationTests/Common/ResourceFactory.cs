@@ -35,9 +35,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
             .WithPassword("password")
             .WithDatabase("db")
             .WithHostname("localhost")
-            .WithPortBinding(ExposedPort, 5432)
-            // TODO: wait until can create a new connection. Until port is available is not working.
-            //.WithWaitStrategy(Wait.ForWindowsContainer().UntilPortIsAvailable(RandomPort))             
+            .WithPortBinding(ExposedPort, 5432)  
             .Build();
     }
 

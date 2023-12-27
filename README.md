@@ -159,9 +159,6 @@ For debugging in the future, one may also want to use [HttpLogging](https://lear
 
 This list is orderned by priority.
 
-Review TODOs
-Create secret for admin password. Use it on integration tests.
-
 #### Security
 
 * When moving into production, must set a secure HTTPS certificate.
@@ -172,7 +169,7 @@ Create secret for admin password. Use it on integration tests.
 
 * Complete Docker support on this application. 
 * I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
-* Create docker secret for JWT key and HTTPs certs. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
+* Create docker secret for JWT key, HTTPs certs and Admin Credentials. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
 Upgrade to .Net 8 

@@ -10,8 +10,7 @@ using System.Net.Mail;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests;
 
-// TODO: test cancelled operations
-// TODO: test database exceptions
+// TODO: test cancelled operations & test database exceptions
 public class UserControllerIntegrationTests : BaseIntegrationTest
 {
     private readonly HttpClient _client;
@@ -139,13 +138,6 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         var users = await response.Content.ReadFromJsonAsync<List<GetUserDto>>()!;
         users.Should().HaveCount(extraSize + 1); // db already has user ADMIN
     }
-
-    // TODO: not sure how to force an internal server error.
-    // Should create another Factory?
-    //[Fact]
-    //public async void GetAllUsersAsync_ShouldReturnInternalServerError_WhenDatabaseIsDown()
-    //{
-    //}
 
     [Fact]
     public async void GetUserById_ShouldReturnUser_WhenIdExists()

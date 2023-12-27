@@ -51,7 +51,6 @@ public class UserController : ApiControllerBase
         return Ok(user);
     }
 
-    // TODO: change return to GetUserDto
     [HasPermission(Policies.UserCreate)]
     [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
