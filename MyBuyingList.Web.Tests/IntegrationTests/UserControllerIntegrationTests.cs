@@ -225,7 +225,9 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async void DeleteUserAsync_ShouldReturnUnprocessableEntity_WhenIdIsAdmin()
     {
         // Arrange
-        var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel("An error occured while processing the request.", "Can't disable user admin.");
+        var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
+            ErrorMessages.BusinessLogicError, 
+            "Can't disable user admin.");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 1);

@@ -1,11 +1,12 @@
-﻿using MyBuyingList.Web;
+﻿using MyBuyingList.Application.Common.Constants;
+using MyBuyingList.Web;
 using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 
 public  class BusinessLogicException : Exception, IFormattedResponseException
 {
-    private readonly static string _responseTitle = "An error occured while processing the request.";
+    private readonly static string _responseTitle = ErrorMessages.BusinessLogicError;
     public int StatusCode => (int)HttpStatusCode.UnprocessableEntity;
     public ErrorModel Error { get; private set; }
     public BusinessLogicException(string details) : base(_responseTitle) 

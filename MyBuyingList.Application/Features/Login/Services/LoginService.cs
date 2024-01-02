@@ -3,6 +3,7 @@ using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Application.Features.Login.DTOs;
+using MyBuyingList.Application.Common.Constants;
 
 namespace MyBuyingList.Application.Features.Login.Services;
 
@@ -26,11 +27,11 @@ public class LoginService : ILoginService
      
         User? user = await _userRepository.GetActiveUserByUsername(username, token);
         if (user is null)
-            throw new AuthenticationException(username, "Invalid username or password.");
+            throw new AuthenticationException(username, ErrorMessages.InvalidUsernameOrPassword);
 
         bool verification = _passwordEncryptionService.VerifyPasswordsAreEqual(password, user.Password);
         if (!verification)
-            throw new AuthenticationException(username, "Invalid username or password.");
+            throw new AuthenticationException(username, ErrorMessages.InvalidUsernameOrPassword);
 
         return await _jwtProvider.GenerateTokenAsync(user.Id, token);
     }

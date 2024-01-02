@@ -19,6 +19,10 @@ This project adopts what many .Net influencers commonly refer to as "Clean Archi
 
 This template comes pre-configured with Swagger UI for API documentation. It maps all possible status code that may be returned from each endpoint, along with the required input payloads and the corresponding response objects.
 
+### Docker
+
+Docker swarm, docker secrets, docker compose.
+
 ### Middlewares, filters and Exception/Error handling
 
 FluentValidation is used mainly on the RequestBodyValidationFilter class, and it's used to validate user input data, which are mainly represented as DTOs. This filter was created for substituing FluentValidation.AspNetCore automatic validation, since FluentValidation itself [does not recommend using it](https://docs.fluentvalidation.net/en/latest/aspnet.html). The filter adds async support for automatic validation.
@@ -71,17 +75,7 @@ Therefore, we set our application to not listen on HTTP. One can check it in thr
 
 ### Testing
 
-* Authentication using JWT
-* Authorization
-* Password hashing with BCrypt
-* Database support, using Entity Framework and repositories
-* Containerization
-* Unit and Integration tests
-* Automatic model validations
-* Rate Limiting
-* Great error/exception handling
-* Api Documentation
-* DDD and Clean Architecture
+xUnit, NSubstitute, AutoFixture, TestContainers
 
 ## How to
 
@@ -95,15 +89,18 @@ This list is orderned by priority.
 
 #### Security
 
-* When moving into production, must set a secure HTTPS certificate.
-* TODO: review security aspects learned on the SecureFlag platform and apply them on this application.
-* Remove sensitive information from logging
+* When moving into production, must set a secure HTTPS certificate. https://learn.microsoft.com/en-us/aspnet/core/security/authentication/certauth?view=aspnetcore-8.0
+* Security issues":
+    * Log injection/Remove sensitive information from logging (check logs in release)
+    * Add Lockout (already has rate limiting)
+    * MFA
+* Docker secrets
 
 #### Docker & Hosting
 
 * Complete Docker support on this application. 
 * I will probably stick with Docker Swarm, add Docker Secrets and configure resource limits.
-* Create docker secret for JWT key, HTTPs certs and Admin Credentials. .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
+* Create docker secret for JWT key, HTTPs certs and Admin Credentials (application + postgres). .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
 Upgrade to .Net 8 

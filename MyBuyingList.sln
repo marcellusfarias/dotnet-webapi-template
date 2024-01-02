@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{7327D7B2-D1E5-46A4-A451-EBF93ED6555B}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		RESEARCH.md = RESEARCH.md
 	EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{837E4160-E6E3-41B2-B73B-CF2E9BF83026}"
@@ -26,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EA8D2936
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Infrastructure.Tests", "MyBuyingList.Infrastructure.Tests\MyBuyingList.Infrastructure.Tests.csproj", "{A7261498-4A33-4B3E-AE59-637409B0A760}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBuyingList.Web.Tests", "MyBuyingList.Web.Tests\MyBuyingList.Web.Tests.csproj", "{67DDCE10-2E6A-472E-9424-238C30C1E02C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Web.Tests", "MyBuyingList.Web.Tests\MyBuyingList.Web.Tests.csproj", "{67DDCE10-2E6A-472E-9424-238C30C1E02C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -30,7 +30,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public ResourceFactory()
     {
         _dbContainer = new PostgreSqlBuilder()
-            .WithImage("postgres:latest")
+            .WithImage("postgres:14")
             .WithUsername("myuser")
             .WithPassword("password")
             .WithDatabase("db")
@@ -77,7 +77,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         var client = CreateClient();
 
-        var loginDto = new LoginDto
+        LoginDto loginDto = new()
         {
             Username = "admin",
             Password = "123"
