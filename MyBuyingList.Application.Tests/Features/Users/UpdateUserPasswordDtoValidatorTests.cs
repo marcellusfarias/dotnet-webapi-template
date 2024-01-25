@@ -17,11 +17,7 @@ public class UpdateUserPasswordDtoValidatorTests
 
     private static UpdateUserPasswordDto CreateDto(string oldPassword, string newPassword)
     {
-        return new UpdateUserPasswordDto()
-        {
-            OldPassword = oldPassword,
-            NewPassword = newPassword
-        };
+        return new UpdateUserPasswordDto(oldPassword, newPassword);
     }
 
     public static IEnumerable<object[]> ValidDtos()

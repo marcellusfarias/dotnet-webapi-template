@@ -5,6 +5,7 @@ using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
 using MyBuyingList.Application.Common.Exceptions;
+using MyBuyingList.Domain.Constants;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
@@ -51,9 +52,9 @@ public class UserServiceTests
         var returnUsers = await _sut.GetAllUsersAsync(DEFAULT_PAGE, default);
 
         //Assert
-        GetUserDto userDto1 = new GetUserDto() { Id = user1.Id, UserName = user1.UserName, Email = user1.Email, Active = user1.Active };
-        GetUserDto userDto2 = new GetUserDto() { Id = user2.Id, UserName = user2.UserName, Email = user2.Email, Active = user2.Active };
-        GetUserDto userDto3 = new GetUserDto() { Id = user3.Id, UserName = user3.UserName, Email = user3.Email, Active = user3.Active };
+        GetUserDto userDto1 = new GetUserDto(user1.Id, user1.UserName, user1.Email, user1.Active);
+        GetUserDto userDto2 = new GetUserDto(user2.Id, user2.UserName, user2.Email, user2.Active);
+        GetUserDto userDto3 = new GetUserDto(user3.Id, user3.UserName, user3.Email, user3.Active);
         var expectedUserDtos = new List<GetUserDto>() { userDto1, userDto2, userDto3 };
 
         returnUsers.Should().BeEquivalentTo(expectedUserDtos);
@@ -89,13 +90,7 @@ public class UserServiceTests
         var returnUser = await _sut.GetUserAsync(searchingUserId, default);
 
         //Assert
-        GetUserDto userDto2 = new GetUserDto()
-        {
-            Id = searchingUserId,
-            UserName = user.UserName,
-            Email = user.Email,
-            Active = user.Active
-        };
+        GetUserDto userDto2 = new GetUserDto(searchingUserId, user.UserName, user.Email, user.Active);
 
         returnUser.Should().BeEquivalentTo(userDto2);
     }

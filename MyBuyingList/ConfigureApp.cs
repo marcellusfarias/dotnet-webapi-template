@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Web.Middlewares;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ internal static class ConfigureApp
     internal async static Task<WebApplication> StartApplication(this WebApplication app)
     {
         bool isDevelopment = app.Environment.IsDevelopment();
-        
+
         try
         {
             app.RunDatabaseMigrations();
@@ -43,6 +44,14 @@ internal static class ConfigureApp
         app.UseMiddleware(typeof(ErrorHandlingMiddleware));
         //app.UseHttpLogging();
         app.UseRouting();
+
+        // Shared mounted volume where letsencrypt certbot will place the challenge files.
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "LetsEncrypt")),
+            RequestPath = "/.well-known/acme-challenge/"
+        });
+
         app.UseRateLimiter();
 
         if (isDevelopment)
@@ -57,7 +66,7 @@ internal static class ConfigureApp
         }
 
         app.UseAuthentication();
-        app.UseAuthorization();              
+        app.UseAuthorization();
 
         // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
         app.Use((context, next) =>

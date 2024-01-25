@@ -35,9 +35,6 @@ public class UserService : IUserService
 
     public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
     {
-        userDto.UserName = userDto.UserName.ToLower();
-        userDto.Email = userDto.Email.ToLower();
-
         var user = userDto.ToUser(active: true);
         user.Password = _passwordEncryptionService.HashPassword(userDto.Password);
 

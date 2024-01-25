@@ -30,13 +30,7 @@ public class UserMapperTests
     {
         // Arrange
         var user = _fixture.Create<User>();
-        var expectedDto = new GetUserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Active = user.Active,
-            UserName = user.UserName,
-        };
+        var expectedDto = new GetUserDto(user.Id, user.UserName, user.Email, user.Active);
         // Act
         var dto = user.ToGetUserDto();
 

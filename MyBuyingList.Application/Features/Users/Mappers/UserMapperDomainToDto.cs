@@ -7,12 +7,6 @@ public static class UserMapperDomainToDto
 {
     public static GetUserDto ToGetUserDto(this User user)
     {
-        return new GetUserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            Active = user.Active,
-        };
+        return new GetUserDto(user.Id, user.UserName, user.Email, user.Active);
     }
 }

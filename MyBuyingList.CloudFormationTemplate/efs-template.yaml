@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  VpcId:
+    Type: String
+    Description: ID of the VPC where EFS and security groups will be created
+    Default: vpc-0e27e4ad94e0d5609
+  Subnet1:
+    Type: String
+    Description: ID of subnet1
+    Default: subnet-044704130cf085ef2
+  Subnet2:
+    Type: String
+    Description: ID of subnet2
+    Default: subnet-0c680bbea1cc905c9
+  Subnet3:
+    Type: String
+    Description: ID of subnet2
+    Default: subnet-0303132bb652e8f88
+
+Resources:
+  SecurityGroupFargateApiTemplate:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Security Group to identify fargate services.
+      VpcId: !Ref VpcId
+
+  SecurityGroupEfsApiTemplate:
+    Type: 'AWS::EC2::SecurityGroup'
+    DependsOn: 
+    - SecurityGroupFargateApiTemplate
+    Properties:
+      GroupDescription: Security Group with NFS inbound rule for fargate services.
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 2049
+          ToPort: 2049
+          SourceSecurityGroupId: !GetAtt SecurityGroupFargateApiTemplate.GroupId
+    
+  FsApiTemplateCerts:
+    Type: 'AWS::EFS::FileSystem'
+    Properties:
+      # First Page
+      BackupPolicy: 
+        Status: DISABLED
+      Encrypted: true
+      PerformanceMode: generalPurpose
+      ThroughputMode: bursting
+      LifecyclePolicies:
+        - TransitionToIA: AFTER_7_DAYS
+        - TransitionToPrimaryStorageClass: AFTER_1_ACCESS  
+      FileSystemTags:
+        - Key: Name
+          Value: FsApiTemplateCerts
+
+  MountTarget1:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - FsApiTemplateCerts
+    - SecurityGroupEfsApiTemplate
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      SubnetId: !Ref Subnet1
+      SecurityGroups:
+      - !Ref SecurityGroupEfsApiTemplate
+  MountTarget2:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - FsApiTemplateCerts
+    - SecurityGroupEfsApiTemplate
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      SubnetId: !Ref Subnet2
+      SecurityGroups:
+      - !Ref SecurityGroupEfsApiTemplate
+  MountTarget3:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+    - FsApiTemplateCerts
+    - SecurityGroupEfsApiTemplate
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      SubnetId: !Ref Subnet3
+      SecurityGroups:
+      - !Ref SecurityGroupEfsApiTemplate
+
+  AccessPointChallengeFiles:
+    Type: 'AWS::EFS::AccessPoint'
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      RootDirectory:
+        Path: '/'
+      AccessPointTags:
+        - Key: Name
+          Value: access-point-challengefiles
+
+  AccessPointCerts:
+    Type: 'AWS::EFS::AccessPoint'
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      RootDirectory:
+        Path: '/'
+      AccessPointTags:
+        - Key: Name
+          Value: access-point-certs
+
+

@@ -21,12 +21,7 @@ public class CreateUserDtoValidatorTests
 
     private static CreateUserDto CreateDto(string username, string email, string password)
     {
-        return new CreateUserDto()
-        {
-            UserName = username,
-            Email = email,
-            Password = password
-        };
+        return new CreateUserDto(username, email, password);
     }
 
     public static IEnumerable<object[]> ValidCreateUserDtos()

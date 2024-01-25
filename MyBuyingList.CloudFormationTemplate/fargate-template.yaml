@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  VpcId:
+    Type: String
+    Description: ID of the VPC where EFS and security groups will be created
+    Default: vpc-0e27e4ad94e0d5609
+  Subnet1:
+    Type: String
+    Description: ID of subnet1
+    Default: subnet-044704130cf085ef2
+  Subnet2:
+    Type: String
+    Description: ID of subnet2
+    Default: subnet-0c680bbea1cc905c9
+  Subnet3:
+    Type: String
+    Description: ID of subnet2
+    Default: subnet-0303132bb652e8f88
+
+# Docs: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html#cfn-ecs-taskdefinition-networkmode
+Resources:
+  TaskCertbot:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions: 
+        - Name: certbot
+          Image: 541494567186.dkr.ecr.sa-east-1.amazonaws.com/certbot:latest
+          Essential: True
+          # LogConfiguration
+          MountPoints:
+            - ContainerPath: /letsencrypt
+              ReadOnly: False
+              SourceVolume: challenge_files
+            - ContainerPath: /etc/letsencrypt
+              ReadOnly: False
+              SourceVolume: data
+
+      Cpu: 256 # .25 vCPU
+      ExecutionRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole # TODO: add this to the template.
+      Family: certbot-task
+      # IpcMode: String
+      Memory: 512 # 0.5 GB
+      NetworkMode: awsvpc # Required by fargate
+      # PidMode: String
+      # PlacementConstraints: 
+      #  - TaskDefinitionPlacementConstraint
+      # ProxyConfiguration: 
+      #   ProxyConfiguration
+      RequiresCompatibilities: 
+        - FARGATE
+      RuntimePlatform: 
+         CpuArchitecture: X86_64
+         OperatingSystemFamily: LINUX
+      # Tags: 
+      #   - Tag
+      TaskRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole # TODO: add this to the template.
+      Volumes: 
+        - Name: challenge_files
+          EFSVolumeConfiguration: 
+            AuthorizationConfig: 
+                AccessPointId: fsap-09c42b6e0b4e9d1a0 #!Ref AccessPointChallengeFiles
+                IAM: ENABLED # it worked with disabled...
+            FilesystemId: fs-0e2722088454cdb74 #!Ref FsApiTemplateCerts
+            RootDirectory: /
+            TransitEncryption: ENABLED
+            # TransitEncryptionPort: Integer
+        - Name: data
+          EFSVolumeConfiguration: 
+            AuthorizationConfig: 
+                AccessPointId: fsap-05cecf0376fd2e071 #!Ref FsApiTemplateCerts
+                IAM: ENABLED
+            FilesystemId: fs-0e2722088454cdb74 #!Ref FsApiTemplateCerts
+            RootDirectory: /
+            TransitEncryption: ENABLED
+            # TransitEncryptionPort: Integer
+        
+

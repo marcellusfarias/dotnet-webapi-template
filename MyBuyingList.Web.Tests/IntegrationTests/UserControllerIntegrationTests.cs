@@ -29,19 +29,32 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
         // https://stackoverflow.com/questions/49160306/why-a-customization-returns-the-same-instance-when-applied-on-two-different-prop
+        //_fixture.Customize<CreateUserDto>(customization =>
+        //    customization
+        //        .With(x => x.Password, _validPassword)
+        //        .Without(x => x.UserName)
+        //        .Do(x =>
+        //        {
+        //            x.UserName = _fixture.Create<string>().Substring(32);
+        //        })
+        //        .Without(x => x.Email)
+        //        .Do(x =>
+        //        {
+        //            x.Email = _fixture.Create<MailAddress>().Address;
+        //        }));
+
         _fixture.Customize<CreateUserDto>(customization =>
             customization
                 .With(x => x.Password, _validPassword)
                 .Without(x => x.UserName)
-                .Do(x =>
-                {
-                    x.UserName = _fixture.Create<string>().Substring(32);
-                })
                 .Without(x => x.Email)
                 .Do(x =>
                 {
-                    x.Email = _fixture.Create<MailAddress>().Address;
-                }));
+                    var username = _fixture.Create<string>().Substring(32);
+                    var email = _fixture.Create<MailAddress>().Address;
+                    x = x with { UserName = username, Email = email };
+                })
+        );
     }
 
     [Fact]
@@ -51,13 +64,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
         var expectedUser = new List<GetUserDto>()
         {
-            new GetUserDto
-            {
-                Id = adminUser.Id,
-                UserName = adminUser.UserName,
-                Email = adminUser.Email,
-                Active = true,
-            }
+            new GetUserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true)
         };
 
         // Act
@@ -144,13 +151,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
-        var expectedUser = new GetUserDto
-        {
-            Id = adminUser.Id,
-            UserName = adminUser.UserName,
-            Email = adminUser.Email,
-            Active = true,
-        };
+        var expectedUser = new GetUserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true);
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, adminUser.Id);
@@ -197,8 +198,11 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var newUser = _fixture.Create<CreateUserDto>();
-        newUser.Email = "bademail@com";
-        newUser.Password = ".";
+        newUser = newUser with
+        {
+            Email = "bademail@com",
+            Password = "."
+        };
 
         var expectedErrorModel = new ErrorModel()
         {
@@ -272,11 +276,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto
-        {
-            OldPassword = Utils.TESTUSER_PASSWORD,
-            NewPassword = "Mn!90..pT",
-        };
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(Utils.TESTUSER_PASSWORD, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");
@@ -288,11 +288,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // If this operation is successfull, 
         // we can infer previous operation really updated the password
         // in the database
-        dto = new UpdateUserPasswordDto
-        {
-            OldPassword = "Mn!90..pT",
-            NewPassword = Utils.TESTUSER_PASSWORD,
-        };
+        dto = new UpdateUserPasswordDto("Mn!90..pT", Utils.TESTUSER_PASSWORD);
         response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -301,11 +297,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async void ChangePassword_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto
-        {
-            OldPassword = _validPassword,
-            NewPassword = ".",
-        };
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(_validPassword, ".");
         
         var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
             "Error validating property 'NewPassword'.", 
@@ -325,11 +317,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async void ChangePassword_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto
-        {
-            OldPassword = _validPassword,
-            NewPassword = "Mn!90..pT",
-        };
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(_validPassword, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 200, "/password");
@@ -348,11 +336,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto
-        {
-            OldPassword = string.Concat(_validPassword, "."),
-            NewPassword = "Mn!90..pT",
-        };
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(string.Concat(_validPassword, "."), "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");

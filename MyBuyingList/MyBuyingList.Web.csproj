@@ -26,4 +26,8 @@
 		<ProjectReference Include="..\MyBuyingList.Infrastructure\MyBuyingList.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="LetsEncrypt\" />
+	</ItemGroup>
+
 </Project>

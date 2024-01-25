@@ -94,6 +94,8 @@ Therefore, we set our application to not listen on HTTP. One can check it in thr
 
 We are using a _self-signed_ certificate for development. When moving into production, we plan to add a valid one.
 
+Production certificate installed following: [this youtube video](https://www.youtube.com/watch?v=jrR_WfgmWEw) and [this readme](https://github.com/marcel-dempers/docker-development-youtube-series/tree/master/security/letsencrypt/introduction)
+
 When moving into a Web App, Microsoft recommends adding  HttpsRedirection middleware and Hsts middleware.
 
 
