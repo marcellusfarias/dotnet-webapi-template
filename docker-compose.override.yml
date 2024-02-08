@@ -5,17 +5,21 @@ services:
     # image: mybuyinglistweb
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443 #;http://+:80
+      # - ASPNETCORE_URLS=https://+:443 
+      - ASPNETCORE_URLS=http://+:80
     ports:
-      - "443"
-      # - "80"
-    volumes: # data for HTTPS certs
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      # - "443"
+      - "8080:80"
+    # volumes: # data for HTTPS certs
+    #   - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    #   - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      # - something:/letsencrypt
+      # - something:/etc/letsencrypt
     depends_on:
       - db
     networks:
       - buyinglist-db
+  
   db:
     image: postgres:14
     environment:
@@ -28,6 +32,7 @@ services:
       - "55432:5432"
     networks:
       - buyinglist-db
+  
   db_admin:
     image: dpage/pgadmin4
     restart: always
@@ -38,14 +43,12 @@ services:
       - "5050:80"
     networks:
       - buyinglist-db
+
 volumes:
-  # Persist contents of the DB outside of the container
-    #- type: bind
-    #  source: /mnt/shared_docker/dc-postgres
-    #  target: /var/lib/postgresql/data
   postgres_data:
   
 networks:
   buyinglist-db:
-    external: true
+    # external: true
+    driver: bridge
         
