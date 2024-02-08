@@ -23,6 +23,15 @@ Resources:
     Properties:
       GroupDescription: Security Group to identify fargate services.
       VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 8080
+        - IpProtocol: tcp
+          CidrIpv6: ::/0
+          FromPort: 80
+          ToPort: 8080
 
   SecurityGroupEfsApiTemplate:
     Type: 'AWS::EC2::SecurityGroup'
@@ -104,4 +113,43 @@ Resources:
         - Key: Name
           Value: access-point-certs
 
+  AccessPointPostgres:
+    Type: 'AWS::EFS::AccessPoint'
+    Properties:
+      FileSystemId: !Ref FsApiTemplateCerts
+      RootDirectory:
+        Path: '/'
+      AccessPointTags:
+        - Key: Name
+          Value: access-point-postgres
 
+Outputs:
+    FileSystemId:
+        Value: !Ref FsApiTemplateCerts
+        Export:
+            Name: FileSystemId
+
+    AccessPointPostgresId:
+        Value: !Ref AccessPointPostgres
+        Export:
+            Name: AccessPointPostgresId
+
+    AccessPointCertsId:
+        Value: !Ref AccessPointCerts
+        Export:
+            Name: AccessPointCertsId
+
+    AccessPointChallengeFilesId:
+        Value: !Ref AccessPointChallengeFiles
+        Export:
+            Name: AccessPointChallengeFilesId
+
+    SecurityGroupFargateApiTemplateId:
+        Value: !Ref SecurityGroupFargateApiTemplate
+        Export:
+            Name: SecurityGroupFargateApiTemplateId
+
+    SecurityGroupEfsApiTemplateId:
+        Value: !Ref SecurityGroupEfsApiTemplate
+        Export:
+            Name: SecurityGroupEfsApiTemplateId

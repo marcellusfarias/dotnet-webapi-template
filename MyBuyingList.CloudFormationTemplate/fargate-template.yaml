@@ -19,7 +19,7 @@ Parameters:
 
 # Docs: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html#cfn-ecs-taskdefinition-networkmode
 Resources:
-  TaskCertbot:
+  CertbotTask:
     Type: AWS::ECS::TaskDefinition
     Properties:
       ContainerDefinitions: 
@@ -58,20 +58,222 @@ Resources:
         - Name: challenge_files
           EFSVolumeConfiguration: 
             AuthorizationConfig: 
-                AccessPointId: fsap-09c42b6e0b4e9d1a0 #!Ref AccessPointChallengeFiles
+                AccessPointId: !ImportValue AccessPointChallengeFilesId
                 IAM: ENABLED # it worked with disabled...
-            FilesystemId: fs-0e2722088454cdb74 #!Ref FsApiTemplateCerts
+            FilesystemId: !ImportValue FileSystemId
             RootDirectory: /
             TransitEncryption: ENABLED
             # TransitEncryptionPort: Integer
         - Name: data
           EFSVolumeConfiguration: 
             AuthorizationConfig: 
-                AccessPointId: fsap-05cecf0376fd2e071 #!Ref FsApiTemplateCerts
+                AccessPointId: !ImportValue AccessPointCertsId
                 IAM: ENABLED
-            FilesystemId: fs-0e2722088454cdb74 #!Ref FsApiTemplateCerts
+            FilesystemId: !ImportValue FileSystemId
             RootDirectory: /
-            TransitEncryption: ENABLED
             # TransitEncryptionPort: Integer
-        
+            TransitEncryption: ENABLED
+              
+  CertbotService:
+    Type: AWS::ECS::Service
+    DependsOn:
+    - CertbotTask
+    Properties:
+        Cluster: api-template
+        DeploymentConfiguration: 
+            DeploymentCircuitBreaker: 
+              Enable: true
+              Rollback: true
+        DeploymentController: 
+          Type: ECS
+        DesiredCount: 1
+        EnableECSManagedTags: true
+        # EnableExecuteCommand: true # Isso aqui eu uso pra debugar
+        LaunchType: FARGATE
+        NetworkConfiguration: # This parameter is required for task definitions that use the awsvpc network, and it is not supported for other network modes.
+            AwsvpcConfiguration: 
+                AssignPublicIp: ENABLED # Dont know why works only with ENABLED
+                SecurityGroups: 
+                  - !ImportValue SecurityGroupFargateApiTemplateId
+                  - !ImportValue SecurityGroupEfsApiTemplateId
+                Subnets: 
+                  - !Ref Subnet1
+                  - !Ref Subnet2
+                  - !Ref Subnet3
+        PlatformVersion: LATEST
+        SchedulingStrategy: REPLICA
+        ServiceName: certbot-service
+        TaskDefinition: certbot-task
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/ApiTask
+
+  ApiTask:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn:
+    - LogGroup
+    Properties:
+        ContainerDefinitions: 
+            - Name: db
+              Image: postgres:14
+              Essential: False
+              Environment:
+                - Name: POSTGRES_USER
+                  Value: myuser
+                - Name: POSTGRES_PASSWORD
+                  Value: mypassword
+                - Name: POSTGRES_DB
+                  Value: mydatabase
+              PortMappings:
+                - ContainerPort: 5532
+                  # HostPort: 55532
+              MountPoints:
+                - ContainerPath: /var/lib/postgresql/data
+                  ReadOnly: False
+                  SourceVolume: postgres_db
+              HealthCheck:
+                  Command:
+                    - "CMD-SHELL"
+                    - "pg_isready -d mydatabase"
+                  Interval: 30
+                  Retries: 5
+                  StartPeriod: 80
+                  Timeout: 60
+
+            - Name: db_admin
+              Image: dpage/pgadmin4
+              Essential: False
+              Environment:
+                - Name: PGADMIN_DEFAULT_EMAIL
+                  Value: admin@admin.com
+                - Name: PGADMIN_DEFAULT_PASSWORD
+                  Value: root
+              PortMappings:
+                - ContainerPort: 80
+  
+            - Name: api
+              DependsOn: 
+              - Condition: HEALTHY 
+                ContainerName: db
+              Image: 541494567186.dkr.ecr.sa-east-1.amazonaws.com/api-template:latest
+              Essential: True
+              LogConfiguration:
+                  LogDriver: awslogs
+                  Options: 
+                    awslogs-group: !Ref LogGroup
+                    awslogs-region: "sa-east-1"
+                    awslogs-stream-prefix: ecs 
+              Environment:
+                -   Name: ASPNETCORE_ENVIRONMENT
+                    Value: Production
+                -   Name: ASPNETCORE_URLS
+                    Value: http://+:8080 
+              PortMappings:
+                - ContainerPort: 8080
+              MountPoints:
+                - ContainerPath: /letsencrypt
+                  ReadOnly: False
+                  SourceVolume: challenge_files
+                - ContainerPath: /etc/letsencrypt
+                  ReadOnly: False
+                  SourceVolume: certs
+        Cpu: 1024
+        ExecutionRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole
+        Family: api-task
+        Memory: 2048
+        NetworkMode: awsvpc # Required by fargate
+        RequiresCompatibilities: 
+          - FARGATE
+        RuntimePlatform: 
+           CpuArchitecture: X86_64
+           OperatingSystemFamily: LINUX
+        TaskRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole 
+        Volumes: 
+          - Name: postgres_db
+            EFSVolumeConfiguration: 
+              AuthorizationConfig: 
+                  AccessPointId: !ImportValue AccessPointPostgresId
+                  IAM: ENABLED # it worked with disabled...
+              FilesystemId: !ImportValue FileSystemId
+              RootDirectory: /
+              TransitEncryption: ENABLED
+          - Name: challenge_files
+            EFSVolumeConfiguration: 
+              AuthorizationConfig: 
+                  AccessPointId: !ImportValue AccessPointChallengeFilesId
+                  IAM: ENABLED # it worked with disabled...
+              FilesystemId: !ImportValue FileSystemId
+              RootDirectory: /
+              TransitEncryption: ENABLED
+              # TransitEncryptionPort: Integer
+          - Name: certs
+            EFSVolumeConfiguration: 
+              AuthorizationConfig: 
+                  AccessPointId: !ImportValue AccessPointCertsId
+                  IAM: ENABLED
+              FilesystemId: !ImportValue FileSystemId
+              RootDirectory: /
+              # TransitEncryptionPort: Integer
+              TransitEncryption: ENABLED
+
+  #Docs: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html#cfn-ecs-service-deploymentconfiguration
+  ApiService:
+    Type: AWS::ECS::Service
+    DependsOn: 
+    - ApiTask
+    Properties:
+      # CapacityProviderStrategy: 
+      #   - CapacityProviderStrategyItem
+      Cluster: api-template
+      DeploymentConfiguration: 
+          # Alarms: 
+          #   DeploymentAlarms
+          DeploymentCircuitBreaker: 
+            Enable: true
+            Rollback: true
+          # MaximumPercent: Integer
+          # MinimumHealthyPercent: Integer
+      DeploymentController: 
+        Type: ECS
+      DesiredCount: 1
+      EnableECSManagedTags: true
+      # EnableExecuteCommand: true # Isso aqui eu uso pra debugar
+      # HealthCheckGracePeriodSeconds: Integer
+      LaunchType: FARGATE
+      # LoadBalancers: 
+      #   - LoadBalancer
+      NetworkConfiguration: # This parameter is required for task definitions that use the awsvpc network, and it is not supported for other network modes.
+          AwsvpcConfiguration: 
+              AssignPublicIp: ENABLED
+              SecurityGroups: 
+                - !ImportValue SecurityGroupFargateApiTemplateId
+                - !ImportValue SecurityGroupEfsApiTemplateId
+              Subnets: 
+                - !Ref Subnet1
+                - !Ref Subnet2
+                - !Ref Subnet3
+      # PlacementConstraints: 
+      #   - PlacementConstraint
+      # PlacementStrategies: 
+      #   - PlacementStrategy
+      PlatformVersion: LATEST
+      # PropagateTags: String
+      # Role: String
+      SchedulingStrategy: REPLICA
+      # ServiceConnectConfiguration: 
+      #     Enabled: True
+      #     # LogConfiguration: 
+      #     #   LogConfiguration
+      #     Namespace: api-template
+      #     Services: 
+      #       - ServiceConnectService
+      ServiceName: api-service
+      # ServiceRegistries: 
+      #   - ServiceRegistry
+      # Tags: 
+      #   - Tag
+      TaskDefinition: api-task
+    
 
