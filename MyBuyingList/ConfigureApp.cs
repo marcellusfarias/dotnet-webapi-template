@@ -9,9 +9,9 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureApp
 {
-    internal async static Task<WebApplication> StartApplication(this WebApplication app)
+    internal async static Task StartApplication(this WebApplication app)
     {
-        bool isDevelopment = app.Environment.IsDevelopment();
+        //if (app.Environment.IsDevelopment()) app.AddDebuggingMiddlewareLogic();
 
         try
         {
@@ -23,11 +23,9 @@ internal static class ConfigureApp
             await app.StopAsync();
         }
 
-        //if (isDevelopment) app.AddDebuggingMiddlewareLogic();
+        app.Logger.LogInformation("Migration ran successfully");
 
-        app.AddMiddlewares(isDevelopment);
-
-        return app;
+        app.AddMiddlewares();
     }
 
     private static void RunDatabaseMigrations(this WebApplication app)
@@ -39,73 +37,57 @@ internal static class ConfigureApp
         }
     }
 
-    private static void AddMiddlewares(this WebApplication app, bool isDevelopment)
+    private static void AddMiddlewares(this WebApplication app)
     {
         app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-        //app.UseHttpLogging();
-        app.UseRouting();
 
+        // Letting this here while I expose port 80 for testing certbot.
+        //app.UseHsts();
+        //app.UseHttpsRedirection();
+
+        app.UseRouting();
+        app.AddLetsEncryptChallengeEndpoint();
+        app.UseRateLimiter();
+        app.AddSwagger();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.EnableRequestBuffering();
+        app.MapControllers();
+    }
+
+    private static void AddLetsEncryptChallengeEndpoint(this WebApplication app)
+    {
         // Shared mounted volume where letsencrypt certbot will place the challenge files.
         app.UseStaticFiles(new StaticFileOptions
         {
-            FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "LetsEncrypt")),
-            RequestPath = "/.well-known/acme-challenge/"
+            //FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "LetsEncrypt")),
+            FileProvider = new PhysicalFileProvider("/letsencrypt"), // location of the folder in the docker container
+            RequestPath = "/.well-known/acme-challenge"
         });
+    }
 
-        app.UseRateLimiter();
-
-        if (isDevelopment)
+    private static void AddSwagger(this WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
         {
-            // Don't require authentication for this.
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                options.RoutePrefix = string.Empty;
-            });
-        }
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            options.RoutePrefix = string.Empty;
+        });
+    }
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-
+    private static void EnableRequestBuffering(this WebApplication app)
+    {
         // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
+        // TODO: investigate performance issues
         app.Use((context, next) =>
         {
             context.Request.EnableBuffering();
             return next();
         });
-
-        app.MapControllers();
     }
 
     #region UsefulFunctions
-
-    //Not needed for now, as this project is still only an API.
-    private static void ApplyWebConfigs(this WebApplication app)
-    {
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Home/Error");
-            app.UseHsts(); // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-
-            //builder.Services.AddHsts(options =>
-            //{
-            //    options.Preload = true;
-            //    options.IncludeSubDomains = true;
-            //    options.MaxAge = TimeSpan.FromDays(60);
-            //    options.ExcludedHosts.Add("example.com");
-            //    options.ExcludedHosts.Add("www.example.com");
-            //});
-        }
-        else
-        {
-            app.UseDeveloperExceptionPage();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-    }
 
     // Call this on the StartApplication method if you want to log the custom added middlewares.
     private static void PrintListOfCustomMiddlewares(this WebApplication app)

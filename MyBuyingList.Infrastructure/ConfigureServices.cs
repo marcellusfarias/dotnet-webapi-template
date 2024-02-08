@@ -9,21 +9,16 @@ using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Infrastructure.Authentication.Services;
 using MyBuyingList.Application.Features.Users;
 
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
-        string connectionString = GetConnectionString(configuration, logger);
-        services.CreateDbContext(connectionString);
-        services.AddRepositores();
-
+        services.AddDatabaseContext(configuration, logger);
+        services.AddRepositores(configuration);
         services.AddJwtAuthentication();
-
-        services.Configure<RepositorySettings>(configuration.GetSection("RepositorySettings"));
-
+        
         return services;
     }
 
@@ -34,10 +29,18 @@ public static class ConfigureServices
         services.ConfigureOptions<JwtOptionsSetup>();
         services.ConfigureOptions<JwtBearerOptionsSetup>();
         services.AddTransient<IJwtProvider, JwtProvider>();
+    }    
+
+    private static void AddRepositores(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<RepositorySettings>(configuration.GetSection("RepositorySettings"));
+        services.AddScoped<IUserRepository, UserRepository>();
     }
 
-    private static void CreateDbContext(this IServiceCollection services, string connectionString)
+    private static void AddDatabaseContext(this IServiceCollection services, IConfiguration configuration, ILogger logger)
     {
+        string connectionString = GetConnectionString(configuration, logger);
+
         services.AddDbContext<ApplicationDbContext>(
                 options =>
                 {
@@ -48,11 +51,6 @@ public static class ConfigureServices
             );
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddScoped<ApplicationDbContext>();
-    }
-
-    private static void AddRepositores(this IServiceCollection services)
-    {
-        services.AddScoped<IUserRepository, UserRepository>();
     }
 
     private static string GetConnectionString(IConfiguration configuration, ILogger logger)
