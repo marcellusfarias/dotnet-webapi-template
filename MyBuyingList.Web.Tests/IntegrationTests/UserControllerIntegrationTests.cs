@@ -27,34 +27,17 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         _fixture = new Fixture();
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+    }
 
-        // https://stackoverflow.com/questions/49160306/why-a-customization-returns-the-same-instance-when-applied-on-two-different-prop
-        //_fixture.Customize<CreateUserDto>(customization =>
-        //    customization
-        //        .With(x => x.Password, _validPassword)
-        //        .Without(x => x.UserName)
-        //        .Do(x =>
-        //        {
-        //            x.UserName = _fixture.Create<string>().Substring(32);
-        //        })
-        //        .Without(x => x.Email)
-        //        .Do(x =>
-        //        {
-        //            x.Email = _fixture.Create<MailAddress>().Address;
-        //        }));
+    // I could not manage to use AutoFixture customization with records. See: https://github.com/AutoFixture/AutoFixture/issues/1201
+    // I was trying to have the same result as I had for class. Check: // https://stackoverflow.com/questions/49160306/why-a-customization-returns-the-same-instance-when-applied-on-two-different-prop
+    private CreateUserDto GenerateCreateUserDto()
+    {
+        var username = _fixture.Create<string>().Substring(32);
+        var email = _fixture.Create<MailAddress>().Address;
+        var password = _validPassword;
 
-        _fixture.Customize<CreateUserDto>(customization =>
-            customization
-                .With(x => x.Password, _validPassword)
-                .Without(x => x.UserName)
-                .Without(x => x.Email)
-                .Do(x =>
-                {
-                    var username = _fixture.Create<string>().Substring(32);
-                    var email = _fixture.Create<MailAddress>().Address;
-                    x = x with { UserName = username, Email = email };
-                })
-        );
+        return new CreateUserDto(username, email, password);
     }
 
     [Fact]
@@ -123,7 +106,12 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var extraSize = 5;
-        var createUsers = _fixture.CreateMany<CreateUserDto>(_pageSize + extraSize).ToList();
+        var createUsers = new List<CreateUserDto>();
+        for (int i = 0; i < _pageSize + extraSize; i++)
+        {
+            createUsers.Add(GenerateCreateUserDto());
+        }
+
         var tasks = new List<Task>();
 
         foreach (var user in createUsers)
@@ -177,7 +165,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async void CreateUserAsync_ShouldReturnCreated_WhenDtoIsGood()
     {
         // Arrange
-        var newUser = _fixture.Create<CreateUserDto>();
+        var newUser = GenerateCreateUserDto();
 
         // Act
         var response = await _client.PostAsync(
@@ -197,7 +185,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async void CreateUserAsync_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
-        var newUser = _fixture.Create<CreateUserDto>();
+        var newUser = GenerateCreateUserDto();
         newUser = newUser with
         {
             Email = "bademail@com",
