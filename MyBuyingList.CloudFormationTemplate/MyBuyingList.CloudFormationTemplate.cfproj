@@ -6,6 +6,7 @@
     <AssemblyName>MyBuyingList.CloudFormationTemplate</AssemblyName>
     <Name>MyBuyingList.CloudFormationTemplate</Name>
     <RootNamespace>MyBuyingList.CloudFormationTemplate</RootNamespace>
+	<ExcludeFromBuild>true</ExcludeFromBuild>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Experimental LocalAppData -->
@@ -21,9 +22,9 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+  <!--<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-  </PropertyGroup>
+  </PropertyGroup>-->
   <Import Project="$(CloudFormationPath)\cloudformation.targets" />
 </Project>
