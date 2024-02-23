@@ -20,7 +20,6 @@ internal static class ConfigureServices
 
         services.AddRateLimitService(configuration);
         services.AddAuthorizationServices();
-        //services.AddHttpRedirectionServices();
         services.AddSwaggerConfiguration();
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
         services.AddLogging();
@@ -83,21 +82,5 @@ internal static class ConfigureServices
     {
         services.AddInfrastructureServices(logger, configuration);
         services.AddApplicationServices(logger);
-    }
-
-    private static void AddHttpRedirectionServices(this IServiceCollection services)
-    {
-        services.AddHttpsRedirection(options =>
-        {
-            options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
-            options.HttpsPort = 443;
-        });
-
-        services.AddHsts(options =>
-        {
-            options.Preload = true;
-            options.IncludeSubDomains = true;
-            options.MaxAge = TimeSpan.FromDays(360);
-        });
     }
 }

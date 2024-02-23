@@ -23,6 +23,8 @@ This list is orderned by priority.
 
 Upgrade to .Net 8 
 
+Finish implementing ValueObjects
+
 ### After releasing 
 
 #### API Documentation

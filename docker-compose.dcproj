@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" Sdk="Microsoft.Docker.Sdk">
-  <PropertyGroup Label="Globals">
-    <ProjectVersion>2.1</ProjectVersion>
-    <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>837e4160-e6e3-41b2-b73b-cf2e9bf83026</ProjectGuid>
-    <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>mybuyinglist.web</DockerServiceName>
-	<DockerComposeProjectName>shared-buying-list</DockerComposeProjectName>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="docker-compose.override.yml">
-      <DependentUpon>docker-compose.yml</DependentUpon>
-    </None>
-    <None Include="docker-compose.yml" />
-    <None Include=".dockerignore" />
-  </ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectVersion>2.1</ProjectVersion>
+		<DockerTargetOS>Linux</DockerTargetOS>
+		<ProjectGuid>837e4160-e6e3-41b2-b73b-cf2e9bf83026</ProjectGuid>
+		<DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
+		<DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+		<DockerServiceName>mybuyinglist.web</DockerServiceName>
+		<DockerComposeProjectName>shared-buying-list</DockerComposeProjectName>
+	</PropertyGroup>
+	<!--https://github.com/microsoft/DockerTools/issues/361-->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<!-- This is the name of your main compose file w/o the .yml-->
+		<DockerComposeBaseFilePath>docker-compose</DockerComposeBaseFilePath>
+		<!-- This is a semicolon-delimited list of additional .yml files to include when launching -->
+		<AdditionalComposeFilePaths>$(MSBuildPojectDirectory)docker-compose.development.yml</AdditionalComposeFilePaths>
+		<!-- Because this is a custom configuration you need to opt into Fast mode -->
+		<DockerDevelopmentMode>Fast</DockerDevelopmentMode>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="docker-compose.development.yml">
+			<DependentUpon>docker-compose.yml</DependentUpon>
+		</None>
+		<None Include="docker-compose.override.yml">
+			<DependentUpon>docker-compose.yml</DependentUpon>
+		</None>
+		<None Include="docker-compose.yml" />
+		<None Include=".dockerignore" />
+	</ItemGroup>
 </Project>

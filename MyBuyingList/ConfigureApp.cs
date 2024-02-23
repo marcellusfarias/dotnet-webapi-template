@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Web.Middlewares;
 using System.Diagnostics;
@@ -40,30 +39,13 @@ internal static class ConfigureApp
     private static void AddMiddlewares(this WebApplication app)
     {
         app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-
-        // Letting this here while I expose port 80 for testing certbot.
-        //app.UseHsts();
-        //app.UseHttpsRedirection();
-
         app.UseRouting();
-        app.AddLetsEncryptChallengeEndpoint();
         app.UseRateLimiter();
         app.AddSwagger();
         app.UseAuthentication();
         app.UseAuthorization();
         app.EnableRequestBuffering();
         app.MapControllers();
-    }
-
-    private static void AddLetsEncryptChallengeEndpoint(this WebApplication app)
-    {
-        // Shared mounted volume where letsencrypt certbot will place the challenge files.
-        app.UseStaticFiles(new StaticFileOptions
-        {
-            //FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "LetsEncrypt")),
-            FileProvider = new PhysicalFileProvider("/letsencrypt"), // location of the folder in the docker container
-            RequestPath = "/.well-known/acme-challenge"
-        });
     }
 
     private static void AddSwagger(this WebApplication app)

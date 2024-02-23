@@ -2,53 +2,10 @@ version: '3.4'
 
 services:
   mybuyinglist.web:
-    # image: mybuyinglistweb
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      # - ASPNETCORE_URLS=https://+:443 
-      - ASPNETCORE_URLS=http://+:80
-    ports:
-      # - "443"
-      - "8080:80"
-    # volumes: # data for HTTPS certs
-    #   - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-    #   - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      # - something:/letsencrypt
-      # - something:/etc/letsencrypt
-    depends_on:
-      - db
-    networks:
-      - buyinglist-db
+      - ASPNETCORE_ENVIRONMENT=Production
+    volumes: 
+      - certs:/root/.aspnet/https:ro
   
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "55432:5432"
-    networks:
-      - buyinglist-db
-  
-  db_admin:
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "5050:80"
-    networks:
-      - buyinglist-db
-
 volumes:
-  postgres_data:
-  
-networks:
-  buyinglist-db:
-    # external: true
-    driver: bridge
-        
+  certs:
