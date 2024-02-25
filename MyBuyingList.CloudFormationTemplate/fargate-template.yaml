@@ -17,94 +17,10 @@ Parameters:
     Description: ID of subnet2
     Default: subnet-0303132bb652e8f88
 
+# Before running this, must place the certificates on the "certs" access point
+
 # Docs: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html#cfn-ecs-taskdefinition-networkmode
 Resources:
-  CertbotTask:
-    Type: AWS::ECS::TaskDefinition
-    Properties:
-      ContainerDefinitions: 
-        - Name: certbot
-          Image: 541494567186.dkr.ecr.sa-east-1.amazonaws.com/certbot:latest
-          Essential: True
-          # LogConfiguration
-          MountPoints:
-            - ContainerPath: /letsencrypt
-              ReadOnly: False
-              SourceVolume: challenge_files
-            - ContainerPath: /etc/letsencrypt
-              ReadOnly: False
-              SourceVolume: data
-
-      Cpu: 256 # .25 vCPU
-      ExecutionRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole # TODO: add this to the template.
-      Family: certbot-task
-      # IpcMode: String
-      Memory: 512 # 0.5 GB
-      NetworkMode: awsvpc # Required by fargate
-      # PidMode: String
-      # PlacementConstraints: 
-      #  - TaskDefinitionPlacementConstraint
-      # ProxyConfiguration: 
-      #   ProxyConfiguration
-      RequiresCompatibilities: 
-        - FARGATE
-      RuntimePlatform: 
-         CpuArchitecture: X86_64
-         OperatingSystemFamily: LINUX
-      # Tags: 
-      #   - Tag
-      TaskRoleArn: arn:aws:iam::541494567186:role/ecsTaskExecutionRole # TODO: add this to the template.
-      Volumes: 
-        - Name: challenge_files
-          EFSVolumeConfiguration: 
-            AuthorizationConfig: 
-                AccessPointId: !ImportValue AccessPointChallengeFilesId
-                IAM: ENABLED # it worked with disabled...
-            FilesystemId: !ImportValue FileSystemId
-            RootDirectory: /
-            TransitEncryption: ENABLED
-            # TransitEncryptionPort: Integer
-        - Name: data
-          EFSVolumeConfiguration: 
-            AuthorizationConfig: 
-                AccessPointId: !ImportValue AccessPointCertsId
-                IAM: ENABLED
-            FilesystemId: !ImportValue FileSystemId
-            RootDirectory: /
-            # TransitEncryptionPort: Integer
-            TransitEncryption: ENABLED
-              
-  CertbotService:
-    Type: AWS::ECS::Service
-    DependsOn:
-    - CertbotTask
-    Properties:
-        Cluster: api-template
-        DeploymentConfiguration: 
-            DeploymentCircuitBreaker: 
-              Enable: true
-              Rollback: true
-        DeploymentController: 
-          Type: ECS
-        DesiredCount: 1
-        EnableECSManagedTags: true
-        # EnableExecuteCommand: true # Isso aqui eu uso pra debugar
-        LaunchType: FARGATE
-        NetworkConfiguration: # This parameter is required for task definitions that use the awsvpc network, and it is not supported for other network modes.
-            AwsvpcConfiguration: 
-                AssignPublicIp: ENABLED # Dont know why works only with ENABLED
-                SecurityGroups: 
-                  - !ImportValue SecurityGroupFargateApiTemplateId
-                  - !ImportValue SecurityGroupEfsApiTemplateId
-                Subnets: 
-                  - !Ref Subnet1
-                  - !Ref Subnet2
-                  - !Ref Subnet3
-        PlatformVersion: LATEST
-        SchedulingStrategy: REPLICA
-        ServiceName: certbot-service
-        TaskDefinition: certbot-task
-
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -173,10 +89,7 @@ Resources:
               PortMappings:
                 - ContainerPort: 8080
               MountPoints:
-                - ContainerPath: /letsencrypt
-                  ReadOnly: False
-                  SourceVolume: challenge_files
-                - ContainerPath: /etc/letsencrypt
+                - ContainerPath: /root/.aspnet/https:ro
                   ReadOnly: False
                   SourceVolume: certs
         Cpu: 1024
@@ -199,15 +112,6 @@ Resources:
               FilesystemId: !ImportValue FileSystemId
               RootDirectory: /
               TransitEncryption: ENABLED
-          - Name: challenge_files
-            EFSVolumeConfiguration: 
-              AuthorizationConfig: 
-                  AccessPointId: !ImportValue AccessPointChallengeFilesId
-                  IAM: ENABLED # it worked with disabled...
-              FilesystemId: !ImportValue FileSystemId
-              RootDirectory: /
-              TransitEncryption: ENABLED
-              # TransitEncryptionPort: Integer
           - Name: certs
             EFSVolumeConfiguration: 
               AuthorizationConfig: 

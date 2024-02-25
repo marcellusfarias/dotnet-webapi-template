@@ -16,7 +16,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{7327D7B2-D1E5-46A4-A451-EBF93ED6555B}"
 	ProjectSection(SolutionItems) = preProject
 		BACKLOG.md = BACKLOG.md
-		letsencrypt\Dockerfile = letsencrypt\Dockerfile
 		README.md = README.md
 		RESEARCH.md = RESEARCH.md
 	EndProjectSection

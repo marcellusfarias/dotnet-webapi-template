@@ -93,16 +93,6 @@ Resources:
       SecurityGroups:
       - !Ref SecurityGroupEfsApiTemplate
 
-  AccessPointChallengeFiles:
-    Type: 'AWS::EFS::AccessPoint'
-    Properties:
-      FileSystemId: !Ref FsApiTemplateCerts
-      RootDirectory:
-        Path: '/'
-      AccessPointTags:
-        - Key: Name
-          Value: access-point-challengefiles
-
   AccessPointCerts:
     Type: 'AWS::EFS::AccessPoint'
     Properties:
@@ -138,11 +128,6 @@ Outputs:
         Value: !Ref AccessPointCerts
         Export:
             Name: AccessPointCertsId
-
-    AccessPointChallengeFilesId:
-        Value: !Ref AccessPointChallengeFiles
-        Export:
-            Name: AccessPointChallengeFilesId
 
     SecurityGroupFargateApiTemplateId:
         Value: !Ref SecurityGroupFargateApiTemplate
