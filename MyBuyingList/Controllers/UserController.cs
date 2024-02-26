@@ -62,7 +62,13 @@ public class UserController : ApiControllerBase
         CreateUserDto createUserDto,
         CancellationToken token)
     {
+        var guid = new Guid();
+        _logger.LogInformation($"{guid} - Create user {createUserDto.UserName} with email {createUserDto.Email}");
+
         var userId = await _userService.CreateAsync(createUserDto, token);
+
+        _logger.LogInformation($"{guid} - Created with id {userId}");
+
         return new ObjectResult(userId) { StatusCode = StatusCodes.Status201Created };
     }
 
@@ -80,7 +86,13 @@ public class UserController : ApiControllerBase
         UpdateUserPasswordDto updateUserPasswordDto,
         CancellationToken token)
     {
+        var guid = new Guid();
+        _logger.LogInformation($"{guid} - Change password from user {id}");
+
         await _userService.ChangeUserPasswordAsync(id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
+
+        _logger.LogInformation($"{guid} - Password from user {id} updated");
+
         return NoContent();
     }
 
@@ -96,7 +108,13 @@ public class UserController : ApiControllerBase
         [FromRoute] int id,
         CancellationToken token)
     {
+        var guid = new Guid();
+        _logger.LogInformation($"{guid} - Delete user {id}");
+
         await _userService.DeleteAsync(id, token);
+
+        _logger.LogInformation($"{guid} - User {id} deleted");
+
         return NoContent();
     }
 

@@ -6,10 +6,13 @@ using MyBuyingList.Application.Features.Login.Services;
 namespace MyBuyingList.Web.Controllers;
 public class AuthController : ApiControllerBase
 {
-    private ILoginService _loginService;
-    public AuthController(ILoginService loginService)
+    private readonly ILoginService _loginService;
+    private readonly ILogger<AuthController> _logger;
+
+    public AuthController(ILoginService loginService, ILogger<AuthController> logger)
     {
         _loginService = loginService;
+        _logger = logger;
     }
 
     [EnableRateLimiting("Authentication")]
@@ -20,7 +23,20 @@ public class AuthController : ApiControllerBase
         [FromBody] LoginDto loginDto, 
         CancellationToken token)
     {
+        var guid = new Guid();
+        _logger.LogInformation($"{guid} - Authenticate user {loginDto.Username}");
+
         var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(loginDto, token);
-        return string.IsNullOrEmpty(jwtToken) ? Unauthorized() : Ok(jwtToken);
+
+        if(string.IsNullOrEmpty(jwtToken))
+        {
+            _logger.LogInformation($"{guid} - Unauthorized {loginDto.Username}");
+            return Unauthorized();
+        }
+        else
+        {
+            _logger.LogInformation($"{guid} - Authenticated {loginDto.Username}");
+            return Ok(jwtToken);
+        }
     }
 }

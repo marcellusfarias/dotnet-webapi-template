@@ -37,6 +37,14 @@ Read articles about how to create a great API documentation. [Example](https://s
 
 * Output caching (Redis).
 
+#### Configuration
+
+Fix JwtOptionsSetup
+
+#### Logging
+
+Create logging service that handles the GUID automatically. Should be simple and have transient lifetime. 
+
 #### Github Actions
 
 * Configure Github actions pipeline.
