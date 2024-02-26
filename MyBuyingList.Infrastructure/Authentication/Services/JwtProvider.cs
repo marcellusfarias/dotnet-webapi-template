@@ -30,7 +30,7 @@ public class JwtProvider : IJwtProvider
         };
 
         var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mySuperSecretKey")),
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),
                 SecurityAlgorithms.HmacSha256Signature
             );
 

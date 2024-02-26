@@ -7,6 +7,30 @@ services:
     # Configure the volume properly with the location of the certs
     volumes: 
       - certs:/root/.aspnet/https:ro
-  
+    secrets:
+      - jwt_secret_key
+
+
+  db:
+    environment:
+      POSTGRES_USER: /run/secrets/postgres_user
+      POSTGRES_PASSWORD: /run/secrets/postgres_password
+      POSTGRES_DB: /run/secrets/postgres_db
+    secrets:
+        - postgres_db
+        - postgres_user
+        - postgres_password
+
 volumes:
   certs:
+
+# Works only on swarm mode
+secrets:
+  jwt_secret_key:
+    external: true
+  postgres_db:
+     external: true
+  postgres_user:
+     external: true
+  postgres_password:
+     external: true

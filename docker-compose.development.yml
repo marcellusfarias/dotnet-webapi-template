@@ -7,3 +7,25 @@ services:
     volumes: # data for HTTPS certs
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    secrets:
+      - jwt_secret_key
+
+  db:
+    environment:
+      POSTGRES_USER: /run/secrets/postgres_user
+      POSTGRES_PASSWORD: /run/secrets/postgres_password
+      POSTGRES_DB: /run/secrets/postgres_db
+    secrets:
+        - postgres_db
+        - postgres_user
+        - postgres_password
+
+secrets:
+   jwt_secret_key:
+     file: ./local/secrets/jwt_secret_key.txt
+   postgres_db:
+     file: ./local/secrets/postgres_db.txt
+   postgres_user:
+     file: ./local/secrets/postgres_user.txt
+   postgres_password:
+     file: ./local/secrets/postgres_password.txt
