@@ -4,6 +4,8 @@ using MyBuyingList.Application.Features.Users.Validators;
 using MyBuyingList.Application.Tests.TestUtils;
 using MyBuyingList.Domain.Constants;
 using System.Net.Mail;
+using FluentValidation;
+using FluentValidation.Resources;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
@@ -17,6 +19,10 @@ public class CreateUserDtoValidatorTests
     public CreateUserDtoValidatorTests()
     {
         _sut = new CreateUserDtoValidator();
+        ValidatorOptions.Global.LanguageManager = new LanguageManager()
+        {
+            Culture = System.Globalization.CultureInfo.GetCultureInfo("en"),
+        };
     }
 
     private static CreateUserDto CreateDto(string username, string email, string password)

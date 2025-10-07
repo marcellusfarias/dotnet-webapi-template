@@ -1,5 +1,4 @@
-﻿using MyBuyingList.Web;
-using System.Net;
+﻿using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;
 

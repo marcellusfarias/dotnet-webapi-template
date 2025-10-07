@@ -1,5 +1,4 @@
 ﻿using MyBuyingList.Application.Common.Constants;
-using MyBuyingList.Web;
 using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;

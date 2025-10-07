@@ -1,6 +1,4 @@
-﻿using MyBuyingList.Web;
-
-namespace MyBuyingList.Application.Common.Exceptions;
+﻿namespace MyBuyingList.Application.Common.Exceptions;
 
 public interface IFormattedResponseException
 {

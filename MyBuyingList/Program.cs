@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.Resources;
 using MyBuyingList.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,12 @@ builder.Services.AddServices(logger, builder.Configuration, isDevelopment);
 var app = builder.Build();
 await app.StartApplication();
 logger.LogInformation("Running app...");
+
+ValidatorOptions.Global.LanguageManager = new LanguageManager()
+{
+    Culture = System.Globalization.CultureInfo.GetCultureInfo("en"),
+};
+
 app.Run();
 
 // This class exists for the Integration Tests.

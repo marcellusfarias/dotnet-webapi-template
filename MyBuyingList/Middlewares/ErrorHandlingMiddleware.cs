@@ -1,4 +1,5 @@
-﻿using MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Application;
+using MyBuyingList.Application.Common.Exceptions;
 using Newtonsoft.Json;
 using System.Net;
 

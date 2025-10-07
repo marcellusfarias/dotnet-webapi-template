@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		BACKLOG.md = BACKLOG.md
 		README.md = README.md
 		RESEARCH.md = RESEARCH.md
+		local\secrets\jwt_secret_key.txt = local\secrets\jwt_secret_key.txt
+		local\secrets\postgres_db.txt = local\secrets\postgres_db.txt
+		local\secrets\postgres_password.txt = local\secrets\postgres_password.txt
+		local\secrets\postgres_user.txt = local\secrets\postgres_user.txt
 	EndProjectSection
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{837E4160-E6E3-41B2-B73B-CF2E9BF83026}"

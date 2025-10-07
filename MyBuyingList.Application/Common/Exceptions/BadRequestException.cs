@@ -1,5 +1,4 @@
 ﻿using FluentValidation.Results;
-using MyBuyingList.Web;
 using System.Net;
 
 namespace MyBuyingList.Application.Common.Exceptions;

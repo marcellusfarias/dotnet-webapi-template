@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyBuyingList.Application;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Application.Features.Users.Services;
 using MyBuyingList.Domain.Constants;
