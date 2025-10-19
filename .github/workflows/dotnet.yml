@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore MyBuyingList.sln
     - name: Build
       run: dotnet build --no-restore MyBuyingList.sln
     - name: Test
