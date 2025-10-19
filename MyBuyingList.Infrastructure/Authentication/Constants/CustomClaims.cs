@@ -2,5 +2,5 @@
 
 public static class CustomClaims
 {
-    public static string Permissions = "permissions";
+    public const string Permissions = "permissions";
 }

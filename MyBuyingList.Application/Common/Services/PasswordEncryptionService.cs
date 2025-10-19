@@ -6,15 +6,13 @@ namespace MyBuyingList.Application.Common.Services;
 
 public class PasswordEncryptionService : IPasswordEncryptionService
 {
-    private const int _workingFactor = 12;
-
-    public PasswordEncryptionService() { }
+    private const int WorkingFactor = 12;
 
     public string HashPassword(string password)
     {
         try
         {
-            return BC.HashPassword(password, _workingFactor);
+            return BC.HashPassword(password, WorkingFactor);
         }
         catch (Exception ex)
         {

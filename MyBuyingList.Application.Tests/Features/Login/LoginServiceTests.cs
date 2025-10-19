@@ -11,8 +11,8 @@ namespace MyBuyingList.Application.Tests.Features.Login;
 
 public class LoginServiceTests
 {
-    private LoginService _sut;
-    private IFixture _fixture;
+    private readonly LoginService _sut;
+    private readonly IFixture _fixture;
     private readonly IUserRepository _userRepositoryMock = Substitute.For<IUserRepository>();
     private readonly IJwtProvider _jwtProviderMock = Substitute.For<IJwtProvider>();
     private readonly IPasswordEncryptionService _passwordEncryptionService = Substitute.For<IPasswordEncryptionService>();
@@ -49,7 +49,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, default)
+            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
@@ -57,11 +57,11 @@ public class LoginServiceTests
             .Returns(true);
 
         _jwtProviderMock
-            .GenerateTokenAsync(user.Id, default)
+            .GenerateTokenAsync(user.Id, CancellationToken.None)
             .Returns("custom_token");
 
         //Act
-        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(dto, default);
+        string token = await _sut.AuthenticateAndReturnJwtTokenAsync(dto, CancellationToken.None);
 
         //Assert
         token.Should().BeEquivalentTo("custom_token");
@@ -81,11 +81,11 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(attemptingUserName, default)
+            .GetActiveUserByUsername(attemptingUserName, CancellationToken.None)
             .ReturnsNull();
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, CancellationToken.None);
 
         //Assert
         await act.Should().ThrowAsync<AuthenticationException>($"An error occured when authenticating user {attemptingUserName}.");
@@ -105,7 +105,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, default)
+            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
@@ -113,7 +113,7 @@ public class LoginServiceTests
             .Returns(false);
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, CancellationToken.None);
 
         //Assert
         await act.Should().ThrowAsync<AuthenticationException>().WithMessage($"An error occured when authenticating user {user.UserName.ToLower()}."); ;
@@ -135,7 +135,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, default)
+            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
@@ -143,11 +143,11 @@ public class LoginServiceTests
             .Returns(true);
 
         _jwtProviderMock
-            .GenerateTokenAsync(user.Id, default)
+            .GenerateTokenAsync(user.Id, CancellationToken.None)
             .Throws(new DatabaseException(new Exception()));
 
         //Act
-        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, default);
+        var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, CancellationToken.None);
 
         //Assert
         await act.Should().ThrowAsync<DatabaseException>();

@@ -17,7 +17,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     private readonly HttpClient _client;
     private readonly IFixture _fixture;
     private readonly int _pageSize;
-    private readonly string _validPassword = "Pa12345678!";
+    private const string ValidPassword = "Pa12345678!";
 
     public UserControllerIntegrationTests(ResourceFactory resourceFactory)
         : base(resourceFactory)
@@ -36,19 +36,19 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         var username = _fixture.Create<string>().Substring(32);
         var email = _fixture.Create<MailAddress>().Address;
-        var password = _validPassword;
+        var password = ValidPassword;
 
         return new CreateUserDto(username, email, password);
     }
 
     [Fact]
-    public async void GetAllUsersAsync_ShouldReturnGetUserDtoList_WhenThereAreUsers()
+    public async Task GetAllUsersAsync_ShouldReturnGetUserDtoList_WhenThereAreUsers()
     {
         // Arrange
-        var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
+        var adminUser = Domain.Constants.Users.AdminUser;
         var expectedUser = new List<GetUserDto>()
         {
-            new GetUserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true)
+            new(adminUser.Id, adminUser.UserName, adminUser.Email, true)
         };
 
         // Act
@@ -60,7 +60,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void GetAllUsersAsync_ShouldReturnUnauthorized_WhenNoTokenIsProvided()
+    public async Task GetAllUsersAsync_ShouldReturnUnauthorized_WhenNoTokenIsProvided()
     {
         // Arrange
         var auth = _client.DefaultRequestHeaders.Authorization;
@@ -75,15 +75,15 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void GetAllUsersAsync_ShouldReturnForbidden_WhenUserWithoutPermissionsRequests()
+    public async Task GetAllUsersAsync_ShouldReturnForbidden_WhenUserWithoutPermissionsRequests()
     {
         // Arrange
         await Utils.InsertTestUser(_client);
 
         LoginDto dto = new() 
         {
-            Username = Utils.TESTUSER_USERNAME,
-            Password = Utils.TESTUSER_PASSWORD
+            Username = Utils.TestUserUsername,
+            Password = Utils.TestUserPassword
         };
 
         var url = Constants.AddressAuthenticationEndpoint;
@@ -103,7 +103,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
 
     [Fact]
-    public async void GetAllUsersAsync_ShouldReturnSecondPage_WhenPageTwoIsAsked()
+    public async Task GetAllUsersAsync_ShouldReturnSecondPage_WhenPageTwoIsAsked()
     {
         // Arrange
         var extraSize = 5;
@@ -136,7 +136,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void GetUserById_ShouldReturnUser_WhenIdExists()
+    public async Task GetUserById_ShouldReturnUser_WhenIdExists()
     {
         // Arrange
         var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
@@ -152,7 +152,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void GetUserById_ShouldReturnNotFoound_WhenIdDoesntExist()
+    public async Task GetUserById_ShouldReturnNotFoound_WhenIdDoesntExist()
     {
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 100);
@@ -163,7 +163,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void CreateUserAsync_ShouldReturnCreated_WhenDtoIsGood()
+    public async Task CreateUserAsync_ShouldReturnCreated_WhenDtoIsGood()
     {
         // Arrange
         var newUser = GenerateCreateUserDto();
@@ -183,7 +183,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void CreateUserAsync_ShouldReturnBadRequest_WhenDtoIsNotOk()
+    public async Task CreateUserAsync_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
         var newUser = GenerateCreateUserDto();
@@ -197,8 +197,8 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         {
             Errors = new List<ErrorDetails>()
             {
-                new ErrorDetails(){ Title = "Error validating property 'Email'.", Detail = ValidationMessages.INVALID_EMAIL },
-                new ErrorDetails(){ Title = "Error validating property 'Password'.", Detail = ValidationMessages.INVALID_PASSWORD },
+                new ErrorDetails(){ Title = "Error validating property 'Email'.", Detail = ValidationMessages.InvalidEmail },
+                new ErrorDetails(){ Title = "Error validating property 'Password'.", Detail = ValidationMessages.InvalidPassword },
             }
         };
 
@@ -215,7 +215,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void DeleteUserAsync_ShouldReturnUnprocessableEntity_WhenIdIsAdmin()
+    public async Task DeleteUserAsync_ShouldReturnUnprocessableEntity_WhenIdIsAdmin()
     {
         // Arrange
         var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
@@ -233,7 +233,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void DeleteUserAsync_ShouldReturnNoContent_WhenIdExists()
+    public async Task DeleteUserAsync_ShouldReturnNoContent_WhenIdExists()
     {
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
@@ -250,7 +250,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void DeleteUserAsync_ShouldReturnNotFound_WhenIdDoesntExist()
+    public async Task DeleteUserAsync_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Act
         var response = await _client.DeleteAsync(string.Concat(Constants.BaseAddressUserEndpoint, 100));
@@ -260,12 +260,12 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void ChangePassword_ShouldReturnNoContent_WhenDtoIsOk()
+    public async Task ChangePassword_ShouldReturnNoContent_WhenDtoIsOk()
     {
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(Utils.TESTUSER_PASSWORD, "Mn!90..pT");
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(Utils.TestUserPassword, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");
@@ -277,20 +277,20 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // If this operation is successfull, 
         // we can infer previous operation really updated the password
         // in the database
-        dto = new UpdateUserPasswordDto("Mn!90..pT", Utils.TESTUSER_PASSWORD);
+        dto = new UpdateUserPasswordDto("Mn!90..pT", Utils.TestUserPassword);
         response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     [Fact]
-    public async void ChangePassword_ShouldReturnBadRequest_WhenDtoIsNotOk()
+    public async Task ChangePassword_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(_validPassword, ".");
+        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(ValidPassword, ".");
         
         var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
             "Error validating property 'NewPassword'.", 
-            ValidationMessages.INVALID_PASSWORD);
+            ValidationMessages.InvalidPassword);
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 2, "/password");
@@ -303,10 +303,10 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void ChangePassword_ShouldReturnNotFound_WhenIdDoesntExist()
+    public async Task ChangePassword_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(_validPassword, "Mn!90..pT");
+        UpdateUserPasswordDto dto = new(ValidPassword, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 200, "/password");
@@ -320,12 +320,12 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void ChangePassword_ShouldReturnUnprocessableEntity_WhenOldPasswordDoesntMatchCurrentOne()
+    public async Task ChangePassword_ShouldReturnUnprocessableEntity_WhenOldPasswordDoesntMatchCurrentOne()
     {
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(string.Concat(_validPassword, "."), "Mn!90..pT");
+        UpdateUserPasswordDto dto = new(string.Concat(ValidPassword, "."), "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");

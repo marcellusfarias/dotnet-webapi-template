@@ -26,7 +26,6 @@ public static class PasswordHelper
         if (!Regex.IsMatch(password, "[A-Z]+"))
             return false;
 
-        return password.Length >= 8 
-            && password.Length <= 32;
+        return password.Length is >= 8 and <= 32;
     }
 }

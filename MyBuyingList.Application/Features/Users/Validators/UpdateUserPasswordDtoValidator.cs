@@ -12,11 +12,11 @@ public class UpdateUserPasswordDtoValidator : AbstractValidator<UpdateUserPasswo
         RuleFor(x => x.OldPassword)
             .NotEmpty()
             .Must(PasswordHelper.IsValidPassword)
-            .WithMessage(ValidationMessages.INVALID_PASSWORD);
+            .WithMessage(ValidationMessages.InvalidPassword);
 
         RuleFor(x => x.NewPassword)
             .NotEmpty()
             .Must(PasswordHelper.IsValidPassword)
-            .WithMessage(ValidationMessages.INVALID_PASSWORD);
+            .WithMessage(ValidationMessages.InvalidPassword);
     }
 }

@@ -29,7 +29,7 @@ public class UserController : ApiControllerBase
         CancellationToken token,
         [FromQuery] int page = 1)
     {
-        _logger.LogInformation($"Starting request. Page = {page}");
+        _logger.LogInformation("Starting request. Page = {Page}", page);
 
         var users = await _userService.GetAllUsersAsync(page, token);
         return Ok(users);
@@ -46,9 +46,9 @@ public class UserController : ApiControllerBase
         [FromRoute] int id,
         CancellationToken token)
     {
-        _logger.LogInformation($"Starting request. Id = {id}");
+        _logger.LogInformation("Starting request. Id = {Id}", id);
 
-        var user = await _userService.GetUserAsync((int)id, token);
+        var user = await _userService.GetUserAsync(id, token);
         return Ok(user);
     }
 
@@ -63,12 +63,12 @@ public class UserController : ApiControllerBase
         CreateUserDto createUserDto,
         CancellationToken token)
     {
-        var guid = new Guid();
-        _logger.LogInformation($"{guid} - Create user {createUserDto.UserName} with email {createUserDto.Email}");
+        var guid = Guid.NewGuid();
+        _logger.LogInformation("{Guid} - Create user {UserName} with email {Email}", guid, createUserDto.UserName, createUserDto.Email);
 
         var userId = await _userService.CreateAsync(createUserDto, token);
 
-        _logger.LogInformation($"{guid} - Created with id {userId}");
+        _logger.LogInformation("{Guid} - Created with id {UserId}", guid, userId);
 
         return new ObjectResult(userId) { StatusCode = StatusCodes.Status201Created };
     }
@@ -87,12 +87,12 @@ public class UserController : ApiControllerBase
         UpdateUserPasswordDto updateUserPasswordDto,
         CancellationToken token)
     {
-        var guid = new Guid();
-        _logger.LogInformation($"{guid} - Change password from user {id}");
+        var guid = Guid.NewGuid();
+        _logger.LogInformation("{Guid} - Change password from user {Id}", guid, id);
 
         await _userService.ChangeUserPasswordAsync(id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
 
-        _logger.LogInformation($"{guid} - Password from user {id} updated");
+        _logger.LogInformation("{Guid} - Password from user {Id} updated", guid, id);
 
         return NoContent();
     }
@@ -109,12 +109,12 @@ public class UserController : ApiControllerBase
         [FromRoute] int id,
         CancellationToken token)
     {
-        var guid = new Guid();
-        _logger.LogInformation($"{guid} - Delete user {id}");
+        var guid = Guid.NewGuid();
+        _logger.LogInformation("{Guid} - Delete user {Id}", guid, id);
 
         await _userService.DeleteAsync(id, token);
 
-        _logger.LogInformation($"{guid} - User {id} deleted");
+        _logger.LogInformation("{Guid} - User {Id} deleted", guid, id);
 
         return NoContent();
     }

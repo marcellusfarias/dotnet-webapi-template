@@ -3,7 +3,7 @@
 // In progress
 public static class ErrorMessages
 {
-    public static string InvalidUsernameOrPassword = "Invalid username or password.";
-    public static string DatabaseError = "An database operation error occured.";
-    public static string BusinessLogicError = "An error occured while processing the request.";
+    public const string InvalidUsernameOrPassword = "Invalid username or password.";
+    public const string DatabaseError = "An database operation error occured.";
+    public const string BusinessLogicError = "An error occured while processing the request.";
 }

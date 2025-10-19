@@ -17,8 +17,6 @@ This list is orderned by priority.
 * Create docker secret for Admin Credentials (application + postgres). .Net [Host](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/webapplication?view=aspnetcore-7.0).
 * Research best way to configure which environment is running. Interesting [link](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/environments?view=aspnetcore-7.0#determining-the-environment-at-runtime). Another [link](https://stackoverflow.com/questions/32548948/how-to-get-the-development-staging-production-hosting-environment-in-configurese).
 
-Upgrade to .Net 8 
-
 Finish implementing ValueObjects
 
 Finish compatibily between docker swarm and fargate. Check secrets, HTTPS certs

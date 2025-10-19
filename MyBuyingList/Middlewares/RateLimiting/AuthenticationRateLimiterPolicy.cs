@@ -7,13 +7,12 @@ namespace MyBuyingList.Web.Middlewares.RateLimiting;
 
 public class AuthenticationRateLimiterPolicy : IRateLimiterPolicy<IPAddress>
 {
-    private Func<OnRejectedContext, CancellationToken, ValueTask>? _onRejected;
     private readonly CustomRateLimiterOptions _options;
 
     public AuthenticationRateLimiterPolicy(ILogger<AuthenticationRateLimiterPolicy> logger,
                                    IOptions<CustomRateLimiterOptions> options)
     {
-        _onRejected = (ctx, token) =>
+        OnRejected = (ctx, token) =>
         {
             ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
             logger.LogWarning($"Request rejected by {nameof(AuthenticationRateLimiterPolicy)}");
@@ -22,7 +21,7 @@ public class AuthenticationRateLimiterPolicy : IRateLimiterPolicy<IPAddress>
         _options = options.Value;
     }
 
-    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected => _onRejected;
+    public Func<OnRejectedContext, CancellationToken, ValueTask>? OnRejected { get; }
 
     public RateLimitPartition<IPAddress> GetPartition(HttpContext httpContext)
     {
@@ -31,15 +30,12 @@ public class AuthenticationRateLimiterPolicy : IRateLimiterPolicy<IPAddress>
         IPAddress ipAddress = httpContext.Connection.RemoteIpAddress!; 
 
         return RateLimitPartition.GetFixedWindowLimiter(ipAddress,
-            _ =>
+            _ => new FixedWindowRateLimiterOptions
             {
-                return new FixedWindowRateLimiterOptions
-                {
-                    PermitLimit = _options.PermitLimit,
-                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                    QueueLimit = _options.QueueLimit,
-                    Window = TimeSpan.FromSeconds(_options.Window)
-                };
+                PermitLimit = _options.PermitLimit,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = _options.QueueLimit,
+                Window = TimeSpan.FromSeconds(_options.Window)
             });
     }
 }

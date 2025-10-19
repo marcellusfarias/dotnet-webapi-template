@@ -7,7 +7,7 @@ namespace MyBuyingList.Application.Tests.Features.Users;
 
 public class UserMapperTests
 {
-    private IFixture _fixture;
+    private readonly IFixture _fixture;
 
     public UserMapperTests()
     {

@@ -11,6 +11,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     /// Adds a new entity in the database asyncronously.
     /// </summary>
     /// <param name="entity"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Returns the Id of the added entity.</returns>
     Task<int> AddAsync(TEntity entity, CancellationToken cancellationToken);
     Task AddRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken);

@@ -7,8 +7,8 @@ namespace MyBuyingList.Application.Tests.Features.Users;
 
 public class UpdateUserPasswordDtoValidatorTests
 {
-    private UpdateUserPasswordDtoValidator _sut;
-    private static readonly string VALID_PASSWORD = "Password123%";
+    private readonly UpdateUserPasswordDtoValidator _sut;
+    private const string ValidPassword = "Password123%";
 
     public UpdateUserPasswordDtoValidatorTests()
     {
@@ -22,35 +22,35 @@ public class UpdateUserPasswordDtoValidatorTests
 
     public static IEnumerable<object[]> ValidDtos()
     {
-        yield return new object[] { CreateDto(VALID_PASSWORD, VALID_PASSWORD), };
+        yield return [CreateDto(ValidPassword, ValidPassword)];
     }
 
     public static IEnumerable<object[]> InvalidDtos()
     {
         // Testing passwords
-        yield return new object[]
-        {
-            CreateDto("", VALID_PASSWORD),
+        yield return
+        [
+            CreateDto("", ValidPassword),
             FluentValidationHelper.GetNotEmptyFieldMessage("Old Password")
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_PASSWORD, ""),
+        yield return
+        [
+            CreateDto(ValidPassword, ""),
             FluentValidationHelper.GetNotEmptyFieldMessage("New Password")
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto("1234", VALID_PASSWORD),
-            ValidationMessages.INVALID_PASSWORD
-        };
+        yield return
+        [
+            CreateDto("1234", ValidPassword),
+            ValidationMessages.InvalidPassword
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_PASSWORD, "12345"),
-            ValidationMessages.INVALID_PASSWORD
-        };
+        yield return
+        [
+            CreateDto(ValidPassword, "12345"),
+            ValidationMessages.InvalidPassword
+        ];
     }
 
     [Theory]

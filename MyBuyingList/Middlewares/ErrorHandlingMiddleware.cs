@@ -7,12 +7,12 @@ namespace MyBuyingList.Web.Middlewares;
 
 public class ErrorHandlingMiddleware
 {
-    private readonly RequestDelegate next;
+    private readonly RequestDelegate _next;
     private readonly ILogger _logger;
 
     public ErrorHandlingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
     {
-        this.next = next;
+        _next = next;
         _logger = loggerFactory.CreateLogger<ErrorHandlingMiddleware>();
     }
 
@@ -20,7 +20,7 @@ public class ErrorHandlingMiddleware
     {
         try
         {
-            await next(context);
+            await _next(context);
         }
         catch (Exception ex)
         {
@@ -40,16 +40,15 @@ public class ErrorHandlingMiddleware
         int code = (int)HttpStatusCode.InternalServerError;
         ErrorModel? errorModel = null;
 
-        var formattedException = exception as IFormattedResponseException;
-        if (formattedException is not null)
+        if (exception is IFormattedResponseException formattedException)
         {
             code = formattedException.StatusCode;
             errorModel = formattedException.Error;
         }
 
-        logger.LogError($"StatusCode: {code}");
-        logger.LogError($"Error Model: {errorModel}");
-        logger.LogError($"Exception: {exception}");
+        logger.LogError("StatusCode: {Code}", code);
+        logger.LogError("Error Model: {ErrorModel}", errorModel);
+        logger.LogError("Exception: {Exception}", exception);
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = code;
