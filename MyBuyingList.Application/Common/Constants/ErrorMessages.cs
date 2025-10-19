@@ -1,6 +1,5 @@
 ﻿namespace MyBuyingList.Application.Common.Constants;
 
-// In progress
 public static class ErrorMessages
 {
     public const string InvalidUsernameOrPassword = "Invalid username or password.";

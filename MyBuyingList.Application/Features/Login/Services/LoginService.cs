@@ -25,7 +25,7 @@ public class LoginService : ILoginService
         var username = loginDto.Username.ToLower();
         var password = loginDto.Password;
      
-        User? user = await _userRepository.GetActiveUserByUsername(username, token);
+        User? user = await _userRepository.GetActiveUserByUsernameAsync(username, token);
         if (user is null)
             throw new AuthenticationException(username, ErrorMessages.InvalidUsernameOrPassword);
 

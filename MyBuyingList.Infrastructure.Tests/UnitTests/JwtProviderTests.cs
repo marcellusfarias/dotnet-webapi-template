@@ -33,7 +33,7 @@ public class JwtProviderTests
         var returningList = _fixture.Create<List<Policy>>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, CancellationToken.None)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Returns(returningList);
 
         // Act
@@ -50,7 +50,7 @@ public class JwtProviderTests
         var userId = _fixture.Create<int>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, CancellationToken.None)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Throws(_fixture.Create<DatabaseException>());
 
         //Act
@@ -68,7 +68,7 @@ public class JwtProviderTests
         var returningList = _fixture.Create<List<Policy>>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, CancellationToken.None)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Returns(returningList);
 
         var options = Substitute.For<IOptions<JwtOptions>>();

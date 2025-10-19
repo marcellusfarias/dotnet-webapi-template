@@ -52,7 +52,7 @@ public class JwtProvider : IJwtProvider
 
     private async Task<List<string>> GetPermissionsAsync(int userId, CancellationToken token)
     {
-        var policies = await _userRepository.GetUserPolicies(userId, token);
+        var policies = await _userRepository.GetUserPoliciesAsync(userId, token);
         if (policies is null)
         {
             return new List<string>();

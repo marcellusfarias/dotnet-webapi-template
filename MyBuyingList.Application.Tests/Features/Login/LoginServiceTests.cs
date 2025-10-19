@@ -49,7 +49,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
+            .GetActiveUserByUsernameAsync(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
@@ -81,7 +81,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(attemptingUserName, CancellationToken.None)
+            .GetActiveUserByUsernameAsync(attemptingUserName, CancellationToken.None)
             .ReturnsNull();
 
         //Act
@@ -105,7 +105,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
+            .GetActiveUserByUsernameAsync(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
@@ -135,7 +135,7 @@ public class LoginServiceTests
         };
 
         _userRepositoryMock
-            .GetActiveUserByUsername(user.UserName, CancellationToken.None)
+            .GetActiveUserByUsernameAsync(user.UserName, CancellationToken.None)
             .Returns(user);
 
         _passwordEncryptionService
