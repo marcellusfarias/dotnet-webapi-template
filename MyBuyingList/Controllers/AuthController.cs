@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.RateLimiting;
 using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Login.Services;
+using MyBuyingList.Web.Middlewares.RateLimiting;
 
 namespace MyBuyingList.Web.Controllers;
 public class AuthController : ApiControllerBase
@@ -15,7 +16,7 @@ public class AuthController : ApiControllerBase
         _logger = logger;
     }
 
-    [EnableRateLimiting("Authentication")]
+    [EnableRateLimiting(AuthenticationRateLimiterPolicy.PolicyName)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [HttpPost, Produces("text/plain")]

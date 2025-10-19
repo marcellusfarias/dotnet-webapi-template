@@ -74,7 +74,7 @@ internal static class ConfigureServices
         services.Configure<CustomRateLimiterOptions>(configuration.GetSection("CustomRateLimiterOptions"));
         services.AddRateLimiter(options =>
         {
-            options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>("Authentication");
+            options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>(AuthenticationRateLimiterPolicy.PolicyName);
         });
     }
 

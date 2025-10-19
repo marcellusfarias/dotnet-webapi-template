@@ -7,7 +7,7 @@ This list is orderned by priority.
 
 #### Security
 
-* Security issues":
+* Security issues:
     * Log injection/Remove sensitive information from logging (check logs in release)
     * Add Lockout (already has rate limiting)
     * MFA

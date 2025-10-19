@@ -7,6 +7,7 @@ namespace MyBuyingList.Web.Middlewares.RateLimiting;
 
 public class AuthenticationRateLimiterPolicy : IRateLimiterPolicy<IPAddress>
 {
+    public const string PolicyName = "Authentication";
     private readonly CustomRateLimiterOptions _options;
 
     public AuthenticationRateLimiterPolicy(ILogger<AuthenticationRateLimiterPolicy> logger,
