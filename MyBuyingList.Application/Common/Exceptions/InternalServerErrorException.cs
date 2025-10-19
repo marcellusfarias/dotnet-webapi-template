@@ -4,13 +4,13 @@ namespace MyBuyingList.Application.Common.Exceptions;
 
 public class InternalServerErrorException : Exception, IFormattedResponseException
 {
-    private readonly static string _responseTitle = "An unexpected error occured.";
+    private const string ResponseTitle = "An unexpected error occured.";
     
     public int StatusCode => (int)HttpStatusCode.InternalServerError;
     public ErrorModel Error { get; private set; }
     
-    public InternalServerErrorException(Exception inner, string details) : base(_responseTitle, inner)
+    public InternalServerErrorException(Exception inner, string details) : base(ResponseTitle, inner)
     {
-        Error = ErrorModel.CreateSingleErrorDetailsModel(_responseTitle, details);
+        Error = ErrorModel.CreateSingleErrorDetailsModel(ResponseTitle, details);
     }
 }

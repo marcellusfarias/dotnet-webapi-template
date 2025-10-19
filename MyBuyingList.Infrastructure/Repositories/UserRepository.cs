@@ -11,7 +11,7 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
     public UserRepository(ApplicationDbContext context, IOptions<RepositorySettings> options) 
         : base(context, options) { }
 
-    public async Task<User?> GetActiveUserByUsername(string username, CancellationToken token)
+    public async Task<User?> GetActiveUserByUsernameAsync(string username, CancellationToken token)
     {
         try
         {
@@ -32,7 +32,7 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         }
     }
 
-    public async Task<List<Policy>?> GetUserPolicies(int id, CancellationToken token)
+    public async Task<List<Policy>?> GetUserPoliciesAsync(int id, CancellationToken token)
     {
         #region Not Great Query example
         //SELECT t.id, t.active, t.created_at, t.email, t.password, t.user_name, t0.id, t0.role_id, t0.user_id, t0.id0, t0.name, t0.id1, t0.policy_id, t0.role_id0, t0.id00, t0.name0

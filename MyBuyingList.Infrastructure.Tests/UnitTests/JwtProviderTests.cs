@@ -13,7 +13,7 @@ public class JwtProviderTests
     private readonly IOptions<JwtOptions> _options;
     private readonly IUserRepository _userRepositoryMock = Substitute.For<IUserRepository>();
 
-    private IFixture _fixture;
+    private readonly IFixture _fixture;
 
     public JwtProviderTests()
     {
@@ -26,57 +26,56 @@ public class JwtProviderTests
     }
         
     [Fact]
-    public async void GenerateTokenAsync_ReturnsToken_WhenSucceded()
+    public async Task GenerateTokenAsync_ReturnsToken_WhenSucceded()
     {
         // Arrange
         var userId = _fixture.Create<int>();
         var returningList = _fixture.Create<List<Policy>>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, default)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Returns(returningList);
 
         // Act
-        var result = await _sut.GenerateTokenAsync(userId, default);
+        var result = await _sut.GenerateTokenAsync(userId, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
-    public async void GenerateTokenAsync_ThrowsException_WhenCantConnectToDatabase()
+    public async Task GenerateTokenAsync_ThrowsException_WhenCantConnectToDatabase()
     {
         // Arrange
         var userId = _fixture.Create<int>();
-        var returningList = _fixture.Create<List<Policy>>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, default)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Throws(_fixture.Create<DatabaseException>());
 
         //Act
-        var act = async () => await _sut.GenerateTokenAsync(userId, default);
+        var act = async () => await _sut.GenerateTokenAsync(userId, CancellationToken.None);
 
         //Assert
         await act.Should().ThrowAsync<DatabaseException>();
     }
 
     [Fact]
-    public async void GenerateTokenAsync_ThrowsException_WhenOptionsAreEmpty()
+    public async Task GenerateTokenAsync_ThrowsException_WhenOptionsAreEmpty()
     {
         // Arrange
         var userId = _fixture.Create<int>();
         var returningList = _fixture.Create<List<Policy>>();
 
         _userRepositoryMock
-            .GetUserPolicies(userId, default)
+            .GetUserPoliciesAsync(userId, CancellationToken.None)
             .Returns(returningList);
 
         var options = Substitute.For<IOptions<JwtOptions>>();
         _sut = new JwtProvider(options, _userRepositoryMock);
 
         //Act
-        var act = async () => await _sut.GenerateTokenAsync(userId, default);
+        var act = async () => await _sut.GenerateTokenAsync(userId, CancellationToken.None);
 
         //Assert
         await act.Should().ThrowAsync<NullReferenceException>();

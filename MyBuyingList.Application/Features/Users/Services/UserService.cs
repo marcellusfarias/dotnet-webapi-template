@@ -28,7 +28,7 @@ public class UserService : IUserService
     public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync(int page, CancellationToken token)
     {
         var users = await _userRepository.GetAllAsync(page, token);
-        List<GetUserDto> getUserDtos = new List<GetUserDto>();
+        List<GetUserDto> getUserDtos = [];
         users.ForEach(user => getUserDtos.Add(user.ToGetUserDto()));
         return getUserDtos;
     }

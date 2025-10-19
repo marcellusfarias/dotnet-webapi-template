@@ -6,15 +6,15 @@ using System.Text.Json;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
 
-public class Utils
+public static class Utils
 {
-    public static readonly string TESTUSER_EMAIL = "newemail@gmail.com";
-    public static readonly string TESTUSER_PASSWORD = "Mx485!@zz";
-    public static readonly string TESTUSER_USERNAME = "test_user";
+    private const string TestUserEmail = "newemail@gmail.com";
+    public const string TestUserPassword = "Mx485!@zz";
+    public const string TestUserUsername = "test_user";
 
     public static async Task<int> InsertTestUser(HttpClient client)
     {
-        var newUser = new CreateUserDto(TESTUSER_USERNAME, TESTUSER_EMAIL, TESTUSER_PASSWORD);
+        var newUser = new CreateUserDto(TestUserUsername, TestUserEmail, TestUserPassword);
                 
         var response = await client.PostAsync(
             requestUri: Constants.BaseAddressUserEndpoint, 

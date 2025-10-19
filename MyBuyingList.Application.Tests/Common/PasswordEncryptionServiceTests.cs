@@ -6,9 +6,9 @@ namespace MyBuyingList.Application.Tests.Common;
 
 public class PasswordEncryptionServiceTests
 {
-    private PasswordEncryptionService _sut;
+    private readonly PasswordEncryptionService _sut;
 
-    private const string _longPassword = "12345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678";
+    private const string LongPassword = "12345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678123456781234567812345678";
 
     public PasswordEncryptionServiceTests()
     {
@@ -18,7 +18,7 @@ public class PasswordEncryptionServiceTests
     [Theory]
     [InlineData("")]
     [InlineData("12345678")]
-    [InlineData(_longPassword)]
+    [InlineData(LongPassword)]
     public void HashPassword_MustReturnValidHashedPassword_WhenPasswordIsNotValid(string password)
     {
         // Act
@@ -45,7 +45,7 @@ public class PasswordEncryptionServiceTests
     [Theory]
     [InlineData("", "$2a$12$VshqThLS2w0/9W02/3RnfOo6Wy7Evsb8VvQnUs7TC89b0dMuBSpFi", false)]
     [InlineData("12345678", "$2a$12$VshqThLS2w0/9W02/3RnfOo6Wy7Evsb8VvQnUs7TC89b0dMuBSpFi", false)]
-    [InlineData(_longPassword, "$2a$12$VshqThLS2w0/9W02/3RnfOo6Wy7Evsb8VvQnUs7TC89b0dMuBSpFi", false)]
+    [InlineData(LongPassword, "$2a$12$VshqThLS2w0/9W02/3RnfOo6Wy7Evsb8VvQnUs7TC89b0dMuBSpFi", false)]
     [InlineData("12345678", "$2a$12$zIdWbQXg/ZnKc4bkK/pxtuAzChQQnMAgyXYaO2F/AQY2CWHHc0dB.", true)]
     public void VerifyPassword_MustVerifyCorrectly_WhenParametersAreValid(string password, string hashedPassword, bool expectedResult)
     {

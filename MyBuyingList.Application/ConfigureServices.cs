@@ -22,8 +22,6 @@ public static class ConfigureServices
     private static void AddValidators(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        //services.AddScoped<IValidator<UserDto>, UserValidator>();
-        //services.AddScoped<IValidator<BuyingListDto>, BuyingListValidator>();
     }
 
     private static void AddServices(this IServiceCollection services)

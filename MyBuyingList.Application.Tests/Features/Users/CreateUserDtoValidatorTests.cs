@@ -11,10 +11,10 @@ namespace MyBuyingList.Application.Tests.Features.Users;
 
 public class CreateUserDtoValidatorTests
 {
-    private CreateUserDtoValidator _sut;
-    private static readonly string VALID_PASSWORD = "Password123%";
-    private static readonly string VALID_EMAIL = "test@gmail.com";
-    private static readonly string VALID_USERNAME = "sample_username";
+    private readonly CreateUserDtoValidator _sut;
+    private const string ValidPassword = "Password123%";
+    private const string ValidEmail = "test@gmail.com";
+    private const string ValidUsername = "sample_username";
 
     public CreateUserDtoValidatorTests()
     {
@@ -35,16 +35,17 @@ public class CreateUserDtoValidatorTests
         var fixture = new Fixture();
 
         // Testing username
-        yield return new object[] { CreateDto("som", VALID_EMAIL, VALID_PASSWORD), }; // length 3
-        yield return new object[] { CreateDto("something_aleatory_wlength_32", VALID_EMAIL, VALID_PASSWORD), }; // length 32
-        yield return new object[] { CreateDto("NuMbeR_1234567890", VALID_EMAIL, VALID_PASSWORD), }; // all numbers
-        yield return new object[] { CreateDto("NuMbeR_____1234567890", VALID_EMAIL, VALID_PASSWORD), }; // multiple underscores
+        yield return [CreateDto("som", ValidEmail, ValidPassword)]; // length 3
+        yield return [CreateDto("something_aleatory_wlength_32", ValidEmail, ValidPassword)]; // length 32
+        yield return [CreateDto("NuMbeR_1234567890", ValidEmail, ValidPassword)]; // all numbers
+        yield return [CreateDto("NuMbeR_____1234567890", ValidEmail, ValidPassword)]; // multiple underscores
 
         // Testing email
-        yield return new object[] { CreateDto(VALID_USERNAME, "validemail@gmail.com", VALID_PASSWORD), };
-        yield return new object[] { CreateDto(VALID_USERNAME, "V@BB.UE", VALID_PASSWORD), };
-        yield return new object[] { CreateDto(VALID_USERNAME, fixture.Create<MailAddress>().Address, VALID_PASSWORD), }; // length 3
-        yield return new object[] { CreateDto(VALID_USERNAME, "stuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz@example.com", VALID_PASSWORD), }; // length 254
+        yield return [CreateDto(ValidUsername, "validemail@gmail.com", ValidPassword)];
+        yield return [CreateDto(ValidUsername, "V@BB.UE", ValidPassword)];
+        yield return [CreateDto(ValidUsername, fixture.Create<MailAddress>().Address, ValidPassword)]; // length 3
+        yield return [CreateDto(ValidUsername, "stuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz@example.com", ValidPassword)
+        ]; // length 254
 
         // Passwords are tested on the PasswordHelperTests class
     }
@@ -52,73 +53,73 @@ public class CreateUserDtoValidatorTests
     public static IEnumerable<object[]> InvalidCreateUserDtos()
     {
         // Invalid usernames
-        yield return new object[]
-        {
-            CreateDto("so", VALID_EMAIL, VALID_PASSWORD),
+        yield return
+        [
+            CreateDto("so", ValidEmail, ValidPassword),
             FluentValidationHelper.GetMinLengthMessage("User Name", FieldLengths.USER_USERNAME_MIN_LENGTH, 2)
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto("something_aleatory_greater_than_length_32", VALID_EMAIL, VALID_PASSWORD),
+        yield return
+        [
+            CreateDto("something_aleatory_greater_than_length_32", ValidEmail, ValidPassword),
             FluentValidationHelper.GetMaxLengthMessage("User Name", FieldLengths.USER_USERNAME_MAX_LENGTH, 41)
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto("", VALID_EMAIL, VALID_PASSWORD),
+        yield return
+        [
+            CreateDto("", ValidEmail, ValidPassword),
             FluentValidationHelper.GetNotEmptyFieldMessage("User Name")
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto("invalid!@#$", VALID_EMAIL, VALID_PASSWORD),
-            ValidationMessages.INVALID_USERNAME
-        };
+        yield return
+        [
+            CreateDto("invalid!@#$", ValidEmail, ValidPassword),
+            ValidationMessages.InvalidUsername
+        ];
 
         // Invalid email
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "", VALID_PASSWORD),
+        yield return
+        [
+            CreateDto(ValidUsername, "", ValidPassword),
              FluentValidationHelper.GetNotEmptyFieldMessage("Email")
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "astuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz@example.com", VALID_PASSWORD),
+        yield return
+        [
+            CreateDto(ValidUsername, "astuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz@example.com", ValidPassword),
             FluentValidationHelper.GetMaxLengthMessage("Email", FieldLengths.USER_EMAIL_MAX_LENGTH, 255)
-        };
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "a##@gmail.com", VALID_PASSWORD),
-            ValidationMessages.INVALID_EMAIL
-        };
+        yield return
+        [
+            CreateDto(ValidUsername, "a##@gmail.com", ValidPassword),
+            ValidationMessages.InvalidEmail
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "abc@.com", VALID_PASSWORD),
-            ValidationMessages.INVALID_EMAIL
-        };
+        yield return
+        [
+            CreateDto(ValidUsername, "abc@.com", ValidPassword),
+            ValidationMessages.InvalidEmail
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "abc@gmail.", VALID_PASSWORD),
-            ValidationMessages.INVALID_EMAIL
-        };
+        yield return
+        [
+            CreateDto(ValidUsername, "abc@gmail.", ValidPassword),
+            ValidationMessages.InvalidEmail
+        ];
 
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, "abc@gmail", VALID_PASSWORD),
-            ValidationMessages.INVALID_EMAIL
-        };
+        yield return
+        [
+            CreateDto(ValidUsername, "abc@gmail", ValidPassword),
+            ValidationMessages.InvalidEmail
+        ];
 
         // Invalid password
-        yield return new object[]
-        {
-            CreateDto(VALID_USERNAME, VALID_EMAIL, "123"),
-            ValidationMessages.INVALID_PASSWORD
-        };
+        yield return
+        [
+            CreateDto(ValidUsername, ValidEmail, "123"),
+            ValidationMessages.InvalidPassword
+        ];
     }
 
     [Theory]

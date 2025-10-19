@@ -23,8 +23,8 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
 
         var loginDto = new LoginDto
         {
-            Username = Utils.TESTUSER_USERNAME,
-            Password = Utils.TESTUSER_PASSWORD
+            Username = Utils.TestUserUsername,
+            Password = Utils.TestUserPassword
         };
 
         // Act
@@ -43,11 +43,11 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        var invalidPassword = string.Concat(Utils.TESTUSER_PASSWORD, ".");
+        var invalidPassword = string.Concat(Utils.TestUserPassword, ".");
 
         var loginDto = new LoginDto
         {
-            Username = Utils.TESTUSER_USERNAME,
+            Username = Utils.TestUserUsername,
             Password = invalidPassword
         };
 
@@ -63,7 +63,7 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
     [InlineData("", "")]
     [InlineData("", "12345678")]
     [InlineData("username", "")]
-    public async void Authenticate_ReturnsBadRequest_WhenMissingUsernameOrPassword(string username, string password)
+    public async Task Authenticate_ReturnsBadRequest_WhenMissingUsernameOrPassword(string username, string password)
     {
         // Arrange
         var loginDto = new LoginDto

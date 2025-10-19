@@ -22,10 +22,10 @@ namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
 public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer;
-    private int ExposedPort = new Random().Next(1000, 10000);
+    private readonly int _exposedPort = new Random().Next(1000, 10000);
 
-    public IConfiguration Configuration { get; private set; } = default!;
-    public HttpClient HttpClient { get; private set; } = default!;
+    public IConfiguration Configuration { get; private set; } = null!;
+    public HttpClient HttpClient { get; private set; } = null!;
 
     public ResourceFactory()
     {
@@ -35,7 +35,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
             .WithPassword("password")
             .WithDatabase("db")
             .WithHostname("localhost")
-            .WithPortBinding(ExposedPort, 5432)  
+            .WithPortBinding(_exposedPort, 5432)  
             .Build();
     }
 
@@ -98,16 +98,11 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public async Task ResetDatabaseAsync()
     {
-        using (var scope = Services.CreateScope())
-        {
-            var dbService = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        using var scope = Services.CreateScope();
+        var dbService = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            if (dbService is not null)
-            {
-                await dbService.Database.EnsureDeletedAsync();
+        await dbService.Database.EnsureDeletedAsync();
 
-                await dbService.Database.EnsureCreatedAsync();
-            }
-        }
+        await dbService.Database.EnsureCreatedAsync();
     }
 }

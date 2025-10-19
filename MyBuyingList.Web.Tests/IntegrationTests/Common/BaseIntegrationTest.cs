@@ -3,14 +3,14 @@
 [Collection(Constants.ResourceFactoryCollection)]
 public abstract class BaseIntegrationTest : IAsyncLifetime
 {
-    private readonly Func<Task> ResetDatabaseAsync;
+    private readonly Func<Task> _resetDatabaseAsync;
 
     public BaseIntegrationTest(ResourceFactory resourceFactory)
     {
-        ResetDatabaseAsync = resourceFactory.ResetDatabaseAsync;
+        _resetDatabaseAsync = resourceFactory.ResetDatabaseAsync;
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
 
-    public async Task DisposeAsync() => await ResetDatabaseAsync();
+    public async Task DisposeAsync() => await _resetDatabaseAsync();
 }

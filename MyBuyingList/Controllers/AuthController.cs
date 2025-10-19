@@ -23,20 +23,18 @@ public class AuthController : ApiControllerBase
         [FromBody] LoginDto loginDto, 
         CancellationToken token)
     {
-        var guid = new Guid();
-        _logger.LogInformation($"{guid} - Authenticate user {loginDto.Username}");
+        Guid guid = Guid.NewGuid();
+        _logger.LogInformation("{Guid} - Authenticate user {LoginDtoUsername}", guid, loginDto.Username);
 
         var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(loginDto, token);
 
         if(string.IsNullOrEmpty(jwtToken))
         {
-            _logger.LogInformation($"{guid} - Unauthorized {loginDto.Username}");
+            _logger.LogInformation("{Guid} - Unauthorized {LoginDtoUsername}", guid, loginDto.Username);
             return Unauthorized();
         }
-        else
-        {
-            _logger.LogInformation($"{guid} - Authenticated {loginDto.Username}");
-            return Ok(jwtToken);
-        }
+
+        _logger.LogInformation("{Guid} - Authenticated {LoginDtoUsername}", guid, loginDto.Username);
+        return Ok(jwtToken);
     }
 }

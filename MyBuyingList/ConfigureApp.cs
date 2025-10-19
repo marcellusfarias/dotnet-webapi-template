@@ -8,7 +8,7 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureApp
 {
-    internal async static Task StartApplication(this WebApplication app)
+    internal static async Task StartApplication(this WebApplication app)
     {
         //if (app.Environment.IsDevelopment()) app.AddDebuggingMiddlewareLogic();
 
@@ -18,7 +18,7 @@ internal static class ConfigureApp
         }
         catch (Exception ex)
         {
-            app.Logger.LogError($"Failed running migrations. Err: {ex.Message}, Exception: {ex.InnerException}");
+            app.Logger.LogError("Failed running migrations. Err: {ExMessage}, Exception: {ExInnerException}", ex.Message, ex.InnerException);
             await app.StopAsync();
         }
 
@@ -29,16 +29,14 @@ internal static class ConfigureApp
 
     private static void RunDatabaseMigrations(this WebApplication app)
     {
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
-            db.Database.Migrate();
-        }
+        using var scope = app.Services.CreateScope();
+        var db = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
+        db.Database.Migrate();
     }
 
     private static void AddMiddlewares(this WebApplication app)
     {
-        app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+        app.UseMiddleware<ErrorHandlingMiddleware>();
         app.UseRouting();
         app.UseRateLimiter();
         app.AddSwagger();
@@ -74,57 +72,68 @@ internal static class ConfigureApp
     // Call this on the StartApplication method if you want to log the custom added middlewares.
     private static void PrintListOfCustomMiddlewares(this WebApplication app)
     {
-        //var sb = new StringBuilder();\
         FieldInfo applicationBuilderFieldInfo = app.GetType()
                             .GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
                             .Single(pi => pi.Name == "<ApplicationBuilder>k__BackingField");
 
         object? applicationBuilderValue = applicationBuilderFieldInfo.GetValue(app);
-        if (applicationBuilderValue != null)
+        if (applicationBuilderValue is null)
         {
-            Type appBuilderType = applicationBuilderValue.GetType();
+            return;
+        }
+        
+        Type appBuilderType = applicationBuilderValue.GetType();
 
-            // Get the FieldInfo for the private field "_components" in ApplicationBuilder
-            FieldInfo? _componentsField = appBuilderType.GetField("_components", BindingFlags.NonPublic | BindingFlags.Instance);
+        // Get the FieldInfo for the private field "_components" in ApplicationBuilder
+        FieldInfo? componentsField = appBuilderType.GetField("_components", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (_componentsField != null)
+        if (componentsField == null)
+        {
+            return;
+        }
+            
+        List<Func<RequestDelegate, RequestDelegate>>? componentsValue =
+            componentsField.GetValue(applicationBuilderValue) as List<Func<RequestDelegate, RequestDelegate>>;
+
+        if (componentsValue != null)
+        {
+            foreach (var func in componentsValue)
             {
-                List<Func<RequestDelegate, RequestDelegate>>? _componentsValue =
-                    _componentsField.GetValue(applicationBuilderValue) as List<Func<RequestDelegate, RequestDelegate>>;
+                var target = func.Target;
 
-                if (_componentsValue != null)
+                if (target == null)
                 {
-                    foreach (var func in _componentsValue)
-                    {
-                        var target = func.Target;
-
-                        if (target != null)
-                        {
-                            Type targetType = target.GetType();
-                            FieldInfo? stateFieldInfo = targetType.GetField("state");
-
-                            if (stateFieldInfo != null)
-                            {
-                                var stateValue = stateFieldInfo.GetValue(target);
-
-                                if (stateValue != null)
-                                {
-                                    Type stateType = stateValue.GetType();
-                                    PropertyInfo middlewareFieldInfo = stateType.GetProperty("Middleware")!;
-                                    object? middlewareValue = middlewareFieldInfo.GetValue(stateValue);
-
-                                    if (middlewareValue != null)
-                                    {
-                                        Type middlewareType = middlewareValue.GetType();
-                                        PropertyInfo nameInfo = middlewareType.GetProperty("Name")!;
-                                        object nameValue = nameInfo.GetValue(middlewareValue)!;
-                                        app.Logger.LogInformation($"Middleware: {nameValue}");
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    continue;
                 }
+                        
+                Type targetType = target.GetType();
+                FieldInfo? stateFieldInfo = targetType.GetField("state");
+
+                if (stateFieldInfo == null)
+                {
+                    continue;
+                }
+                        
+                var stateValue = stateFieldInfo.GetValue(target);
+
+                if (stateValue == null)
+                {
+                    continue;
+                }
+                            
+                Type stateType = stateValue.GetType();
+                PropertyInfo middlewareFieldInfo = stateType.GetProperty("Middleware")!;
+                object? middlewareValue = middlewareFieldInfo.GetValue(stateValue);
+
+                if (middlewareValue == null)
+                {
+                    continue;
+                }
+                        
+                Type middlewareType = middlewareValue.GetType();
+                PropertyInfo nameInfo = middlewareType.GetProperty("Name")!;
+                object nameValue = nameInfo.GetValue(middlewareValue)!;
+                app.Logger.LogInformation("Middleware: {NameValue}", nameValue);
             }
         }
     }

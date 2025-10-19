@@ -16,7 +16,7 @@ public class ErrorModel
 
         return new ErrorModel
         {
-            Errors = new List<ErrorDetails> { item }
+            Errors = [item]
         };
     }
 

@@ -5,11 +5,11 @@ namespace MyBuyingList.Application.Common.Exceptions;
 
 public  class BusinessLogicException : Exception, IFormattedResponseException
 {
-    private readonly static string _responseTitle = ErrorMessages.BusinessLogicError;
+    private const string ResponseTitle = ErrorMessages.BusinessLogicError;
     public int StatusCode => (int)HttpStatusCode.UnprocessableEntity;
     public ErrorModel Error { get; private set; }
-    public BusinessLogicException(string details) : base(_responseTitle) 
+    public BusinessLogicException(string details) : base(ResponseTitle) 
     {
-        Error = ErrorModel.CreateSingleErrorDetailsModel(_responseTitle, details);
+        Error = ErrorModel.CreateSingleErrorDetailsModel(ResponseTitle, details);
     }
 }

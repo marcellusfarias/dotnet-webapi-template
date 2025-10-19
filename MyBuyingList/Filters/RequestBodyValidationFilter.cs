@@ -49,23 +49,21 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
 
                     httpRequestBody.Seek(0, SeekOrigin.Begin); // Rewind the stream
 
-                    using (var reader = new StreamReader(httpRequestBody))
+                    using var reader = new StreamReader(httpRequestBody);
+                    var bodyContent = await reader.ReadToEndAsync();
+                    var parameterValue = JsonConvert.DeserializeObject(bodyContent, modelType);
+                    var validateMethod = validatorType.GetMethod("ValidateAsync")!;
+
+                    var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, new[]
                     {
-                        var bodyContent = await reader.ReadToEndAsync();
-                        var parameterValue = JsonConvert.DeserializeObject(bodyContent, modelType);
-                        var validateMethod = validatorType.GetMethod("ValidateAsync")!;
+                        parameterValue,
+                        CancellationToken.None
+                    })!;
 
-                        var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, new[]
-                            {
-                                parameterValue,
-                                CancellationToken.None
-                            })!;
-
-                        var validationResult = await validationResultTask;
-                        if (!validationResult.IsValid)
-                        {
-                            throw new BadRequestException(validationResult);
-                        }
+                    var validationResult = await validationResultTask;
+                    if (!validationResult.IsValid)
+                    {
+                        throw new BadRequestException(validationResult);
                     }
                 }
             }
@@ -76,7 +74,7 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Unexpected error while validating user input. Ex: {ex.Message}");
+            _logger.LogError("Unexpected error while validating user input. Ex: {ExMessage}", ex.Message);
             throw new InternalServerErrorException(ex, "Error while validating user input.");
         }
 
