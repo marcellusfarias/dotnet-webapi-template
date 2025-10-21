@@ -10,6 +10,8 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled; 
 });
 
+builder.Configuration.AddKeyPerFile(directoryPath: "/run/secrets", optional: false, reloadOnChange: true);
+
 var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!; // TODO: fix warning in the future.
 var isDevelopment = builder.Environment.IsDevelopment();
 builder.Services.AddServices(logger, builder.Configuration, isDevelopment);
