@@ -10,7 +10,14 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled; 
 });
 
-builder.Configuration.AddKeyPerFile(directoryPath: "/run/secrets", optional: false, reloadOnChange: true);
+string secretsLocation = builder.Configuration["SecretsLocation"] ?? throw new Exception("Secrets location not set");
+
+if (builder.Environment.EnvironmentName is "Test")
+{
+    secretsLocation = Path.Combine(Directory.GetCurrentDirectory(), secretsLocation);
+}
+
+builder.Configuration.AddKeyPerFile(directoryPath: secretsLocation, optional: false, reloadOnChange: true);
 
 var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!; // TODO: fix warning in the future.
 var isDevelopment = builder.Environment.IsDevelopment();

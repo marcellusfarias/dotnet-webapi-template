@@ -18,4 +18,4 @@ services:
       
 secrets:
   JwtSettings__SigningKey:
-    file: ./local/secrets/jwt_secret_key.txt
+    file: ./MyBuyingList/local/secrets/JwtSettings__SigningKey

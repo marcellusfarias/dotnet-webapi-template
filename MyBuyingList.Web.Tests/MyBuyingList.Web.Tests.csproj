@@ -32,4 +32,10 @@
     <ProjectReference Include="..\MyBuyingList\MyBuyingList.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.IntegrationTests.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
