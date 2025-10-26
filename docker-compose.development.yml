@@ -4,28 +4,18 @@ services:
   mybuyinglist.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    volumes: # data for HTTPS certs
+    volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     secrets:
-      - jwt_secret_key
+      - JwtSettings__SigningKey
 
   db:
     environment:
-      POSTGRES_USER: /run/secrets/postgres_user
-      POSTGRES_PASSWORD: /run/secrets/postgres_password
-      POSTGRES_DB: /run/secrets/postgres_db
-    secrets:
-        - postgres_db
-        - postgres_user
-        - postgres_password
-
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+      
 secrets:
-   jwt_secret_key:
-     file: ./local/secrets/jwt_secret_key.txt
-   postgres_db:
-     file: ./local/secrets/postgres_db.txt
-   postgres_user:
-     file: ./local/secrets/postgres_user.txt
-   postgres_password:
-     file: ./local/secrets/postgres_password.txt
+  JwtSettings__SigningKey:
+    file: ./MyBuyingList/local/secrets/JwtSettings__SigningKey

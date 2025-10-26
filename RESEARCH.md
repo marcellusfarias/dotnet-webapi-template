@@ -148,6 +148,8 @@ Investigate further in the future:
 * Response compression & decompression
 * [Url Rewriting](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/url-rewriting?view=aspnetcore-7.0)
 
+Others: interesting article around middleware debugging: https://andrewlock.net/understanding-your-middleware-pipeline-in-dotnet-6-with-the-middleware-analysis-package/
+
 ### 12. Logging
 
 ASP.NET logging documentation [here](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/logging/?view=aspnetcore-7.0) and [here](https://learn.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line). There are four logging providers on the generic host: Console, Debug, EventSource and EventLog. We added only console for this API.

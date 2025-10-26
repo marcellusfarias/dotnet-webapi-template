@@ -41,16 +41,16 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration((context, conf) =>
-        {
-            // expand default config with settings designed for Integration Tests
-            conf.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.IntegrationTests.json"));
-            conf.AddEnvironmentVariables();
+        builder.UseEnvironment("Test");
+        
+        var manager = new ConfigurationManager();
+        manager
+            .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.IntegrationTests.json"))
+            .Build();
 
-            // here we can "compile" the settings. Api.Setup will do the same, it doesn't matter.
-            Configuration = conf.Build();
-        });
-
+        builder.UseConfiguration(manager);
+        Configuration = manager;
+        
         builder.ConfigureTestServices(services =>
         {
             // Replace with proper DbContext

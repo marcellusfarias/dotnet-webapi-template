@@ -20,10 +20,30 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.KeyPerFile" Version="8.0.21" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyBuyingList.Infrastructure\MyBuyingList.Infrastructure.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="local\secrets\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="local\secrets\JwtSettings__SigningKey">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="local\secrets\postgres_db.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="local\secrets\postgres_password.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="local\secrets\postgres_user.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

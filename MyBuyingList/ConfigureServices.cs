@@ -13,9 +13,6 @@ internal static class ConfigureServices
 {
     internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration, bool isDevelopment)
     {
-        // Insert the AnalysisStartupFilter as the first IStartupFilter in the container
-        //if (isDevelopment) services.Insert(0, ServiceDescriptor.Transient<IStartupFilter, AnalysisStartupFilter>());
-
         services.AddExternalServices(logger, configuration);
 
         services.AddRateLimitService(configuration);
@@ -74,7 +71,7 @@ internal static class ConfigureServices
         services.Configure<CustomRateLimiterOptions>(configuration.GetSection("CustomRateLimiterOptions"));
         services.AddRateLimiter(options =>
         {
-            options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>("Authentication");
+            options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>(AuthenticationRateLimiterPolicy.PolicyName);
         });
     }
 
