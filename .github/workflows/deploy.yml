@@ -59,14 +59,18 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         debug: true
+        envs: GITHUB_TOKEN,GITHUB_ACTOR
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_ACTOR: ${{ github.actor }}
         script: |
           cd ~/app
 
           echo "Joined ~/app folder"
           
           # Login to GitHub Container Registry
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          
           echo "Logged in in docker registry"
           
           # Pull and restart
