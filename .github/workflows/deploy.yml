@@ -54,16 +54,15 @@ jobs:
     
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.0.3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_ACTOR: ${{ github.actor }}
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         debug: true
         envs: GITHUB_TOKEN,GITHUB_ACTOR
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
-      with:  
         script: |
           cd ~/app
 
