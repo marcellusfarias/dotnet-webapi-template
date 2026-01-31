@@ -74,11 +74,11 @@ jobs:
           echo "Logged in in docker registry"
           
           # Pull and restart
-          docker compose pull
+          docker compose -f docker-compose.yml -f docker-compose.production.yml pull
 
           echo "'docker compose pull' completed"
           
-          docker compose up -d
+          docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
 
           echo "'docker compose up' completed"
           
