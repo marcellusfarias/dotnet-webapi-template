@@ -4,6 +4,9 @@ services:
   mybuyinglist.web:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: .
+      dockerfile: MyBuyingList/Dockerfile
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

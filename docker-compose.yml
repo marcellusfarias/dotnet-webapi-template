@@ -3,9 +3,6 @@ version: '3.4'
 services:
   mybuyinglist.web:
     image: ${DOCKER_REGISTRY-}mybuyinglistweb
-    build:
-        context: .
-        dockerfile: MyBuyingList/Dockerfile
     environment:
         - ASPNETCORE_URLS=https://+:443 
     ports:

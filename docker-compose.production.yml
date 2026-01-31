@@ -2,14 +2,13 @@ version: '3.4'
 
 services:
   mybuyinglist.web:
+    image: ghcr.io/marcellusfarias/dotnet-webapi-template:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-    # Configure the volume properly with the location of the certs
     volumes: 
       - certs:/root/.aspnet/https:ro
     secrets:
       - jwt_secret_key
-
 
   db:
     environment:
