@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   mybuyinglist.web:
+    image: ${DOCKER_REGISTRY-}mybuyinglistweb
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     build:
