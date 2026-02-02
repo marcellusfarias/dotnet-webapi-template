@@ -33,8 +33,3 @@ services:
 
 volumes:
   postgres_data:
-  
-networks:
-  buyinglist-db:
-    # external: true
-    driver: bridge

@@ -33,3 +33,7 @@ secrets:
      external: true
   postgres_password:
      external: true
+     
+networks:
+  buyinglist-db:
+    driver: overlay

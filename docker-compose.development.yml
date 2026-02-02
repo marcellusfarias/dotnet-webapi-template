@@ -23,3 +23,8 @@ services:
 secrets:
   JwtSettings__SigningKey:
     file: ./MyBuyingList/local/secrets/JwtSettings__SigningKey
+    
+networks:
+  buyinglist-db:
+    # external: true
+    driver: bridge
