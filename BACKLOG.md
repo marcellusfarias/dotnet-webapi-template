@@ -1,6 +1,22 @@
 
 ## Backlog
 
+### Infrastructure
+
+* Configure CertBot in VPS
+* Configure Docker Swarm in VPS
+* Create docker secrets in VPS
+  * Postgresql secrets
+  * PGAdmin secrets
+  * JWT key
+* Create overlay network
+* Setup resource limits for containers
+* Setup replicas and health checks (automatic restarting) for containers
+* Use rollout deployingment with update_config
+* Setup monitoring (grafana, etc)
+* Run containers as non-root users
+* Backup volumes
+
 ### Before releasing
 
 This list is orderned by priority.

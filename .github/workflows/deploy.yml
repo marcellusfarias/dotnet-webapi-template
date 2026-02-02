@@ -74,13 +74,9 @@ jobs:
           echo "Logged in in docker registry"
           
           # Pull and restart
-          docker compose -f docker-compose.yml -f docker-compose.production.yml pull
+          docker stack deploy -c docker-compose.yml -c docker-compose.production.yml myapp
 
-          echo "'docker compose pull' completed"
-          
-          docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
-
-          echo "'docker compose up' completed"
+          echo "'docker stack deploy' completed"
           
           # Cleanup
           docker image prune -af
