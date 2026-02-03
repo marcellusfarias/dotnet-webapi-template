@@ -116,7 +116,7 @@ public class LoginServiceTests
         var act = async () => await _sut.AuthenticateAndReturnJwtTokenAsync(loginDto, CancellationToken.None);
 
         //Assert
-        await act.Should().ThrowAsync<AuthenticationException>().WithMessage($"An error occured when authenticating user {user.UserName.ToLower()}."); ;
+        await act.Should().ThrowAsync<AuthenticationException>().WithMessage($"An error occurred when authenticating user {user.UserName.ToLower()}.");
     }
 
     [Fact]
