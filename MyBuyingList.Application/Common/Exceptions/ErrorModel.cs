@@ -4,7 +4,7 @@ namespace MyBuyingList.Application.Common.Exceptions;
 
 public class ErrorModel
 {
-    public required List<ErrorDetails> Errors { get; set; }
+    public required List<ErrorDetails> Errors { get; init; }
 
     public static ErrorModel CreateSingleErrorDetailsModel(string title, string detail)
     {

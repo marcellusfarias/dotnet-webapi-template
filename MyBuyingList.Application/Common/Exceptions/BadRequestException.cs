@@ -7,9 +7,9 @@ public class BadRequestException : Exception, IFormattedResponseException
 {
     public int StatusCode => (int)HttpStatusCode.BadRequest;
 
-    public ErrorModel? Error { get; private set; }
+    public ErrorModel? Error { get; }
 
-    public BadRequestException(ValidationResult validationResult) : base() 
+    public BadRequestException(ValidationResult validationResult)
     {
         Error = ErrorModel.CreateFromValidationResult(validationResult);
     }

@@ -8,7 +8,7 @@ public class DatabaseException : Exception, IFormattedResponseException
     private const string ResponseTitle = ErrorMessages.DatabaseError;
     
     public int StatusCode => (int)HttpStatusCode.InternalServerError;
-    public ErrorModel Error { get; private set; }
+    public ErrorModel Error { get; }
 
     public DatabaseException(Exception inner) : base(ResponseTitle, inner)
     {

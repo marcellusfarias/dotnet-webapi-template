@@ -7,7 +7,7 @@ public  class BusinessLogicException : Exception, IFormattedResponseException
 {
     private const string ResponseTitle = ErrorMessages.BusinessLogicError;
     public int StatusCode => (int)HttpStatusCode.UnprocessableEntity;
-    public ErrorModel Error { get; private set; }
+    public ErrorModel Error { get; }
     public BusinessLogicException(string details) : base(ResponseTitle) 
     {
         Error = ErrorModel.CreateSingleErrorDetailsModel(ResponseTitle, details);

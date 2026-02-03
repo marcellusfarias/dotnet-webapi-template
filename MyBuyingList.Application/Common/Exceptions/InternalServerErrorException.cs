@@ -7,7 +7,7 @@ public class InternalServerErrorException : Exception, IFormattedResponseExcepti
     private const string ResponseTitle = "An unexpected error occurred.";
     
     public int StatusCode => (int)HttpStatusCode.InternalServerError;
-    public ErrorModel Error { get; private set; }
+    public ErrorModel Error { get; }
     
     public InternalServerErrorException(Exception inner, string details) : base(ResponseTitle, inner)
     {
