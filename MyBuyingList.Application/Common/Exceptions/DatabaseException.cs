@@ -8,10 +8,10 @@ public class DatabaseException : Exception, IFormattedResponseException
     private const string ResponseTitle = ErrorMessages.DatabaseError;
     
     public int StatusCode => (int)HttpStatusCode.InternalServerError;
-    public ErrorModel Error { get; }
+    public ErrorResponse Error { get; }
 
     public DatabaseException(Exception inner) : base(ResponseTitle, inner)
     {
-        Error = ErrorModel.CreateSingleErrorDetailsModel(ResponseTitle, "Please, contact administrator");
+        Error = ErrorResponse.CreateSingleErrorDetail(ResponseTitle, "Please, contact administrator");
     }
 }

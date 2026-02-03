@@ -8,11 +8,11 @@ using System.Text.RegularExpressions;
 
 namespace MyBuyingList.Application.Features.Users.Validators;
 
-public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
     private static readonly Regex UsernameRegex = new("^[a-zA-Z0-9_]+$");
 
-    public CreateUserDtoValidator()
+    public CreateUserRequestValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty()
@@ -28,7 +28,7 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .WithMessage(ValidationMessages.InvalidUsername);
 
         RuleFor(x => x.Password)
-            .Must(PasswordHelper.IsValidPassword)
+            .Must(PasswordValidator.IsValidPassword)
             .WithMessage(ValidationMessages.InvalidPassword);
     }
 

@@ -14,7 +14,7 @@ public interface IUserService
     /// <param name="token">Cancellation token.</param>
     /// <returns>The user data.</returns>
     /// <exception cref="Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
-    Task<GetUserDto> GetUserAsync(int id, CancellationToken token);
+    Task<UserDto> GetUserAsync(int id, CancellationToken token);
 
     /// <summary>
     /// Retrieves a paginated list of all users.
@@ -22,7 +22,7 @@ public interface IUserService
     /// <param name="page">The page number (1-based).</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>A collection of user data.</returns>
-    Task<IEnumerable<GetUserDto>> GetAllUsersAsync(int page, CancellationToken token);
+    Task<IEnumerable<UserDto>> GetAllUsersAsync(int page, CancellationToken token);
 
     /// <summary>
     /// Creates a new user with the provided data.
@@ -30,7 +30,7 @@ public interface IUserService
     /// <param name="userDto">The user creation data.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>The identifier of the newly created user.</returns>
-    Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token);
+    Task<int> CreateAsync(CreateUserRequest userDto, CancellationToken token);
 
     /// <summary>
     /// Changes a user's password after validating the old password.

@@ -2,19 +2,19 @@
 
 namespace MyBuyingList.Application.Tests.Common;
 
-public class PasswordHelperTests
+public class PasswordValidatorTests
 {
-    public PasswordHelperTests() { }
+    public PasswordValidatorTests() { }
 
     [Theory]
     [InlineData("AvrT9d3!@")]
     [InlineData("Password123%")]
     [InlineData("123@#$%Ps")]
     [InlineData("Ps987654321@#$%&*+_()':;?.,![]\\-")]
-    public void PasswordHelperIsValidPassword_ShouldReturnTrue_WhenPasswordIsValid(string password)
+    public void PasswordValidatorIsValidPassword_ShouldReturnTrue_WhenPasswordIsValid(string password)
     {
         // Act
-        var result = PasswordHelper.IsValidPassword(password);
+        var result = PasswordValidator.IsValidPassword(password);
 
         // Assert
         result.Should().BeTrue();
@@ -29,10 +29,10 @@ public class PasswordHelperTests
     [InlineData("PASSWORD123!")] // no lower case
     [InlineData("PASSWORd!")] // no number
     [InlineData("Password123@VeryLongPasswordVeryVeryLongVeryLongNotTooLong")] // max 32 chars
-    public void PasswordHelperIsValidPassword_ShouldReturnFalse_WhenPasswordIsNotValid(string password)
+    public void PasswordValidatorIsValidPassword_ShouldReturnFalse_WhenPasswordIsNotValid(string password)
     {
         // Act
-        var result = PasswordHelper.IsValidPassword(password);
+        var result = PasswordValidator.IsValidPassword(password);
 
         // Assert
         result.Should().BeFalse();

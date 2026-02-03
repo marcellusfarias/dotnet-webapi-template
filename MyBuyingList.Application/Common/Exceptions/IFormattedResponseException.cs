@@ -14,5 +14,5 @@ public interface IFormattedResponseException
     /// The error details to include in the response body.
     /// Null when no error details are needed (e.g., NotFound responses).
     /// </summary>
-    ErrorModel? Error { get; }
+    ErrorResponse? Error { get; }
 }

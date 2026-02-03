@@ -18,5 +18,5 @@ public interface IPasswordEncryptionService
     /// <param name="password">The plain text password to verify.</param>
     /// <param name="hashedPassword">The hashed password to compare against.</param>
     /// <returns>True if passwords match; otherwise, false.</returns>
-    bool VerifyPasswordsAreEqual(string password, string hashedPassword);
+    bool VerifyPassword(string password, string hashedPassword);
 }

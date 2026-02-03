@@ -32,21 +32,21 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
     // I could not manage to use AutoFixture customization with records. See: https://github.com/AutoFixture/AutoFixture/issues/1201
     // I was trying to have the same result as I had for class. Check: // https://stackoverflow.com/questions/49160306/why-a-customization-returns-the-same-instance-when-applied-on-two-different-prop
-    private CreateUserDto GenerateCreateUserDto()
+    private CreateUserRequest GenerateCreateUserRequest()
     {
         var username = _fixture.Create<string>().Substring(32);
         var email = _fixture.Create<MailAddress>().Address;
         var password = ValidPassword;
 
-        return new CreateUserDto(username, email, password);
+        return new CreateUserRequest(username, email, password);
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnGetUserDtoList_WhenThereAreUsers()
+    public async Task GetAllUsersAsync_ShouldReturnUserDtoList_WhenThereAreUsers()
     {
         // Arrange
         var adminUser = Domain.Constants.Users.AdminUser;
-        var expectedUser = new List<GetUserDto>()
+        var expectedUser = new List<UserDto>()
         {
             new(adminUser.Id, adminUser.UserName, adminUser.Email, true)
         };
@@ -55,7 +55,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         var response = await _client.GetAsync("api/users");
 
         // Assert
-        var users = await response.Content.ReadFromJsonAsync<List<GetUserDto>>()!;
+        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
         users.Should().BeEquivalentTo(expectedUser);
     }
 
@@ -80,7 +80,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        LoginDto dto = new() 
+        LoginRequest dto = new() 
         {
             Username = Utils.TestUserUsername,
             Password = Utils.TestUserPassword
@@ -107,10 +107,10 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var extraSize = 5;
-        var createUsers = new List<CreateUserDto>();
+        var createUsers = new List<CreateUserRequest>();
         for (int i = 0; i < _pageSize + extraSize; i++)
         {
-            createUsers.Add(GenerateCreateUserDto());
+            createUsers.Add(GenerateCreateUserRequest());
         }
 
         var tasks = new List<Task>();
@@ -131,7 +131,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var users = await response.Content.ReadFromJsonAsync<List<GetUserDto>>()!;
+        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
         users.Should().HaveCount(extraSize + 1); // db already has user ADMIN
     }
 
@@ -140,14 +140,14 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
-        var expectedUser = new GetUserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true);
+        var expectedUser = new UserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true);
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, adminUser.Id);
         var response = await _client.GetAsync(url);
 
         // Assert
-        var user = await response.Content.ReadFromJsonAsync<GetUserDto>()!;
+        var user = await response.Content.ReadFromJsonAsync<UserDto>()!;
         user.Should().BeEquivalentTo(expectedUser);
     }
 
@@ -166,7 +166,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async Task CreateUserAsync_ShouldReturnCreated_WhenDtoIsGood()
     {
         // Arrange
-        var newUser = GenerateCreateUserDto();
+        var newUser = GenerateCreateUserRequest();
 
         // Act
         var response = await _client.PostAsync(
@@ -186,20 +186,20 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async Task CreateUserAsync_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
-        var newUser = GenerateCreateUserDto();
+        var newUser = GenerateCreateUserRequest();
         newUser = newUser with
         {
             Email = "bademail@com",
             Password = "."
         };
 
-        var expectedErrorModel = new ErrorModel()
+        var expectedErrorResponse = new ErrorResponse()
         {
             Errors =
             [
-                new ErrorDetails()
+                new ErrorDetail()
                     { Title = "Error validating property 'Email'.", Detail = ValidationMessages.InvalidEmail },
-                new ErrorDetails()
+                new ErrorDetail()
                     { Title = "Error validating property 'Password'.", Detail = ValidationMessages.InvalidPassword }
             ]
         };
@@ -212,15 +212,15 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseErrorModel = await response.Content.ReadFromJsonAsync<ErrorModel>();
-        responseErrorModel!.Should().BeEquivalentTo(expectedErrorModel);
+        var responseErrorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        responseErrorResponse!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
     [Fact]
     public async Task DeleteUserAsync_ShouldReturnUnprocessableEntity_WhenIdIsAdmin()
     {
         // Arrange
-        var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
+        var expectedErrorResponse = ErrorResponse.CreateSingleErrorDetail(
             ErrorMessages.BusinessLogicError, 
             "Can't disable user admin.");
 
@@ -230,8 +230,8 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
-        var content = await response.Content.ReadFromJsonAsync<ErrorModel>();
-        content!.Should().BeEquivalentTo(expectedErrorModel);
+        var content = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        content!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
     [Fact]
@@ -247,7 +247,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         var getUserResponse = await _client.GetAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId));
         getUserResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await getUserResponse.Content.ReadFromJsonAsync<GetUserDto>();
+        var content = await getUserResponse.Content.ReadFromJsonAsync<UserDto>();
         content!.Active.Should().Be(false);
     }
 
@@ -267,7 +267,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(Utils.TestUserPassword, "Mn!90..pT");
+        ChangePasswordRequest dto = new ChangePasswordRequest(Utils.TestUserPassword, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");
@@ -279,7 +279,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // If this operation is successfull, 
         // we can infer previous operation really updated the password
         // in the database
-        dto = new UpdateUserPasswordDto("Mn!90..pT", Utils.TestUserPassword);
+        dto = new ChangePasswordRequest("Mn!90..pT", Utils.TestUserPassword);
         response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -288,9 +288,9 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async Task ChangePassword_ShouldReturnBadRequest_WhenDtoIsNotOk()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new UpdateUserPasswordDto(ValidPassword, ".");
+        ChangePasswordRequest dto = new ChangePasswordRequest(ValidPassword, ".");
         
-        var expectedErrorModel = ErrorModel.CreateSingleErrorDetailsModel(
+        var expectedErrorResponse = ErrorResponse.CreateSingleErrorDetail(
             "Error validating property 'NewPassword'.", 
             ValidationMessages.InvalidPassword);
 
@@ -300,15 +300,15 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadFromJsonAsync<ErrorModel>();
-        responseContent!.Should().BeEquivalentTo(expectedErrorModel);
+        var responseContent = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        responseContent!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
     [Fact]
     public async Task ChangePassword_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Arrange
-        UpdateUserPasswordDto dto = new(ValidPassword, "Mn!90..pT");
+        ChangePasswordRequest dto = new(ValidPassword, "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 200, "/password");
@@ -327,7 +327,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         var createdId = await Utils.InsertTestUser(_client);
 
-        UpdateUserPasswordDto dto = new(string.Concat(ValidPassword, "."), "Mn!90..pT");
+        ChangePasswordRequest dto = new(string.Concat(ValidPassword, "."), "Mn!90..pT");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");

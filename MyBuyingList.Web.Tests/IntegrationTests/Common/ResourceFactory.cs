@@ -70,7 +70,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         var client = CreateClient();
 
-        LoginDto loginDto = new()
+        LoginRequest loginDto = new()
         {
             Username = "admin",
             Password = "123"

@@ -20,10 +20,10 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserGetAll)]
-    [ProducesResponseType(typeof(List<GetUserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [HttpGet("~/api/users/")]
     public async Task<IActionResult> GetAllUsers(
         CancellationToken token,
@@ -36,11 +36,11 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserGet)]
-    [ProducesResponseType(typeof(GetUserDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(
         [FromRoute] int id,
@@ -53,14 +53,14 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserCreate)]
-    [ProducesResponseType(typeof(CreateUserDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<IActionResult> Create(
-        CreateUserDto createUserDto,
+        CreateUserRequest createUserDto,
         CancellationToken token)
     {
         var guid = Guid.NewGuid();
@@ -75,16 +75,16 @@ public class UserController : ApiControllerBase
 
     [HasPermission(Policies.UserUpdate)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [HttpPut("{id}/password")]
     public async Task<IActionResult> ChangePassword(
         [FromRoute] int id,
-        UpdateUserPasswordDto updateUserPasswordDto,
+        ChangePasswordRequest updateUserPasswordDto,
         CancellationToken token)
     {
         var guid = Guid.NewGuid();
@@ -102,8 +102,8 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(
         [FromRoute] int id,

@@ -2,7 +2,7 @@
 
 namespace MyBuyingList.Application.Common.Helpers;
 
-public static class PasswordHelper
+public static class PasswordValidator
 {
     private static readonly Regex AllowedCharsRegex = new("[a-zA-Z0-9@#$%&*+_()':;?.,![\\]\\-]+");
     private static readonly Regex DigitRegex = new("[0-9]+");

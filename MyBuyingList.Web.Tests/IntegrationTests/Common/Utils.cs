@@ -14,7 +14,7 @@ public static class Utils
 
     public static async Task<int> InsertTestUser(HttpClient client)
     {
-        var newUser = new CreateUserDto(TestUserUsername, TestUserEmail, TestUserPassword);
+        var newUser = new CreateUserRequest(TestUserUsername, TestUserEmail, TestUserPassword);
                 
         var response = await client.PostAsync(
             requestUri: Constants.BaseAddressUserEndpoint, 

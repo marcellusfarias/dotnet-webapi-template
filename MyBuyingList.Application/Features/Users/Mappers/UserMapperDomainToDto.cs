@@ -5,8 +5,8 @@ namespace MyBuyingList.Application.Features.Users.Mappers;
 
 public static class UserMapperDomainToDto
 {
-    public static GetUserDto ToGetUserDto(this User user)
+    public static UserDto ToUserDto(this User user)
     {
-        return new GetUserDto(user.Id, user.UserName, user.Email, user.Active);
+        return new UserDto(user.Id, user.UserName, user.Email, user.Active);
     }
 }

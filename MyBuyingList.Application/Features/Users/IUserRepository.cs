@@ -29,5 +29,5 @@ public interface IUserRepository : IRepository<User>
     /// </summary>
     /// <param name="user">The user to deactivate.</param>
     /// <param name="token">Cancellation token.</param>
-    Task LogicalExclusionAsync(User user, CancellationToken token);
+    Task DeactivateAsync(User user, CancellationToken token);
 }

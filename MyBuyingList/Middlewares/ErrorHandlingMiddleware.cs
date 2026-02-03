@@ -38,7 +38,7 @@ public class ErrorHandlingMiddleware
         }
 
         int code = (int)HttpStatusCode.InternalServerError;
-        ErrorModel? errorModel = null;
+        ErrorResponse? errorModel = null;
 
         if (exception is IFormattedResponseException formattedException)
         {
@@ -47,7 +47,7 @@ public class ErrorHandlingMiddleware
         }
 
         logger.LogError("StatusCode: {Code}", code);
-        logger.LogError("Error Model: {ErrorModel}", errorModel);
+        logger.LogError("Error Model: {ErrorResponse}", errorModel);
         logger.LogError("Exception: {Exception}", exception);
 
         context.Response.ContentType = "application/json";

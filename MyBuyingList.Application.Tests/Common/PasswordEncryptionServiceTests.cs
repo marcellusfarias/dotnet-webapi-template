@@ -35,7 +35,7 @@ public class PasswordEncryptionServiceTests
     public void VerifyPassword_MustThrowException_WhenHashIsInvalid(string password, string hashedPassword)
     {
         // Act
-        var action = _sut.Invoking(_ => _sut.VerifyPasswordsAreEqual(password, hashedPassword));
+        var action = _sut.Invoking(_ => _sut.VerifyPassword(password, hashedPassword));
 
         // Assure
         action.Should().Throw<InternalServerErrorException>();
@@ -49,7 +49,7 @@ public class PasswordEncryptionServiceTests
     public void VerifyPassword_MustVerifyCorrectly_WhenParametersAreValid(string password, string hashedPassword, bool expectedResult)
     {
         // Act
-        var result = _sut.VerifyPasswordsAreEqual(password, hashedPassword);
+        var result = _sut.VerifyPassword(password, hashedPassword);
 
         // Assure
         result.Should().Be(expectedResult);

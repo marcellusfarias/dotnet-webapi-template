@@ -20,7 +20,7 @@ public class LoginService : ILoginService
         _passwordEncryptionService = passwordEncryptionService;
     }
 
-    public async Task<string> AuthenticateAndReturnJwtTokenAsync(LoginDto loginDto, CancellationToken token)
+    public async Task<string> AuthenticateAndReturnJwtTokenAsync(LoginRequest loginDto, CancellationToken token)
     {
         var username = loginDto.Username.ToLower();
         var password = loginDto.Password;
@@ -29,7 +29,7 @@ public class LoginService : ILoginService
         if (user is null)
             throw new AuthenticationException(username, ErrorMessages.InvalidUsernameOrPassword);
 
-        bool verification = _passwordEncryptionService.VerifyPasswordsAreEqual(password, user.Password);
+        bool verification = _passwordEncryptionService.VerifyPassword(password, user.Password);
         if (!verification)
             throw new AuthenticationException(username, ErrorMessages.InvalidUsernameOrPassword);
 

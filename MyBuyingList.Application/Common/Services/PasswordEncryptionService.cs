@@ -21,7 +21,7 @@ public class PasswordEncryptionService : IPasswordEncryptionService
         
     }
 
-    public bool VerifyPasswordsAreEqual(string password, string hashedPassword)
+    public bool VerifyPassword(string password, string hashedPassword)
     {
         try
         {

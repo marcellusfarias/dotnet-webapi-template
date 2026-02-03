@@ -27,7 +27,7 @@ public class LoginServiceTests
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
 
-        _fixture.Customize<CreateUserDto>(c => c
+        _fixture.Customize<CreateUserRequest>(c => c
             .With(x =>
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
@@ -42,7 +42,7 @@ public class LoginServiceTests
 
         var attemptingPassword = _fixture.Create<string>();
 
-        var dto = new LoginDto
+        var dto = new LoginRequest
         {
             Username = user.UserName,
             Password = attemptingPassword
@@ -53,7 +53,7 @@ public class LoginServiceTests
             .Returns(user);
 
         _passwordEncryptionService
-            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .VerifyPassword(attemptingPassword, user.Password)
             .Returns(true);
 
         _jwtProviderMock
@@ -74,7 +74,7 @@ public class LoginServiceTests
         var attemptingPassword = _fixture.Create<string>();
         var attemptingUserName = _fixture.Create<string>();
 
-        var loginDto = new LoginDto
+        var loginDto = new LoginRequest
         {
             Password = attemptingPassword,
             Username = attemptingUserName
@@ -98,7 +98,7 @@ public class LoginServiceTests
         var user = _fixture.Create<User>();
         var attemptingPassword = _fixture.Create<string>();
 
-        var loginDto = new LoginDto
+        var loginDto = new LoginRequest
         {
             Password = attemptingPassword,
             Username = user.UserName
@@ -109,7 +109,7 @@ public class LoginServiceTests
             .Returns(user);
 
         _passwordEncryptionService
-            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .VerifyPassword(attemptingPassword, user.Password)
             .Returns(false);
 
         //Act
@@ -128,7 +128,7 @@ public class LoginServiceTests
 
         var attemptingPassword = _fixture.Create<string>();
 
-        var loginDto = new LoginDto
+        var loginDto = new LoginRequest
         {
             Password = attemptingPassword,
             Username = user.UserName
@@ -139,7 +139,7 @@ public class LoginServiceTests
             .Returns(user);
 
         _passwordEncryptionService
-            .VerifyPasswordsAreEqual(attemptingPassword, user.Password)
+            .VerifyPassword(attemptingPassword, user.Password)
             .Returns(true);
 
         _jwtProviderMock

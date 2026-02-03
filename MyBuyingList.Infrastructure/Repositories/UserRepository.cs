@@ -95,7 +95,7 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         }
     }
 
-    public async Task LogicalExclusionAsync(User user, CancellationToken token)
+    public async Task DeactivateAsync(User user, CancellationToken token)
     {
         try
         {
