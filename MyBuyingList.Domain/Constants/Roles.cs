@@ -9,19 +9,17 @@ public static class Roles
 
     public static IEnumerable<Role> GetValues()
     {
-        var _ordernedDictionary = new Dictionary<int, string>()
+        var orderedDictionary = new Dictionary<int, string>()
         {
-            #region Items
             {1, Administrator},
             {2, RegularUser}
-            #endregion
         };
 
-        List<Role> roles = new List<Role>();
+        List<Role> roles = [];
 
         // doing this, because one can not guarantee order using reflection.
         // Knowing the ID may be important on some use cases.
-        foreach (var item in _ordernedDictionary)
+        foreach (var item in orderedDictionary)
         {
             roles.Add(new Role { Id = item.Key, Name = item.Value });
         }

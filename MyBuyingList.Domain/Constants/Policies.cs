@@ -12,22 +12,20 @@ public static class Policies
 
     public static IEnumerable<Policy> GetValues()
     {
-        var _ordernedDictionary = new Dictionary<int, string>()
+        var orderedDictionary = new Dictionary<int, string>()
         {
-            #region Items
             {1, UserCreate},
             {2, UserUpdate},
             {3, UserDelete},
             {4, UserGetAll},
             {5, UserGet},
-            #endregion
         };
 
-        List<Policy> policies = new List<Policy>();
+        List<Policy> policies = [];
 
         // doing this, because one can not guarantee order using reflection.
         // Knowing the ID may be important on some use cases.
-        foreach (var item in _ordernedDictionary)
+        foreach (var item in orderedDictionary)
         {
             policies.Add(new Policy { Id = item.Key, Name = item.Value });
         }

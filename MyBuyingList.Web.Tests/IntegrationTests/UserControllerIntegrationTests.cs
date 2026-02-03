@@ -195,11 +195,13 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         var expectedErrorModel = new ErrorModel()
         {
-            Errors = new List<ErrorDetails>()
-            {
-                new ErrorDetails(){ Title = "Error validating property 'Email'.", Detail = ValidationMessages.InvalidEmail },
-                new ErrorDetails(){ Title = "Error validating property 'Password'.", Detail = ValidationMessages.InvalidPassword },
-            }
+            Errors =
+            [
+                new ErrorDetails()
+                    { Title = "Error validating property 'Email'.", Detail = ValidationMessages.InvalidEmail },
+                new ErrorDetails()
+                    { Title = "Error validating property 'Password'.", Detail = ValidationMessages.InvalidPassword }
+            ]
         };
 
         // Act

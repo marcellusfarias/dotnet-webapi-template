@@ -53,7 +53,7 @@ internal static class ConfigureServices
                                 Id="Bearer"
                             }
                         },
-                        new string[] {}
+                        []
                     }
                 });
         });
