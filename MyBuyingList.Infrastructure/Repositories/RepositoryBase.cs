@@ -18,7 +18,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         _pageSize = options.Value.PageSize;
     }
 
-    public async Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -36,7 +36,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -59,7 +59,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<int> AddAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task<int> AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -80,7 +80,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task AddRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task AddRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -97,7 +97,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -114,7 +114,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task DeleteRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task DeleteRangeAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -131,7 +131,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task EditAsync(TEntity entity, CancellationToken cancellationToken = default(CancellationToken))
+    public async Task EditAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         try
         {
