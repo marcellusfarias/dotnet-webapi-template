@@ -10,7 +10,7 @@ public class DatabaseException : Exception, IFormattedResponseException
     public int StatusCode => (int)HttpStatusCode.InternalServerError;
     public ErrorModel Error { get; private set; }
 
-    public DatabaseException(Exception inner) : base(string.Format(ResponseTitle), inner)
+    public DatabaseException(Exception inner) : base(ResponseTitle, inner)
     {
         Error = ErrorModel.CreateSingleErrorDetailsModel(ResponseTitle, "Please, contact administrator");
     }

@@ -11,7 +11,7 @@ namespace MyBuyingList.Application;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, ILogger logger)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddValidators();
         services.AddServices();

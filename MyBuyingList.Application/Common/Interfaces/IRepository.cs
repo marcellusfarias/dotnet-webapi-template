@@ -8,7 +8,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Adds a new entity in the database asyncronously.
+    /// Adds a new entity in the database asynchronously.
     /// </summary>
     /// <param name="entity"></param>
     /// <param name="cancellationToken"></param>

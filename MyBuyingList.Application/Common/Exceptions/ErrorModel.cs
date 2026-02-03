@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace MyBuyingList.Application;
+namespace MyBuyingList.Application.Common.Exceptions;
 
 public class ErrorModel
 {

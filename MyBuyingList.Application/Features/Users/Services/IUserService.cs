@@ -8,7 +8,7 @@ public interface IUserService
     Task<IEnumerable<GetUserDto>> GetAllUsersAsync(int page, CancellationToken token);
 
     /// <summary>
-    /// Creates a new user asyncronously.
+    /// Creates a new user asynchronously.
     /// </summary>
     /// <param name="userDto"></param>
     /// <param name="token"></param>

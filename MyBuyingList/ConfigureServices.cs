@@ -77,6 +77,6 @@ internal static class ConfigureServices
     private static void AddExternalServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
         services.AddInfrastructureServices(logger, configuration);
-        services.AddApplicationServices(logger);
+        services.AddApplicationServices();
     }
 }
