@@ -6,5 +6,5 @@ namespace MyBuyingList.Web.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Consumes(MediaTypeNames.Application.Json)]
-[Produces("application/json")]
+[Produces(MediaTypeNames.Application.Json)]
 public class ApiControllerBase : ControllerBase { }

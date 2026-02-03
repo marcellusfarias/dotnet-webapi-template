@@ -16,7 +16,7 @@ public class AuthenticationRateLimiterPolicy : IRateLimiterPolicy<IPAddress>
         OnRejected = (ctx, token) =>
         {
             ctx.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-            logger.LogWarning($"Request rejected by {nameof(AuthenticationRateLimiterPolicy)}");
+            logger.LogWarning("Request rejected by {PolicyName}", nameof(AuthenticationRateLimiterPolicy));
             return ValueTask.CompletedTask;
         };
         _options = options.Value;

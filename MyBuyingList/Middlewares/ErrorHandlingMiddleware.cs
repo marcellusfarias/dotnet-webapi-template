@@ -1,7 +1,6 @@
-﻿using MyBuyingList.Application;
-using MyBuyingList.Application.Common.Exceptions;
-using Newtonsoft.Json;
+﻿using MyBuyingList.Application.Common.Exceptions;
 using System.Net;
+using System.Text.Json;
 
 namespace MyBuyingList.Web.Middlewares;
 
@@ -55,7 +54,7 @@ public class ErrorHandlingMiddleware
 
         if (errorModel is not null)
         {
-            var result = JsonConvert.SerializeObject(errorModel);
+            var result = JsonSerializer.Serialize(errorModel);
 
             return context.Response.WriteAsync(result);
         }
