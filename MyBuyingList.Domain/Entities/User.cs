@@ -1,6 +1,8 @@
-﻿namespace MyBuyingList.Domain.Entities;
+﻿using MyBuyingList.Domain.Common;
 
-public class User : BaseEntity
+namespace MyBuyingList.Domain.Entities;
+
+public sealed class User : BaseEntity
 {
     public required string Email { get; set; }
     public required string UserName { get; set; }   
@@ -8,9 +10,5 @@ public class User : BaseEntity
     public DateTime CreatedAt { get; set; } //not required because it will be set on postgres with default value.... think about this
     public required bool Active { get; set; }
 
-    //Entity Framework navigation property.
-    //Not sure if it should stay in domain. See: https://softwareengineering.stackexchange.com/questions/396043/domain-driven-design-navigation-properties-and-aggregate
-#pragma warning disable CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
-    public virtual ICollection<UserRole> UserRoles { get; set; }
-#pragma warning restore CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
+    public ICollection<UserRole> UserRoles { get; set; } = [];
 }

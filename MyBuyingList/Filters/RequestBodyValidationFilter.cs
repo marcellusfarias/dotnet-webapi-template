@@ -54,11 +54,11 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
                     var parameterValue = JsonConvert.DeserializeObject(bodyContent, modelType);
                     var validateMethod = validatorType.GetMethod("ValidateAsync")!;
 
-                    var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, new[]
-                    {
+                    var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, 
+                    [
                         parameterValue,
                         CancellationToken.None
-                    })!;
+                    ])!;
 
                     var validationResult = await validationResultTask;
                     if (!validationResult.IsValid)

@@ -5,7 +5,7 @@ namespace MyBuyingList.Application.Features.Users.Mappers;
 
 public static class UserMapperDtoToDomain
 {
-    public static User ToUser(this CreateUserDto dto, bool active)
+    public static User ToUser(this CreateUserRequest dto, bool active)
     {
         return new User
         {

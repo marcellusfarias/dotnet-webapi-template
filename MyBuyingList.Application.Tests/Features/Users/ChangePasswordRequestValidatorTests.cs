@@ -5,19 +5,19 @@ using MyBuyingList.Application.Tests.TestUtils;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
-public class UpdateUserPasswordDtoValidatorTests
+public class ChangePasswordRequestValidatorTests
 {
-    private readonly UpdateUserPasswordDtoValidator _sut;
+    private readonly ChangePasswordRequestValidator _sut;
     private const string ValidPassword = "Password123%";
 
-    public UpdateUserPasswordDtoValidatorTests()
+    public ChangePasswordRequestValidatorTests()
     {
-        _sut = new UpdateUserPasswordDtoValidator();
+        _sut = new ChangePasswordRequestValidator();
     }
 
-    private static UpdateUserPasswordDto CreateDto(string oldPassword, string newPassword)
+    private static ChangePasswordRequest CreateDto(string oldPassword, string newPassword)
     {
-        return new UpdateUserPasswordDto(oldPassword, newPassword);
+        return new ChangePasswordRequest(oldPassword, newPassword);
     }
 
     public static IEnumerable<object[]> ValidDtos()
@@ -55,7 +55,7 @@ public class UpdateUserPasswordDtoValidatorTests
 
     [Theory]
     [MemberData(nameof(ValidDtos))]
-    public void Validate_ShouldReturnSuccess_WhenThereAreNoErrors(UpdateUserPasswordDto dto)
+    public void Validate_ShouldReturnSuccess_WhenThereAreNoErrors(ChangePasswordRequest dto)
     {
         // Act
         var result = _sut.Validate(dto);
@@ -66,7 +66,7 @@ public class UpdateUserPasswordDtoValidatorTests
 
     [Theory]
     [MemberData(nameof(InvalidDtos))]
-    public void Validate_ShouldReturnError_WhenThereAreErrors(UpdateUserPasswordDto dto, string errorMessage)
+    public void Validate_ShouldReturnError_WhenThereAreErrors(ChangePasswordRequest dto, string errorMessage)
     {
         // Act
         var result = _sut.Validate(dto);

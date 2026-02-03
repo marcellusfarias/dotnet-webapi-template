@@ -1,7 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using MyBuyingList.Web.Filters;
 using MyBuyingList.Application;
-using Microsoft.AspNetCore.MiddlewareAnalysis;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Web.Middlewares.Authorization;
@@ -53,7 +52,7 @@ internal static class ConfigureServices
                                 Id="Bearer"
                             }
                         },
-                        new string[] {}
+                        []
                     }
                 });
         });
@@ -78,6 +77,6 @@ internal static class ConfigureServices
     private static void AddExternalServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
         services.AddInfrastructureServices(logger, configuration);
-        services.AddApplicationServices(logger);
+        services.AddApplicationServices();
     }
 }

@@ -1,1 +1,0 @@
-﻿global using MyBuyingList.Domain.Common;

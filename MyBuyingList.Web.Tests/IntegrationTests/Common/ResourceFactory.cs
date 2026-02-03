@@ -5,15 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Application.Features.Login.DTOs;
-using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Infrastructure;
-using MyBuyingList.Infrastructure.Authentication.JwtSetup;
-using MyBuyingList.Infrastructure.Repositories;
-using MyBuyingList.Web.Middlewares.RateLimiting;
-using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -77,7 +70,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         var client = CreateClient();
 
-        LoginDto loginDto = new()
+        LoginRequest loginDto = new()
         {
             Username = "admin",
             Password = "123"

@@ -55,7 +55,7 @@ public class JwtProvider : IJwtProvider
         var policies = await _userRepository.GetUserPoliciesAsync(userId, token);
         if (policies is null)
         {
-            return new List<string>();
+            return [];
         }
 
         var permissions = policies

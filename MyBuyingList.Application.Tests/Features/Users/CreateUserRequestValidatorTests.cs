@@ -9,28 +9,28 @@ using FluentValidation.Resources;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
-public class CreateUserDtoValidatorTests
+public class CreateUserRequestValidatorTests
 {
-    private readonly CreateUserDtoValidator _sut;
+    private readonly CreateUserRequestValidator _sut;
     private const string ValidPassword = "Password123%";
     private const string ValidEmail = "test@gmail.com";
     private const string ValidUsername = "sample_username";
 
-    public CreateUserDtoValidatorTests()
+    public CreateUserRequestValidatorTests()
     {
-        _sut = new CreateUserDtoValidator();
+        _sut = new CreateUserRequestValidator();
         ValidatorOptions.Global.LanguageManager = new LanguageManager()
         {
             Culture = System.Globalization.CultureInfo.GetCultureInfo("en"),
         };
     }
 
-    private static CreateUserDto CreateDto(string username, string email, string password)
+    private static CreateUserRequest CreateDto(string username, string email, string password)
     {
-        return new CreateUserDto(username, email, password);
+        return new CreateUserRequest(username, email, password);
     }
 
-    public static IEnumerable<object[]> ValidCreateUserDtos()
+    public static IEnumerable<object[]> ValidCreateUserRequests()
     {
         var fixture = new Fixture();
 
@@ -47,10 +47,10 @@ public class CreateUserDtoValidatorTests
         yield return [CreateDto(ValidUsername, "stuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz@example.com", ValidPassword)
         ]; // length 254
 
-        // Passwords are tested on the PasswordHelperTests class
+        // Passwords are tested on the PasswordValidatorTests class
     }
 
-    public static IEnumerable<object[]> InvalidCreateUserDtos()
+    public static IEnumerable<object[]> InvalidCreateUserRequests()
     {
         // Invalid usernames
         yield return
@@ -123,8 +123,8 @@ public class CreateUserDtoValidatorTests
     }
 
     [Theory]
-    [MemberData(nameof(ValidCreateUserDtos))]
-    public void Validate_ShouldReturnSuccess_WhenThereAreNoErrors(CreateUserDto dto)
+    [MemberData(nameof(ValidCreateUserRequests))]
+    public void Validate_ShouldReturnSuccess_WhenThereAreNoErrors(CreateUserRequest dto)
     {
         // Act
         var result = _sut.Validate(dto);
@@ -134,8 +134,8 @@ public class CreateUserDtoValidatorTests
     }
 
     [Theory]
-    [MemberData(nameof(InvalidCreateUserDtos))]
-    public void Validate_ShouldReturnError_WhenThereAreErrors(CreateUserDto dto, string errorMessage)
+    [MemberData(nameof(InvalidCreateUserRequests))]
+    public void Validate_ShouldReturnError_WhenThereAreErrors(CreateUserRequest dto, string errorMessage)
     {
         // Act
         var result = _sut.Validate(dto);

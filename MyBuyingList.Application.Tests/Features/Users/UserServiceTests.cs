@@ -5,7 +5,6 @@ using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
 using MyBuyingList.Application.Common.Exceptions;
-using MyBuyingList.Domain.Constants;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 
@@ -29,14 +28,14 @@ public class UserServiceTests
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
 
-        _fixture.Customize<CreateUserDto>(c => c
+        _fixture.Customize<CreateUserRequest>(c => c
             .With(x =>
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnGetUserDtoList_WhenThereAreUsers()
+    public async Task GetAllUsersAsync_ShouldReturnUserDtoList_WhenThereAreUsers()
     {
         //Arrange
         User user1 = _fixture.Create<User>();
@@ -52,10 +51,10 @@ public class UserServiceTests
         var returnUsers = await _sut.GetAllUsersAsync(DefaultPage, CancellationToken.None);
 
         //Assert
-        GetUserDto userDto1 = new GetUserDto(user1.Id, user1.UserName, user1.Email, user1.Active);
-        GetUserDto userDto2 = new GetUserDto(user2.Id, user2.UserName, user2.Email, user2.Active);
-        GetUserDto userDto3 = new GetUserDto(user3.Id, user3.UserName, user3.Email, user3.Active);
-        var expectedUserDtos = new List<GetUserDto>() { userDto1, userDto2, userDto3 };
+        UserDto userDto1 = new UserDto(user1.Id, user1.UserName, user1.Email, user1.Active);
+        UserDto userDto2 = new UserDto(user2.Id, user2.UserName, user2.Email, user2.Active);
+        UserDto userDto3 = new UserDto(user3.Id, user3.UserName, user3.Email, user3.Active);
+        var expectedUserDtos = new List<UserDto>() { userDto1, userDto2, userDto3 };
 
         returnUsers.Should().BeEquivalentTo(expectedUserDtos);
     }
@@ -90,7 +89,7 @@ public class UserServiceTests
         var returnUser = await _sut.GetUserAsync(searchingUserId, CancellationToken.None);
 
         //Assert
-        GetUserDto userDto2 = new GetUserDto(searchingUserId, user.UserName, user.Email, user.Active);
+        UserDto userDto2 = new UserDto(searchingUserId, user.UserName, user.Email, user.Active);
 
         returnUser.Should().BeEquivalentTo(userDto2);
     }
@@ -117,7 +116,7 @@ public class UserServiceTests
     {
         // Arrange
         var randomId = _fixture.Create<int>();
-        var createUser = _fixture.Create<CreateUserDto>();
+        var createUser = _fixture.Create<CreateUserRequest>();
         _userRepositoryMock
             .AddAsync(Arg.Any<User>(), CancellationToken.None)
             .Returns(randomId);
@@ -148,7 +147,7 @@ public class UserServiceTests
             .Returns(user);
 
         _passwordEncryptionService
-            .VerifyPasswordsAreEqual(oldPassoword, user.Password)
+            .VerifyPassword(oldPassoword, user.Password)
             .Returns(true);
 
         //Act
@@ -174,7 +173,7 @@ public class UserServiceTests
             .Returns(user);
 
         _passwordEncryptionService
-            .VerifyPasswordsAreEqual(oldPassoword, user.Password)
+            .VerifyPassword(oldPassoword, user.Password)
             .Returns(false);
 
         //Act
@@ -218,7 +217,7 @@ public class UserServiceTests
 
         //Assert
 #pragma warning disable 4014 //for .Received await is not required, so suppress warning �Consider applying the 'await' operator�
-        _userRepositoryMock.Received(1).LogicalExclusionAsync(Arg.Any<User>(), CancellationToken.None);
+        _userRepositoryMock.Received(1).DeactivateAsync(Arg.Any<User>(), CancellationToken.None);
 #pragma warning restore 4014
     }
 

@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyBuyingList.Domain.Common;
 
 namespace MyBuyingList.Domain.Entities;
 
-public class RolePolicy : BaseEntity
+public sealed class RolePolicy : BaseEntity
 {
     public required int RoleId { get; set; }
     public required int PolicyId { get; set; }
-
-#pragma warning disable CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
-
-    public virtual Role Role { get; set; }
-    public virtual Policy Policy { get; set; }
-#pragma warning restore CS8618 // O campo não anulável precisa conter um valor não nulo ao sair do construtor. Considere declará-lo como anulável.
-
+    
+    public Role Role { get; set; } = null!;
+    public Policy Policy { get; set; } = null!;
 }

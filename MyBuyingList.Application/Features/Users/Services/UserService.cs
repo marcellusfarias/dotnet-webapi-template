@@ -15,25 +15,25 @@ public class UserService : IUserService
         _passwordEncryptionService = passwordEncryptionService;
     }
 
-    public async Task<GetUserDto> GetUserAsync(int userId, CancellationToken token)
+    public async Task<UserDto> GetUserAsync(int userId, CancellationToken token)
     {
         var user = await _userRepository.GetAsync(userId, token);
 
         if (user is null)
             throw new ResourceNotFoundException();
 
-        return user.ToGetUserDto();
+        return user.ToUserDto();
     }
 
-    public async Task<IEnumerable<GetUserDto>> GetAllUsersAsync(int page, CancellationToken token)
+    public async Task<IEnumerable<UserDto>> GetAllUsersAsync(int page, CancellationToken token)
     {
         var users = await _userRepository.GetAllAsync(page, token);
-        List<GetUserDto> getUserDtos = [];
-        users.ForEach(user => getUserDtos.Add(user.ToGetUserDto()));
+        List<UserDto> getUserDtos = [];
+        users.ForEach(user => getUserDtos.Add(user.ToUserDto()));
         return getUserDtos;
     }
 
-    public async Task<int> CreateAsync(CreateUserDto userDto, CancellationToken token)
+    public async Task<int> CreateAsync(CreateUserRequest userDto, CancellationToken token)
     {
         var user = userDto.ToUser(active: true);
         user.Password = _passwordEncryptionService.HashPassword(userDto.Password);
@@ -47,7 +47,7 @@ public class UserService : IUserService
         if (user is null)
             throw new ResourceNotFoundException();
 
-        bool checkOldPassword = _passwordEncryptionService.VerifyPasswordsAreEqual(oldPassword, user.Password);
+        bool checkOldPassword = _passwordEncryptionService.VerifyPassword(oldPassword, user.Password);
         if (!checkOldPassword)
             throw new BusinessLogicException("Old password does not match current one.");
 
@@ -63,9 +63,9 @@ public class UserService : IUserService
         if (user is null)
             throw new ResourceNotFoundException();
 
-        if (user.UserName.Equals("admin"))
+        if (user.UserName.Equals(Domain.Constants.Users.AdminUser.UserName, StringComparison.OrdinalIgnoreCase))
             throw new BusinessLogicException("Can't disable user admin.");
 
-        await _userRepository.LogicalExclusionAsync(user, token);
+        await _userRepository.DeactivateAsync(user, token);
     }
 }

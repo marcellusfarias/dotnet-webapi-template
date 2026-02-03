@@ -3,9 +3,9 @@ using MyBuyingList.Application.Features.Login.DTOs;
 
 namespace MyBuyingList.Application.Features.Login.Validators;
 
-public class LoginDtoValidator : AbstractValidator<LoginDto>
+public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
-    public LoginDtoValidator()
+    public LoginRequestValidator()
     {
         RuleFor(x => x.Username)
             .NotEmpty();

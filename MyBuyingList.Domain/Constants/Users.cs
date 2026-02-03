@@ -4,22 +4,14 @@ namespace MyBuyingList.Domain.Constants;
 
 public static class Users
 {
-    public static readonly User AdminUser = new User 
+    public static readonly User AdminUser = new()
     { 
         Id = 1,
-        Email = "marcelluscfarias@gmail.com",
+        Email = "admin@example.com",
         UserName = "admin",
         Password = "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe",
         Active = true 
     };
 
-    public static IEnumerable<User> GetValues()
-    {
-        List<User> users = new List<User>()
-        {
-            AdminUser
-        };
-        
-        return users;
-    }
+    public static IEnumerable<User> GetValues() => [AdminUser];
 }

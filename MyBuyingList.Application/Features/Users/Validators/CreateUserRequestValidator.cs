@@ -3,19 +3,22 @@ using MyBuyingList.Application.Common.Constants;
 using MyBuyingList.Application.Common.Helpers;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Domain.Constants;
+using MyBuyingList.Domain.ValueObjects;
 using System.Text.RegularExpressions;
 
 namespace MyBuyingList.Application.Features.Users.Validators;
 
-public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
-    public CreateUserDtoValidator()
+    private static readonly Regex UsernameRegex = new("^[a-zA-Z0-9_]+$");
+
+    public CreateUserRequestValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty()
             .MaximumLength(FieldLengths.USER_EMAIL_MAX_LENGTH)
-            .Must(ValidEmail)
-            .WithMessage(ValidationMessages.InvalidEmail);            
+            .Must(EmailAddress.IsValid)
+            .WithMessage(ValidationMessages.InvalidEmail);
 
         RuleFor(x => x.UserName)
             .NotEmpty()
@@ -25,19 +28,9 @@ public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
             .WithMessage(ValidationMessages.InvalidUsername);
 
         RuleFor(x => x.Password)
-            .Must(PasswordHelper.IsValidPassword)
+            .Must(PasswordValidator.IsValidPassword)
             .WithMessage(ValidationMessages.InvalidPassword);
     }
 
-    private bool ValidEmail(string email)
-    {
-        Regex rxEmail = new Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        return rxEmail.IsMatch(email);
-    }
-
-    private bool ValidUsername(string username)
-    {
-        Regex rx = new Regex("^[a-zA-Z0-9_]+$");
-        return rx.IsMatch(username);
-    }
+    private static bool ValidUsername(string username) => UsernameRegex.IsMatch(username);
 }

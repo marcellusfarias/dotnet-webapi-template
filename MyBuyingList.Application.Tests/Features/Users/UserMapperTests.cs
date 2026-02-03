@@ -19,20 +19,20 @@ public class UserMapperTests
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
 
-        _fixture.Customize<CreateUserDto>(c => c
+        _fixture.Customize<CreateUserRequest>(c => c
             .With(x =>
                 x.Email,
                 _fixture.Create<MailAddress>().Address));
     }
 
     [Fact]
-    public void UserMapperDomainToDto_ReturnsGetUserDto_WhenDomainIsValid()
+    public void UserMapperDomainToDto_ReturnsUserDto_WhenDomainIsValid()
     {
         // Arrange
         var user = _fixture.Create<User>();
-        var expectedDto = new GetUserDto(user.Id, user.UserName, user.Email, user.Active);
+        var expectedDto = new UserDto(user.Id, user.UserName, user.Email, user.Active);
         // Act
-        var dto = user.ToGetUserDto();
+        var dto = user.ToUserDto();
 
         // Assert
         dto.Should().BeEquivalentTo(expectedDto);
@@ -42,7 +42,7 @@ public class UserMapperTests
     public void UserMapperDtoToDomain_ReturnsUser_WhenDtoIsValid()
     {
         // Arrange
-        var dto = _fixture.Create<CreateUserDto>();
+        var dto = _fixture.Create<CreateUserRequest>();
         var expectedUser = new User
         {
             Id = 0,

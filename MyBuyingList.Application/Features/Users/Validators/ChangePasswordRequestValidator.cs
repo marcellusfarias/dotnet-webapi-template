@@ -5,18 +5,18 @@ using MyBuyingList.Application.Features.Users.DTOs;
 
 namespace MyBuyingList.Application.Features.Users.Validators;
 
-public class UpdateUserPasswordDtoValidator : AbstractValidator<UpdateUserPasswordDto>
+public class ChangePasswordRequestValidator : AbstractValidator<ChangePasswordRequest>
 {
-    public UpdateUserPasswordDtoValidator()
+    public ChangePasswordRequestValidator()
     {
         RuleFor(x => x.OldPassword)
             .NotEmpty()
-            .Must(PasswordHelper.IsValidPassword)
+            .Must(PasswordValidator.IsValidPassword)
             .WithMessage(ValidationMessages.InvalidPassword);
 
         RuleFor(x => x.NewPassword)
             .NotEmpty()
-            .Must(PasswordHelper.IsValidPassword)
+            .Must(PasswordValidator.IsValidPassword)
             .WithMessage(ValidationMessages.InvalidPassword);
     }
 }

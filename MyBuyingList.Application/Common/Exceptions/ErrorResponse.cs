@@ -1,44 +1,44 @@
 ﻿using FluentValidation.Results;
 
-namespace MyBuyingList.Application;
+namespace MyBuyingList.Application.Common.Exceptions;
 
-public class ErrorModel
+public class ErrorResponse
 {
-    public required List<ErrorDetails> Errors { get; set; }
+    public required List<ErrorDetail> Errors { get; init; }
 
-    public static ErrorModel CreateSingleErrorDetailsModel(string title, string detail)
+    public static ErrorResponse CreateSingleErrorDetail(string title, string detail)
     {
-        var item = new ErrorDetails
+        var item = new ErrorDetail
         {
             Title = title,
             Detail = detail,
         };
 
-        return new ErrorModel
+        return new ErrorResponse
         {
             Errors = [item]
         };
     }
 
-    public static ErrorModel CreateFromValidationResult(ValidationResult validationResult)
+    public static ErrorResponse CreateFromValidationResult(ValidationResult validationResult)
     {
-        var errorDetails = new List<ErrorDetails>();
+        var errorDetails = new List<ErrorDetail>();
 
         validationResult
            .Errors
            .ForEach(x =>
                errorDetails.Add(
-                   new ErrorDetails()
+                   new ErrorDetail()
                    {
                        Title = $"Error validating property '{x.PropertyName}'.",
                        Detail = x.ErrorMessage
                    }));
 
-        return new ErrorModel { Errors = errorDetails };
+        return new ErrorResponse { Errors = errorDetails };
     }
 }
 
-public class ErrorDetails
+public class ErrorDetail
 {
     public required string Title { get; set; }
 
