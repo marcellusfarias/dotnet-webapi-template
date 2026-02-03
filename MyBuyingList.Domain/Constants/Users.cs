@@ -13,10 +13,5 @@ public static class Users
         Active = true 
     };
 
-    public static IEnumerable<User> GetValues()
-    {
-        List<User> users = [AdminUser];
-        
-        return users;
-    }
+    public static IEnumerable<User> GetValues() => [AdminUser];
 }

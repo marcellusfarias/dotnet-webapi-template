@@ -1,6 +1,7 @@
-﻿namespace MyBuyingList.Domain.Constants;
+﻿// ReSharper disable InconsistentNaming
+namespace MyBuyingList.Domain.Constants;
 
-// follow pattern: [ENTITY]_[PROPERTY]_{MESSAGE}
+// follow pattern: [ENTITY]_[PROPERTY]_[CONSTRAINT]
 public static class FieldLengths
 {
     // Policy
