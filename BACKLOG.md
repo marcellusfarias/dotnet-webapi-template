@@ -1,19 +1,14 @@
 
 ## Backlog
 
-### Infrastructure
-
-* Configure CertBot in VPS
-* Setup resource limits for containers
-* Setup replicas and health checks (automatic restarting) for containers
-* Use rollout deployment with update_config
-* Setup monitoring (grafana, etc)
-* Run containers as non-root users
-* Backup volumes
-
 ### Before releasing
 
 This list is ordered by priority.
+
+#### Infrastructure
+
+* Configure CertBot in VPS
+
 
 #### Security
 
@@ -25,6 +20,18 @@ This list is ordered by priority.
 Finish implementing ValueObjects
 
 ### After releasing 
+
+#### Infrastructure
+
+* Setup resource limits for containers
+* Setup replicas and health checks (automatic restarting) for containers
+* Use rollout deployment with update_config
+* Setup monitoring (grafana, etc)
+* Run containers as non-root users
+* Backup volumes
+* Fail deploy.yml if services deployed are not healthy
+* Add some sort of rollback if deployment fails
+* image: ghcr.io/${GITHUB_REPOSITORY}:latest
 
 #### API Documentation
 
