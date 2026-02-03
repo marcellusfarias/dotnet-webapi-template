@@ -69,7 +69,7 @@ jobs:
           # Login to GitHub Container Registry
           echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           
-          echo "Logged in in docker registry"
+          echo "Logged in to docker registry"
           
           # Pull and restart
           docker stack deploy -c docker-compose.yml -c docker-compose.production.yml myapp
