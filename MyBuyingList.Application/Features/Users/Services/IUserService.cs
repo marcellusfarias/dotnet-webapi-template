@@ -13,7 +13,7 @@ public interface IUserService
     /// <param name="id">The user's unique identifier.</param>
     /// <param name="token">Cancellation token.</param>
     /// <returns>The user data.</returns>
-    /// <exception cref="Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
     Task<UserDto> GetUserAsync(int id, CancellationToken token);
 
     /// <summary>
@@ -39,8 +39,8 @@ public interface IUserService
     /// <param name="oldPassword">The current password for verification.</param>
     /// <param name="newPassword">The new password to set.</param>
     /// <param name="token">Cancellation token.</param>
-    /// <exception cref="Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
-    /// <exception cref="Application.Common.Exceptions.BusinessLogicException">Thrown when old password doesn't match.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.BusinessLogicException">Thrown when old password doesn't match.</exception>
     Task ChangeUserPasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken token);
 
     /// <summary>
@@ -48,7 +48,7 @@ public interface IUserService
     /// </summary>
     /// <param name="userId">The user's unique identifier.</param>
     /// <param name="token">Cancellation token.</param>
-    /// <exception cref="Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
-    /// <exception cref="Application.Common.Exceptions.BusinessLogicException">Thrown when attempting to delete the admin user.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.ResourceNotFoundException">Thrown when user is not found.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.BusinessLogicException">Thrown when attempting to delete the admin user.</exception>
     Task DeleteAsync(int userId, CancellationToken token);
 }

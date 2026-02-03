@@ -13,6 +13,6 @@ public interface ILoginService
     /// <param name="loginDto">The login credentials.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A JWT token if authentication succeeds.</returns>
-    /// <exception cref="Application.Common.Exceptions.AuthenticationException">Thrown when credentials are invalid.</exception>
+    /// <exception cref="MyBuyingList.Application.Common.Exceptions.AuthenticationException">Thrown when credentials are invalid.</exception>
     Task<string> AuthenticateAndReturnJwtTokenAsync(LoginRequest loginDto, CancellationToken cancellationToken);
 }

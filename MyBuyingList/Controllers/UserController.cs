@@ -53,7 +53,7 @@ public class UserController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserCreate)]
-    [ProducesResponseType(typeof(CreateUserRequest), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
