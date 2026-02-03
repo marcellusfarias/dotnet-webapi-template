@@ -1,3 +1,5 @@
-﻿namespace MyBuyingList.Application.Features.Users.DTOs;
+﻿using MyBuyingList.Domain.ValueObjects;
 
-public record GetUserDto(int Id, string UserName, string Email, bool Active);
+namespace MyBuyingList.Application.Features.Users.DTOs;
+
+public record GetUserDto(int Id, string UserName, EmailAddress Email, bool Active);

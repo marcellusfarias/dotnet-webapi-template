@@ -1,4 +1,6 @@
-﻿namespace MyBuyingList.Domain.Entities;
+﻿using MyBuyingList.Domain.Common;
+
+namespace MyBuyingList.Domain.Entities;
 
 public class UserRole : BaseEntity
 {
