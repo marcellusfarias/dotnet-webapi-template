@@ -18,7 +18,7 @@ public class EmailAddress : ValueObject
         Address = address;
     }
 
-    private static bool IsValid(string? emailAddress)
+    public static bool IsValid(string? emailAddress)
     {
         if (string.IsNullOrWhiteSpace(emailAddress))
             return false;

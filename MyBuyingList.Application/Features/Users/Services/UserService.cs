@@ -63,7 +63,7 @@ public class UserService : IUserService
         if (user is null)
             throw new ResourceNotFoundException();
 
-        if (user.UserName.Equals("admin"))
+        if (user.UserName.Equals(Domain.Constants.Users.AdminUser.UserName, StringComparison.OrdinalIgnoreCase))
             throw new BusinessLogicException("Can't disable user admin.");
 
         await _userRepository.LogicalExclusionAsync(user, token);
