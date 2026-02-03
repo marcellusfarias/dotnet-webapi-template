@@ -13,7 +13,7 @@
 
 ### Before releasing
 
-This list is orderned by priority.
+This list is ordered by priority.
 
 #### Security
 
