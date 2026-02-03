@@ -1,9 +1,13 @@
 version: '3.4'
 
 services:
-  mybuyinglist.web:
+  mybuyinglist_web:
+    image: ${DOCKER_REGISTRY-}mybuyinglistweb
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      context: .
+      dockerfile: MyBuyingList/Dockerfile
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
@@ -19,3 +23,8 @@ services:
 secrets:
   JwtSettings__SigningKey:
     file: ./MyBuyingList/local/secrets/JwtSettings__SigningKey
+    
+networks:
+  buyinglist-db:
+    # external: true
+    driver: bridge

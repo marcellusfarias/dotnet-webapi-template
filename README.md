@@ -3,7 +3,7 @@
 This project aims to be a template for new WebAPI projects. It already sets up:
 
 Tech stack:
-* .Net 7 (migrating to .Net 8 soon)
+* .Net 8
 * Swagger
 * Postgres with Entity Framework Core
 * Docker and Docker Swarm
