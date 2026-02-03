@@ -6,6 +6,8 @@ namespace MyBuyingList.Domain.ValueObjects;
 // TODO: replace "string" Email for this ValueObject
 public class EmailAddress : ValueObject
 {
+    private static readonly Regex EmailRegex = new Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+
     public string Address { get; init; }
 
     public EmailAddress(string emailAddress)
@@ -18,8 +20,7 @@ public class EmailAddress : ValueObject
 
     public static bool IsValid(string emailAddress)
     {
-        Regex rxEmail = new Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        return rxEmail.IsMatch(emailAddress);
+        return EmailRegex.IsMatch(emailAddress);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
