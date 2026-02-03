@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using MyBuyingList.Application.Common.Helpers;
+﻿using MyBuyingList.Application.Common.Helpers;
 
 namespace MyBuyingList.Application.Tests.Common;
 

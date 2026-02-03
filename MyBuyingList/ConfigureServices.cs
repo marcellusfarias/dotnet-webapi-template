@@ -1,7 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using MyBuyingList.Web.Filters;
 using MyBuyingList.Application;
-using Microsoft.AspNetCore.MiddlewareAnalysis;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Web.Middlewares.Authorization;

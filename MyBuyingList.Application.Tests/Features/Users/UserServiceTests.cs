@@ -5,7 +5,6 @@ using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
 using MyBuyingList.Application.Common.Exceptions;
-using MyBuyingList.Domain.Constants;
 
 namespace MyBuyingList.Application.Tests.Features.Users;
 

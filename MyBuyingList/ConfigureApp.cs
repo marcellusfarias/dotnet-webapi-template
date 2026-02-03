@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Web.Middlewares;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace MyBuyingList.Web;
 

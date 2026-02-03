@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using MyBuyingList.Application.Common.Exceptions;
+﻿using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Services;
 
 namespace MyBuyingList.Application.Tests.Common;
