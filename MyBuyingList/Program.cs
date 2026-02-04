@@ -10,7 +10,8 @@ builder.Logging.AddSimpleConsole(opt =>
     opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled; 
 });
 
-string secretsLocation = builder.Configuration["SecretsLocation"] ?? throw new Exception("Secrets location not set");
+string secretsLocation = builder.Configuration["SecretsLocation"]
+    ?? throw new InvalidOperationException("SecretsLocation not found in configuration.");
 
 if (builder.Environment.EnvironmentName is "Test")
 {

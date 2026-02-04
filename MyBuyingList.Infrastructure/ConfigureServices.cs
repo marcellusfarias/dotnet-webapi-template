@@ -16,7 +16,7 @@ public static class ConfigureServices
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
         services.AddDatabaseContext(configuration, logger);
-        services.AddRepositores(configuration);
+        services.AddRepositories(configuration);
         services.AddJwtAuthentication();
         
         return services;
@@ -31,7 +31,7 @@ public static class ConfigureServices
         services.AddTransient<IJwtProvider, JwtProvider>();
     }    
 
-    private static void AddRepositores(this IServiceCollection services, IConfiguration configuration)
+    private static void AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RepositorySettings>(configuration.GetSection("RepositorySettings"));
         services.AddScoped<IUserRepository, UserRepository>();
@@ -58,8 +58,8 @@ public static class ConfigureServices
         string? connectionString = configuration.GetConnectionString("DefaultConnection");
         if (connectionString == null)
         {
-            logger.LogError($"Invalid connection string.");
-            throw new Exception("Invalid connection string.");
+            logger.LogError("Connection string 'DefaultConnection' not found in configuration.");
+            throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration.");
         }
 
         return connectionString;

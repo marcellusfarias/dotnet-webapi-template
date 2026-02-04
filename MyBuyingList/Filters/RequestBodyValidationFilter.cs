@@ -3,7 +3,7 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MyBuyingList.Application.Common.Exceptions;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace MyBuyingList.Web.Filters;
 
@@ -44,14 +44,14 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
 
                     if (!httpRequestBody.CanSeek)
                     {
-                        throw new Exception("Cannot seek request body.");
+                        throw new InvalidOperationException("Cannot seek request body. Ensure request buffering is enabled.");
                     }
 
                     httpRequestBody.Seek(0, SeekOrigin.Begin); // Rewind the stream
 
                     using var reader = new StreamReader(httpRequestBody);
                     var bodyContent = await reader.ReadToEndAsync();
-                    var parameterValue = JsonConvert.DeserializeObject(bodyContent, modelType);
+                    var parameterValue = JsonSerializer.Deserialize(bodyContent, modelType);
                     var validateMethod = validatorType.GetMethod("ValidateAsync")!;
 
                     var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, 

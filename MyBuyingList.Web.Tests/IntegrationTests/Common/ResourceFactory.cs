@@ -61,7 +61,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await _dbContainer.StartAsync();
 

@@ -18,7 +18,6 @@ internal static class ConfigureServices
         services.AddAuthorizationServices();
         services.AddSwaggerConfiguration();
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
-        services.AddLogging();
     }
 
     private static void AddSwaggerConfiguration(this IServiceCollection services)
@@ -38,7 +37,7 @@ internal static class ConfigureServices
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Here enter JWT Token with bearer format like bearer[space] token"
+                Description = "Enter JWT token with Bearer format: Bearer {token}"
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement

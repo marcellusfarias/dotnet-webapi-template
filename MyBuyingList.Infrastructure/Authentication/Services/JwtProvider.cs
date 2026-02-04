@@ -22,7 +22,7 @@ public class JwtProvider : IJwtProvider
 
     public async Task<string> GenerateTokenAsync(int userId, CancellationToken cancellationToken)
     {
-        var permissions = GetPermissionsAsync(userId, cancellationToken);
+        var permissions = await GetPermissionsAsync(userId, cancellationToken);
 
         var claims = new List<Claim>
         {
@@ -34,7 +34,7 @@ public class JwtProvider : IJwtProvider
                 SecurityAlgorithms.HmacSha256Signature
             );
 
-        (await permissions).ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
+        permissions.ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
 
         var token = new JwtSecurityToken(
             _options.Issuer,
