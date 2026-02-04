@@ -34,7 +34,7 @@ public class LoginServiceTests
     }
 
     [Fact]
-    public async void AuthenticateAndReturnJwtToken_ShouldReturnToken_WhenAuthenticationIsValid()
+    public async Task AuthenticateAndReturnJwtToken_ShouldReturnToken_WhenAuthenticationIsValid()
     {
         //Arrange
         var user = _fixture.Create<User>();
@@ -68,7 +68,7 @@ public class LoginServiceTests
     }
 
     [Fact]
-    public async void AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenUserDoesNotExist()
+    public async Task AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenUserDoesNotExist()
     {
         //Arrange
         var attemptingPassword = _fixture.Create<string>();
@@ -92,7 +92,7 @@ public class LoginServiceTests
     }
 
     [Fact]
-    public async void AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenPasswordsDontMatch()
+    public async Task AuthenticateAndReturnJwtToken_ShouldThrowsException_WhenPasswordsDontMatch()
     {
         //Arrange
         var user = _fixture.Create<User>();
@@ -120,7 +120,7 @@ public class LoginServiceTests
     }
 
     [Fact]
-    public async void AuthenticateAndReturnJwtToken_ShouldThrowException_WhenFailsToGenerateJwtToken()
+    public async Task AuthenticateAndReturnJwtToken_ShouldThrowException_WhenFailsToGenerateJwtToken()
     {
         //Arrange
         var user = _fixture.Create<User>();

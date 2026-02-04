@@ -16,7 +16,7 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void Authenticate_ReturnsToken_WhenCredentialsAreValid()
+    public async Task Authenticate_ReturnsToken_WhenCredentialsAreValid()
     {
         // Arrange
         await Utils.InsertTestUser(_client);
@@ -38,7 +38,7 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async void Authenticate_ReturnsUnauthorized_WhenCredentialsAreInvalid()
+    public async Task Authenticate_ReturnsUnauthorized_WhenCredentialsAreInvalid()
     {
         // Arrange
         await Utils.InsertTestUser(_client);
