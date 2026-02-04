@@ -10,7 +10,7 @@ public abstract class BaseIntegrationTest : IAsyncLifetime
         _resetDatabaseAsync = resourceFactory.ResetDatabaseAsync;
     }
 
-    public ValueTask InitializeAsync() => new(Task.CompletedTask);
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
     public async ValueTask DisposeAsync() => await _resetDatabaseAsync();
 }
