@@ -21,8 +21,7 @@ if (builder.Environment.EnvironmentName is "Test")
 builder.Configuration.AddKeyPerFile(directoryPath: secretsLocation, optional: false, reloadOnChange: true);
 
 var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!; // TODO: fix warning in the future.
-var isDevelopment = builder.Environment.IsDevelopment();
-builder.Services.AddServices(logger, builder.Configuration, isDevelopment);
+builder.Services.AddServices(logger, builder.Configuration);
 
 var app = builder.Build();
 await app.StartApplication();
