@@ -27,5 +27,3 @@ secrets:
 networks:
   default:
     external: true
-    driver: overlay
-    enable_ipv6: true
