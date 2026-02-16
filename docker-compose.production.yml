@@ -12,8 +12,6 @@ services:
     secrets:
       - JwtSettings__SigningKey
       - ConnectionStrings__DefaultConnection
-    networks:
-      - default
 
 volumes:
   certs:
@@ -22,8 +20,4 @@ secrets:
   JwtSettings__SigningKey:
     external: true
   ConnectionStrings__DefaultConnection:
-    external: true
-    
-networks:
-  default:
     external: true
