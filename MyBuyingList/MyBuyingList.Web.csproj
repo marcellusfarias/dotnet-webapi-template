@@ -24,20 +24,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="local\secrets\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <None Update="local\secrets\JwtSettings__SigningKey">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="local\secrets\postgres_db.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="local\secrets\postgres_password.txt">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="local\secrets\postgres_user.txt">
+	  <None Update="local\secrets\ConnectionStrings__DefaultConnection">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

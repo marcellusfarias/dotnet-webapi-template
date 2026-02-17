@@ -38,7 +38,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
         
         var manager = new ConfigurationManager();
         manager
-            .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.IntegrationTests.json"))
+            .AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.IntegrationTests.json"), optional: false)
             .Build();
 
         builder.UseConfiguration(manager);
