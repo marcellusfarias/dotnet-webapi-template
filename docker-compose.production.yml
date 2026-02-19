@@ -7,14 +7,13 @@ services:
     image: ghcr.io/marcellusfarias/dotnet-webapi-template:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/fullchain.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/privkey.pem
     volumes: 
-      - certs:/root/.aspnet/https:ro
+      - /etc/letsencrypt/live/yourdomain.com:/https:ro
     secrets:
       - JwtSettings__SigningKey
       - ConnectionStrings__DefaultConnection
-
-volumes:
-  certs:
 
 secrets:
   JwtSettings__SigningKey:

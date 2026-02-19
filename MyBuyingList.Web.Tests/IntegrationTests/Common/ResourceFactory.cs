@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Infrastructure;
 using System.Net.Http.Headers;
+using MyBuyingList.Domain.Constants;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -72,8 +73,8 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         LoginRequest loginDto = new()
         {
-            Username = "admin",
-            Password = "123"
+            Username = Users.AdminUser.UserName,
+            Password = Users.AdminUser.Password
         };
 
         var response = await client.PostAsync("api/auth", Utils.GetJsonContentFromObject(loginDto));
