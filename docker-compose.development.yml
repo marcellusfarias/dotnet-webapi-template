@@ -8,10 +8,10 @@ services:
       context: .
       dockerfile: MyBuyingList/Dockerfile
     volumes:
-        # Uncomment these volumes if you are using MacOS
+        # MacOS default configuration: these volume mappings expect MacOS user secret and HTTPS certificate locations.
         - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
         - ~/.aspnet/https:/root/.aspnet/https:ro
-        # Uncomment these volumes if you are using Windows
+        # For Windows, comment out the two MacOS lines above and uncomment the two lines below (or configure equivalent environment variables):
         #      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
         #      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
         # Since no need for Swarm mode in development, we can use local folder for secrets
