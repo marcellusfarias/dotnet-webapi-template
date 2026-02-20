@@ -9,6 +9,7 @@ using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Infrastructure;
 using System.Net.Http.Headers;
+using MyBuyingList.Infrastructure.Persistence.Seeders;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -69,6 +70,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
         
         // Seeds the database with an admin user, since this function is ran before 
         // BaseIntegrationTests.InitializeAsync()
+        await SeedAdminAsync();
         await SeedIntegrationAdminAsync();
         
         // Creates client and adds JWT so it doesnt need to authenticate
@@ -102,9 +104,17 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await dbService.Database.EnsureDeletedAsync();
         await dbService.Database.EnsureCreatedAsync();
 
+        await SeedAdminAsync();
         await SeedIntegrationAdminAsync();
     }
 
+    private async Task SeedAdminAsync()
+    {
+        using var scope = Services.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
+        await seeder.SeedAsync();
+    }
+    
     private async Task SeedIntegrationAdminAsync()
     {
         using var scope = Services.CreateScope();

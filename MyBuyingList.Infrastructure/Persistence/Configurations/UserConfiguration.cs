@@ -26,6 +26,6 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
             t.HasCheckConstraint("CHK_Username_MinLength", 
             $"(length(user_name) >= {FieldLengths.USER_USERNAME_MIN_LENGTH})"));
 
-        builder.HasData(Users.GetValues());
+        // Admin user is seeded at runtime by AdminUserSeeder after migrations run.
     }
 }

@@ -134,11 +134,6 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "users",
-                columns: new[] { "id", "active", "email", "password", "user_name" },
-                values: new object[] { 1, true, "marcelluscfarias@gmail.com", "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe", "admin" });
-
-            migrationBuilder.InsertData(
                 table: "role_policies",
                 columns: new[] { "id", "policy_id", "role_id" },
                 values: new object[,]
@@ -149,11 +144,6 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
                     { 4, 4, 1 },
                     { 5, 5, 1 }
                 });
-
-            migrationBuilder.InsertData(
-                table: "user_roles",
-                columns: new[] { "id", "role_id", "user_id" },
-                values: new object[] { 1, 1, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "ix_policies_name",

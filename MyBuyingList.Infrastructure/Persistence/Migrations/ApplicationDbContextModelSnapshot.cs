@@ -17,7 +17,7 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -226,17 +226,6 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CHK_Username_MinLength", "(length(user_name) >= 3)");
                         });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Active = true,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "marcelluscfarias@gmail.com",
-                            Password = "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe",
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("MyBuyingList.Domain.Entities.UserRole", b =>
@@ -266,14 +255,6 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_user_roles_user_id");
 
                     b.ToTable("user_roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            RoleId = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("MyBuyingList.Domain.Entities.RolePolicy", b =>

@@ -10,13 +10,19 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/fullchain.pem
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/privkey.pem
     volumes: 
-      - /etc/letsencrypt/live/yourdomain.com:/https:ro
+      - /etc/letsencrypt/live/${APPLICATION_DOMAIN}:/https:ro
     secrets:
       - JwtSettings__SigningKey
       - ConnectionStrings__DefaultConnection
+      - AdminSettings__Password
+      - AdminSettings__Email
 
 secrets:
   JwtSettings__SigningKey:
     external: true
   ConnectionStrings__DefaultConnection:
+    external: true
+  AdminSettings__Password:
+    external: true
+  AdminSettings__Email:
     external: true

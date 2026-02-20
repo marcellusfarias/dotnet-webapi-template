@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyBuyingList.Infrastructure;
+using MyBuyingList.Infrastructure.Persistence.Seeders;
 using MyBuyingList.Web.Middlewares;
 
 namespace MyBuyingList.Web;
@@ -12,7 +13,7 @@ internal static class ConfigureApp
 
         try
         {
-            app.RunDatabaseMigrations();
+            await app.RunDatabaseMigrations();
         }
         catch (Exception ex)
         {
@@ -25,11 +26,14 @@ internal static class ConfigureApp
         app.AddMiddlewares();
     }
 
-    private static void RunDatabaseMigrations(this WebApplication app)
+    private static async Task RunDatabaseMigrations(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var db = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService(typeof(ApplicationDbContext));
-        db.Database.Migrate();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await db.Database.MigrateAsync();
+
+        var seeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
+        await seeder.SeedAsync();
     }
 
     private static void AddMiddlewares(this WebApplication app)
