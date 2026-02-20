@@ -1,39 +1,22 @@
 version: '3.4'
 
+# This is a production-ready docker compose file.
+# It's intended to be used in Docker Swarm mode.
 services:
-  mybuyinglist_web:
+  api:
     image: ghcr.io/marcellusfarias/dotnet-webapi-template:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/fullchain.pem
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/privkey.pem
     volumes: 
-      - certs:/root/.aspnet/https:ro
+      - /etc/letsencrypt/live/yourdomain.com:/https:ro
     secrets:
-      - jwt_secret_key
+      - JwtSettings__SigningKey
+      - ConnectionStrings__DefaultConnection
 
-  db:
-    environment:
-      POSTGRES_USER: /run/secrets/postgres_user
-      POSTGRES_PASSWORD: /run/secrets/postgres_password
-      POSTGRES_DB: /run/secrets/postgres_db
-    secrets:
-        - postgres_db
-        - postgres_user
-        - postgres_password
-
-volumes:
-  certs:
-
-# Works only on swarm mode
 secrets:
-  jwt_secret_key:
+  JwtSettings__SigningKey:
     external: true
-  postgres_db:
-     external: true
-  postgres_user:
-     external: true
-  postgres_password:
-     external: true
-     
-networks:
-  buyinglist-db:
-    driver: overlay
+  ConnectionStrings__DefaultConnection:
+    external: true

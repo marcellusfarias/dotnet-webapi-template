@@ -10,7 +10,7 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureServices
 {
-    internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration, bool isDevelopment)
+    internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
     {
         services.AddExternalServices(logger, configuration);
 
