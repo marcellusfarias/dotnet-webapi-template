@@ -64,7 +64,7 @@ public class UserController : ApiControllerBase
         CancellationToken token)
     {
         var guid = Guid.NewGuid();
-        _logger.LogInformation("{Guid} - Create user {UserName} with email {Email}", guid, createUserDto.UserName, createUserDto.Email);
+        _logger.LogInformation("{Guid} - Create user {UserName}", guid, SanitizeForLog(createUserDto.UserName));
 
         var userId = await _userService.CreateAsync(createUserDto, token);
 
@@ -119,4 +119,12 @@ public class UserController : ApiControllerBase
         return NoContent();
     }
 
+    private static string SanitizeForLog(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        var sanitized = input.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        return sanitized.Length > 200 ? sanitized[..200] : sanitized;
+    }
 }

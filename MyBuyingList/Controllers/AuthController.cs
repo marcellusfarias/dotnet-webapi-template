@@ -21,21 +21,31 @@ public class AuthController : ApiControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [HttpPost, Produces("text/plain")]
     public async Task<IActionResult> Authenticate(
-        [FromBody] LoginRequest loginDto, 
+        [FromBody] LoginRequest loginDto,
         CancellationToken token)
     {
         Guid guid = Guid.NewGuid();
-        _logger.LogInformation("{Guid} - Authenticate user {LoginRequestUsername}", guid, loginDto.Username);
+        var safeUsername = SanitizeForLog(loginDto.Username);
+        _logger.LogInformation("{Guid} - Authenticate user {LoginRequestUsername}", guid, safeUsername);
 
         var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(loginDto, token);
 
         if(string.IsNullOrEmpty(jwtToken))
         {
-            _logger.LogInformation("{Guid} - Unauthorized {LoginRequestUsername}", guid, loginDto.Username);
+            _logger.LogInformation("{Guid} - Unauthorized {LoginRequestUsername}", guid, safeUsername);
             return Unauthorized();
         }
 
-        _logger.LogInformation("{Guid} - Authenticated {LoginRequestUsername}", guid, loginDto.Username);
+        _logger.LogInformation("{Guid} - Authenticated {LoginRequestUsername}", guid, safeUsername);
         return Ok(jwtToken);
+    }
+
+    private static string SanitizeForLog(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        var sanitized = input.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        return sanitized.Length > 200 ? sanitized[..200] : sanitized;
     }
 }
