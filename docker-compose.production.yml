@@ -14,9 +14,15 @@ services:
     secrets:
       - JwtSettings__SigningKey
       - ConnectionStrings__DefaultConnection
+      - AdminSettings__Password
+      - AdminSettings__Email
 
 secrets:
   JwtSettings__SigningKey:
     external: true
   ConnectionStrings__DefaultConnection:
+    external: true
+  AdminSettings__Password:
+    external: true
+  AdminSettings__Email:
     external: true

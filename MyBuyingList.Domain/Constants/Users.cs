@@ -5,13 +5,13 @@ namespace MyBuyingList.Domain.Constants;
 public static class Users
 {
     public static readonly User AdminUser = new()
-    { 
+    {
         Id = 1,
-        Email = "admin@example.com",
         UserName = "admin",
-        Password = "$2a$16$CZ18qbFWtcoAY6SnsqNYnO1H.D3It5TTD6uuhTFyjge5I/n5SRLKe",
-        Active = true 
+        // Email and Password are sourced from secrets at runtime via AdminUserSeeder.
+        // These placeholder values are never persisted.
+        Email = string.Empty,
+        Password = string.Empty,
+        Active = true
     };
-
-    public static IEnumerable<User> GetValues() => [AdminUser];
 }

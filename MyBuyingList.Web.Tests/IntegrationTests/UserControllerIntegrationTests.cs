@@ -133,7 +133,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var adminUser = MyBuyingList.Domain.Constants.Users.AdminUser;
-        var expectedUser = new UserDto(adminUser.Id, adminUser.UserName, adminUser.Email, true);
+        var expectedUser = new UserDto(adminUser.Id, adminUser.UserName, "admin@example.com", true);
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, adminUser.Id);

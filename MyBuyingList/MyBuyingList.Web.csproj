@@ -30,6 +30,12 @@
 	  <None Update="local\secrets\ConnectionStrings__DefaultConnection">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="local\secrets\AdminSettings__Email">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="local\secrets\AdminSettings__Password">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

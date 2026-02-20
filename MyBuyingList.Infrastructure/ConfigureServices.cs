@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Repositories;
 using MyBuyingList.Infrastructure.Authentication.JwtSetup;
+using MyBuyingList.Infrastructure.Persistence.Seeders;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Infrastructure.Authentication.Services;
 using MyBuyingList.Application.Features.Users;
@@ -18,8 +19,15 @@ public static class ConfigureServices
         services.AddDatabaseContext(configuration, logger);
         services.AddRepositories(configuration);
         services.AddJwtAuthentication();
-        
+        services.AddAdminSeeder();
+
         return services;
+    }
+
+    private static void AddAdminSeeder(this IServiceCollection services)
+    {
+        services.ConfigureOptions<AdminSettingsSetup>();
+        services.AddScoped<AdminUserSeeder>();
     }
 
     private static void AddJwtAuthentication(this IServiceCollection services)
