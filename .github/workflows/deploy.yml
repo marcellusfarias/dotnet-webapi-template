@@ -56,11 +56,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_ACTOR: ${{ github.actor }}
+        APPLICATION_DOMAIN: ${{ secrets.APPLICATION_DOMAIN }}
       with:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        envs: GITHUB_TOKEN,GITHUB_ACTOR
+        envs: GITHUB_TOKEN,GITHUB_ACTOR,APPLICATION_DOMAIN
         script: |
           cd ~/app
 
