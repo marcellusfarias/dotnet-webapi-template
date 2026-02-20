@@ -65,6 +65,7 @@ public class LoginServiceTests
 
         //Assert
         token.Should().BeEquivalentTo("custom_token");
+        token.Should().BeEquivalentTo("test");
     }
 
     [Fact]
