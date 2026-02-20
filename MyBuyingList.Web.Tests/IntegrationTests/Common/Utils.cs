@@ -12,6 +12,9 @@ public static class Utils
     public const string TestUserPassword = "Mx485!@zz";
     public const string TestUserUsername = "test_user";
 
+    public const string IntegrationTestAdminUsername = "integration_admin";
+    public const string IntegrationTestAdminPassword = "IntAdmin!Test1";
+
     public static async Task<int> InsertTestUser(HttpClient client)
     {
         var newUser = new CreateUserRequest(TestUserUsername, TestUserEmail, TestUserPassword);

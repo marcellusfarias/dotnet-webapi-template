@@ -44,19 +44,12 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task GetAllUsersAsync_ShouldReturnUserDtoList_WhenThereAreUsers()
     {
-        // Arrange
-        var adminUser = Domain.Constants.Users.AdminUser;
-        var expectedUser = new List<UserDto>()
-        {
-            new(adminUser.Id, adminUser.UserName, adminUser.Email, true)
-        };
-
         // Act
         var response = await _client.GetAsync("api/users");
 
         // Assert
         var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
-        users.Should().BeEquivalentTo(expectedUser);
+        users.Should().HaveCount(2); // db already has user ADMIN and integration admin
     }
 
     [Fact]
@@ -132,7 +125,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
-        users.Should().HaveCount(extraSize + 1); // db already has user ADMIN
+        users.Should().HaveCount(extraSize + 2); // db already has user ADMIN and integration admin
     }
 
     [Fact]

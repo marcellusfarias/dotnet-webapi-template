@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Login.DTOs;
+using MyBuyingList.Domain.Entities;
 using MyBuyingList.Infrastructure;
 using System.Net.Http.Headers;
-using MyBuyingList.Domain.Constants;
 using Testcontainers.PostgreSql;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -65,16 +66,19 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         await _dbContainer.StartAsync();
-
+        
+        // Seeds the database with an admin user, since this function is ran before 
+        // BaseIntegrationTests.InitializeAsync()
+        await SeedIntegrationAdminAsync();
+        
         // Creates client and adds JWT so it doesnt need to authenticate
         // on every test.
-
         var client = CreateClient();
 
         LoginRequest loginDto = new()
         {
-            Username = Users.AdminUser.UserName,
-            Password = Users.AdminUser.Password
+            Username = Utils.IntegrationTestAdminUsername,
+            Password = Utils.IntegrationTestAdminPassword
         };
 
         var response = await client.PostAsync("api/auth", Utils.GetJsonContentFromObject(loginDto));
@@ -96,7 +100,33 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
         var dbService = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         await dbService.Database.EnsureDeletedAsync();
-
         await dbService.Database.EnsureCreatedAsync();
+
+        await SeedIntegrationAdminAsync();
+    }
+
+    private async Task SeedIntegrationAdminAsync()
+    {
+        using var scope = Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var passwordService = scope.ServiceProvider.GetRequiredService<IPasswordEncryptionService>();
+
+        var user = new User
+        {
+            UserName = Utils.IntegrationTestAdminUsername,
+            Email = "integration_admin@test.local",
+            Password = passwordService.HashPassword(Utils.IntegrationTestAdminPassword),
+            Active = true
+        };
+
+        db.Set<User>().Add(user);
+        await db.SaveChangesAsync();
+
+        // Assign Administrator role (Id = 1) to the newly created user
+        var insertedUser = await db.Set<User>()
+            .SingleAsync(u => u.UserName == Utils.IntegrationTestAdminUsername);
+
+        db.Set<UserRole>().Add(new UserRole { UserId = insertedUser.Id, RoleId = 1 });
+        await db.SaveChangesAsync();
     }
 }
