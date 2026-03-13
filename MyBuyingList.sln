@@ -13,13 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Application", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Application.Tests", "MyBuyingList.Application.Tests\MyBuyingList.Application.Tests.csproj", "{4924AB00-E1C3-4F4D-9243-07788B642022}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{7327D7B2-D1E5-46A4-A451-EBF93ED6555B}"
-	ProjectSection(SolutionItems) = preProject
-		BACKLOG.md = BACKLOG.md
-		README.md = README.md
-		RESEARCH.md = RESEARCH.md
-	EndProjectSection
-EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{837E4160-E6E3-41B2-B73B-CF2E9BF83026}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1B43C338-5861-4355-B073-4B4ED441C3F0}"
@@ -29,6 +22,24 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Infrastructure.Tests", "MyBuyingList.Infrastructure.Tests\MyBuyingList.Infrastructure.Tests.csproj", "{A7261498-4A33-4B3E-AE59-637409B0A760}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyBuyingList.Web.Tests", "MyBuyingList.Web.Tests\MyBuyingList.Web.Tests.csproj", "{67DDCE10-2E6A-472E-9424-238C30C1E02C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "agents", "agents", "{0F13E070-3496-4EF1-9731-23DFDBF271A4}"
+	ProjectSection(SolutionItems) = preProject
+		CLAUDE.md = CLAUDE.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E11C2A77-7EAA-4FFC-AF0A-48135E899AA8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\BACKLOG.md = docs\BACKLOG.md
+		docs\RESEARCH.md = docs\RESEARCH.md
+		README.md = README.md
+		docs\CODING-PATTERNS.md = docs\CODING-PATTERNS.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "skills", "skills", "{BA177695-39A6-43E8-8FFF-45B5268143B7}"
+	ProjectSection(SolutionItems) = preProject
+		skills\DATABASE.md = skills\DATABASE.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,6 +125,7 @@ Global
 		{4924AB00-E1C3-4F4D-9243-07788B642022} = {EA8D2936-F3EE-431E-95C1-445BA153829A}
 		{A7261498-4A33-4B3E-AE59-637409B0A760} = {EA8D2936-F3EE-431E-95C1-445BA153829A}
 		{67DDCE10-2E6A-472E-9424-238C30C1E02C} = {EA8D2936-F3EE-431E-95C1-445BA153829A}
+		{BA177695-39A6-43E8-8FFF-45B5268143B7} = {0F13E070-3496-4EF1-9731-23DFDBF271A4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A042ADF-ED3D-4204-BD0C-DF69CC22682E}
