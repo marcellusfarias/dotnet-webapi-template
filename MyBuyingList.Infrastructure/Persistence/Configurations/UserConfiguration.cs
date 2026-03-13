@@ -17,6 +17,8 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(p => p.Password).IsRequired().HasMaxLength(FieldLengths.USER_PASSWORD_MAX_LENGTH);
         builder.Property(p => p.CreatedAt).IsRequired().HasDefaultValueSql("NOW()");
         builder.Property(p => p.Active).IsRequired().HasDefaultValueSql("FALSE");
+        builder.Property(p => p.FailedLoginAttempts).IsRequired().HasDefaultValue(0);
+        builder.Property(p => p.LockoutEnd).IsRequired(false);
 
         builder.HasKey(p => p.Id).HasName("PK_users_id");
         builder.HasIndex(p => p.Email).IsUnique(true);

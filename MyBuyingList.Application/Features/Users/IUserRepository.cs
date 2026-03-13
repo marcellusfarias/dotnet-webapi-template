@@ -30,4 +30,22 @@ public interface IUserRepository : IRepository<User>
     /// <param name="user">The user to deactivate.</param>
     /// <param name="token">Cancellation token.</param>
     Task DeactivateAsync(User user, CancellationToken token);
+
+    /// <summary>
+    /// Increments the failed login attempt counter for the user.
+    /// If <paramref name="lockoutEnd"/> is provided, also sets the account lockout expiry.
+    /// </summary>
+    /// <param name="userId">The user's unique identifier.</param>
+    /// <param name="lockoutEnd">
+    /// When set, the datetime until the account is locked; null leaves the current lockout end unchanged.
+    /// </param>
+    /// <param name="token">Cancellation token.</param>
+    Task IncrementFailedLoginAttemptsAsync(int userId, DateTime? lockoutEnd, CancellationToken token);
+
+    /// <summary>
+    /// Resets the failed login attempt counter and clears any active lockout for the user.
+    /// </summary>
+    /// <param name="userId">The user's unique identifier.</param>
+    /// <param name="token">Cancellation token.</param>
+    Task ResetLockoutAsync(int userId, CancellationToken token);
 }

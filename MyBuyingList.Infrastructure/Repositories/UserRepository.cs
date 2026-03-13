@@ -112,4 +112,32 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
             throw new DatabaseException(ex);
         }
     }
+
+    public async Task IncrementFailedLoginAttemptsAsync(int userId, DateTime? lockoutEnd, CancellationToken token)
+    {
+        try
+        {
+            await _context.Set<User>()
+                .Where(u => u.Id == userId)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(u => u.FailedLoginAttempts, u => u.FailedLoginAttempts + 1)
+                    .SetProperty(u => u.LockoutEnd, u => lockoutEnd ?? u.LockoutEnd), token);
+        }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex) { throw new DatabaseException(ex); }
+    }
+
+    public async Task ResetLockoutAsync(int userId, CancellationToken token)
+    {
+        try
+        {
+            await _context.Set<User>()
+                .Where(u => u.Id == userId)
+                .ExecuteUpdateAsync(s => s
+                    .SetProperty(u => u.FailedLoginAttempts, 0)
+                    .SetProperty(u => u.LockoutEnd, (DateTime?)null), token);
+        }
+        catch (OperationCanceledException) { throw; }
+        catch (Exception ex) { throw new DatabaseException(ex); }
+    }
 }

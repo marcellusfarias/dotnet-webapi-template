@@ -10,5 +10,8 @@ public sealed class User : BaseEntity
     public DateTime CreatedAt { get; set; } //not required because it will be set on postgres with default value.... think about this
     public required bool Active { get; set; }
 
+    public int FailedLoginAttempts { get; set; }
+    public DateTime? LockoutEnd { get; set; }
+
     public ICollection<UserRole> UserRoles { get; set; } = [];
 }

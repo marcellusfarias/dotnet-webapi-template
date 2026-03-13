@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Web.Middlewares.Authorization;
 using MyBuyingList.Web.Middlewares.RateLimiting;
+using MyBuyingList.Application.Common.Options;
 
 namespace MyBuyingList.Web;
 
@@ -71,6 +72,9 @@ internal static class ConfigureServices
         {
             options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>(AuthenticationRateLimiterPolicy.PolicyName);
         });
+        
+        // Lockout
+        services.Configure<LockoutOptions>(configuration.GetSection(LockoutOptions.SectionName));
     }
 
     private static void AddExternalServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
