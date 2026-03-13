@@ -4,13 +4,13 @@ services:
   api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/etc/ssl/certs/aspnetcore-localhost-1FAA1A3C85393F717419416A10C6E8E1457C75F8.pfx
     build:
       context: .
       dockerfile: MyBuyingList/Dockerfile
     volumes:
         # MacOS default configuration: these volume mappings expect MacOS user secret and HTTPS certificate locations.
-        - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
-        - ~/.aspnet/https:/root/.aspnet/https:ro
+        - ~/.aspnet/dev-certs/https:/etc/ssl/certs
         # For Windows, comment out the two MacOS lines above and uncomment the two lines below (or configure equivalent environment variables):
         #      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
         #      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
