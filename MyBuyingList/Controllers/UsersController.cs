@@ -9,11 +9,11 @@ using MyBuyingList.Web.Middlewares.Authorization;
 namespace MyBuyingList.Web.Controllers;
 
 [Authorize]
-public class UserController : ApiControllerBase
+public class UsersController : ApiControllerBase
 {
     private readonly IUserService _userService;
-    private readonly ILogger<UserController> _logger;
-    public UserController(ILogger<UserController> logger, IUserService userService)
+    private readonly ILogger<UsersController> _logger;
+    public UsersController(ILogger<UsersController> logger, IUserService userService)
     {
         _userService = userService;
         _logger = logger;
@@ -24,7 +24,7 @@ public class UserController : ApiControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
-    [HttpGet("~/api/users/")]
+    [HttpGet]
     public async Task<IActionResult> GetAllUsers(
         CancellationToken token,
         [FromQuery] int page = 1)

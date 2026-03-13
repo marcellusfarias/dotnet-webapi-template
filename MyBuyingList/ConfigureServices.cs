@@ -19,6 +19,7 @@ internal static class ConfigureServices
         services.AddAuthorizationServices();
         services.AddSwaggerConfiguration();
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
+        services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
     }
 
     private static void AddSwaggerConfiguration(this IServiceCollection services)

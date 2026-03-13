@@ -1,58 +1,34 @@
-
 ## Backlog
 
-### Before releasing
+### Infrastructure
 
-This list is ordered by priority.
+* Roll out new versions incrementally across replicas
+* Halt the rollout and remove unhealthy containers if a health check fails during deployment
+* Fail the pipeline if any service is not healthy after deployment
 
-#### Infrastructure
+### Observability
 
-* Configure CertBot in VPS
+* Set up an observability stack covering metrics, logs, and traces (Prometheus, Grafana, Loki or equivalent)
+* Instrument the application with OpenTelemetry
+* Define the log shipping strategy — evaluate a sidecar collector (e.g., Promtail, Fluentd) vs. the Docker Loki log driver
+* Introduce a correlation ID middleware to generate and propagate `X-Correlation-ID` across requests
+
+### API
+
+* Implement a `/health` endpoint
+* Configure CORS policy
+
+### Authentication
+
+* Implement refresh token support
+
+### AI
+
+Create folder structure for AI agents and implement a simple agent that can perform a task (e.g., fetch data from an API, process it, and return results)
 
 
-#### Security
+### Future
 
-* Security issues:
-    * Log injection/Remove sensitive information from logging (check logs in release)
-    * Add Lockout (already has rate limiting)
-    * MFA
-
-Finish implementing ValueObjects
-
-### After releasing 
-
-#### Infrastructure
-
-* Setup resource limits for containers
-* Setup replicas and health checks (automatic restarting) for containers
-* Use rollout deployment with update_config
-* Setup monitoring (grafana, etc)
+* Output caching with Redis
+* Container resource limits
 * Run containers as non-root users
-* Backup volumes
-* Fail deploy.yml if services deployed are not healthy
-* Add some sort of rollback if deployment fails
-* image: ghcr.io/${GITHUB_REPOSITORY}:latest
-
-#### API Documentation
-
-Add deeper level of details in the API documentation. Add sections like
-* Authentication
-* Rate Limits
-
-#### Caching
-
-* Output caching (Redis).
-
-#### Configuration
-
-Fix JwtOptionsSetup
-
-#### Logging
-
-Create logging service that handles the GUID automatically. Should be simple and have transient lifetime. 
-
-#### Testing
-* Create e2e test for RateLimiting.
-
-#### Other topics
-* Benchmarks & Performance Tests.
