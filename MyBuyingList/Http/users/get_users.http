@@ -1,0 +1,6 @@
+@token = 
+
+GET https://localhost:8080/api/users
+Authorization: Bearer {{token}}
+
+

@@ -1,0 +1,5 @@
+@token =
+@userId = 1
+
+DELETE https://localhost:8080/api/users/{{userId}}
+Authorization: Bearer {{token}}

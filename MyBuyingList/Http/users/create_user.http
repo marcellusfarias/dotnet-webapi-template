@@ -1,0 +1,11 @@
+@token =
+
+POST https://localhost:8080/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "UserName": "johndoe",
+  "Email": "johndoe@example.com",
+  "Password": "Password123!"
+}

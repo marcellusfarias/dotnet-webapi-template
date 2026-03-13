@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -50,7 +50,9 @@ namespace MyBuyingList.Infrastructure.Persistence.Migrations
                     user_name = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     password = table.Column<string>(type: "character varying(72)", maxLength: 72, nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "NOW()"),
-                    active = table.Column<bool>(type: "boolean", nullable: false, defaultValueSql: "FALSE")
+                    active = table.Column<bool>(type: "boolean", nullable: false, defaultValueSql: "FALSE"),
+                    failed_login_attempts = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    lockout_end = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {

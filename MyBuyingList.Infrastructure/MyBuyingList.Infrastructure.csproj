@@ -30,8 +30,5 @@
 		<ProjectReference Include="..\MyBuyingList.Domain\MyBuyingList.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Persistence\Migrations\" />
-	</ItemGroup>
 
 </Project>
