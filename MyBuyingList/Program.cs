@@ -13,7 +13,7 @@ builder.Logging.AddSimpleConsole(opt =>
 string secretsLocation = builder.Configuration["SecretsLocation"]
     ?? throw new InvalidOperationException("SecretsLocation not found in configuration.");
 
-if (builder.Environment.EnvironmentName is "Test")
+if (builder.Environment.EnvironmentName is ("Test" or "Development"))
 {
     secretsLocation = Path.Combine(Directory.GetCurrentDirectory(), secretsLocation);
 }
