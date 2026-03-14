@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBuyingList.Application.Common.Exceptions;
+using MyBuyingList.Application.Common.Models;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Application.Features.Users.Services;
 using MyBuyingList.Domain.Constants;
@@ -20,7 +21,7 @@ public class UsersController : ApiControllerBase
     }
 
     [HasPermission(Policies.UserGetAll)]
-    [ProducesResponseType(typeof(List<UserDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResult<UserDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(void), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -31,8 +32,8 @@ public class UsersController : ApiControllerBase
     {
         _logger.LogInformation("Starting request. Page = {Page}", page);
 
-        var users = await _userService.GetAllUsersAsync(page, token);
-        return Ok(users);
+        var result = await _userService.GetAllUsersAsync(page, token);
+        return Ok(result);
     }
 
     [HasPermission(Policies.UserGet)]

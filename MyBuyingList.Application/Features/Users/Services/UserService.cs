@@ -1,5 +1,6 @@
 ﻿using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Application.Common.Models;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Application.Features.Users.Mappers;
 
@@ -25,12 +26,11 @@ public class UserService : IUserService
         return user.ToUserDto();
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync(int page, CancellationToken token)
+    public async Task<PagedResult<UserDto>> GetAllUsersAsync(int page, CancellationToken token)
     {
-        var users = await _userRepository.GetAllAsync(page, token);
-        List<UserDto> getUserDtos = [];
-        users.ForEach(user => getUserDtos.Add(user.ToUserDto()));
-        return getUserDtos;
+        var pagedUsers = await _userRepository.GetAllAsync(page, token);
+        var userDtos = pagedUsers.Data.Select(user => user.ToUserDto());
+        return new PagedResult<UserDto>(userDtos, pagedUsers.Page, pagedUsers.TotalCount, pagedUsers.TotalPages);
     }
 
     public async Task<int> CreateAsync(CreateUserRequest userDto, CancellationToken token)
