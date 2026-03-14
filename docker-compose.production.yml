@@ -21,7 +21,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     deploy:
       replicas: 2
       resources:
@@ -30,12 +30,12 @@ services:
       restart_policy:
         condition: on-failure
         delay: 10s
-        max_attempts: 100
+        max_attempts: 3
       update_config:
         parallelism: 1
         order: start-first
         failure_action: rollback
-        monitor: 70s
+        monitor: 60s
       rollback_config:
         parallelism: 1
         order: stop-first
