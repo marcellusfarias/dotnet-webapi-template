@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using MyBuyingList.Application.Common.Constants;
+using MyBuyingList.Application.Common.Models;
 using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Users.DTOs;
 using MyBuyingList.Web.Tests.IntegrationTests.Common;
@@ -17,6 +18,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     private readonly HttpClient _client;
     private readonly IFixture _fixture;
     private readonly int _pageSize;
+    private readonly CancellationToken _cancellationToken = TestContext.Current.CancellationToken;
     private const string ValidPassword = "Pa12345678!";
 
     public UserControllerIntegrationTests(ResourceFactory resourceFactory)
@@ -42,14 +44,17 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnUserDtoList_WhenThereAreUsers()
+    public async Task GetAllUsersAsync_ShouldReturnPagedResult_WhenThereAreUsers()
     {
         // Act
-        var response = await _client.GetAsync("api/users");
+        var response = await _client.GetAsync("api/users", _cancellationToken);
 
         // Assert
-        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
-        users.Should().HaveCount(2); // db already has user ADMIN and integration admin
+        var result = await response.Content.ReadFromJsonAsync<PagedResult<UserDto>>(_cancellationToken)!;
+        result!.Data.Should().HaveCount(2); // db already has user ADMIN and integration admin
+        result.TotalCount.Should().Be(2);
+        result.Page.Should().Be(1);
+        result.TotalPages.Should().Be(1);
     }
 
     [Fact]
@@ -60,7 +65,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         _client.DefaultRequestHeaders.Authorization = null;
 
         // Act
-        var response = await _client.GetAsync("api/users");
+        var response = await _client.GetAsync("api/users", _cancellationToken);
         _client.DefaultRequestHeaders.Authorization = auth;
 
         // Assert
@@ -73,21 +78,21 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        LoginRequest dto = new() 
+        LoginRequest dto = new()
         {
             Username = Utils.TestUserUsername,
             Password = Utils.TestUserPassword
         };
 
         var url = Constants.AddressAuthenticationEndpoint;
-        var tokenResponse = await _client.PostAsync(url, Utils.GetJsonContentFromObject(dto));
-        var token = await tokenResponse.Content.ReadAsStringAsync();
+        var tokenResponse = await _client.PostAsync(url, Utils.GetJsonContentFromObject(dto), _cancellationToken);
+        var token = await tokenResponse.Content.ReadAsStringAsync(_cancellationToken);
 
         var auth = _client.DefaultRequestHeaders.Authorization;
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         // Act
-        var response = await _client.GetAsync("api/users");
+        var response = await _client.GetAsync("api/users", _cancellationToken);
         _client.DefaultRequestHeaders.Authorization = auth;
 
         // Assert
@@ -111,7 +116,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         foreach (var user in createUsers)
         {
             tasks.Add(Task.Run(() => _client.PostAsync(
-                requestUri: Constants.BaseAddressUserEndpoint, 
+                requestUri: Constants.BaseAddressUserEndpoint,
                 content: Utils.GetJsonContentFromObject(user))
             ));
         }
@@ -120,12 +125,13 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Act
         var url = "api/users?page=2";
-        var response = await _client.GetAsync(url);
+        var response = await _client.GetAsync(url, _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>()!;
-        users.Should().HaveCount(extraSize + 2); // db already has user ADMIN and integration admin
+        var result = await response.Content.ReadFromJsonAsync<PagedResult<UserDto>>(_cancellationToken)!;
+        result!.Data.Should().HaveCount(extraSize + 2); // db already has user ADMIN and integration admin
+        result.Page.Should().Be(2);
     }
 
     [Fact]
@@ -137,19 +143,19 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, adminUser.Id);
-        var response = await _client.GetAsync(url);
+        var response = await _client.GetAsync(url, _cancellationToken);
 
         // Assert
-        var user = await response.Content.ReadFromJsonAsync<UserDto>()!;
+        var user = await response.Content.ReadFromJsonAsync<UserDto>(_cancellationToken)!;
         user.Should().BeEquivalentTo(expectedUser);
     }
 
     [Fact]
-    public async Task GetUserById_ShouldReturnNotFoound_WhenIdDoesntExist()
+    public async Task GetUserById_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 100);
-        var response = await _client.GetAsync(url);
+        var response = await _client.GetAsync(url, _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -163,15 +169,16 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Act
         var response = await _client.PostAsync(
-            requestUri: Constants.BaseAddressUserEndpoint, 
-            content: Utils.GetJsonContentFromObject(newUser)
+            requestUri: Constants.BaseAddressUserEndpoint,
+            content: Utils.GetJsonContentFromObject(newUser),
+            cancellationToken: _cancellationToken
         );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
-        var createdId = await response.Content.ReadFromJsonAsync<int>();
+        var createdId = await response.Content.ReadFromJsonAsync<int>(_cancellationToken);
 
-        var getUserResponse = await _client.GetAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId));
+        var getUserResponse = await _client.GetAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId), _cancellationToken);
         getUserResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
@@ -199,13 +206,14 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Act
         var response = await _client.PostAsync(
-            requestUri: Constants.BaseAddressUserEndpoint, 
-            content: Utils.GetJsonContentFromObject(newUser)
+            requestUri: Constants.BaseAddressUserEndpoint,
+            content: Utils.GetJsonContentFromObject(newUser),
+            cancellationToken: _cancellationToken
         );
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseErrorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var responseErrorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>(_cancellationToken);
         responseErrorResponse!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
@@ -214,16 +222,16 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         var expectedErrorResponse = ErrorResponse.CreateSingleErrorDetail(
-            ErrorMessages.BusinessLogicError, 
+            ErrorMessages.BusinessLogicError,
             "Can't disable user admin.");
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 1);
-        var response = await _client.DeleteAsync(url);
+        var response = await _client.DeleteAsync(url, _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
-        var content = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var content = await response.Content.ReadFromJsonAsync<ErrorResponse>(_cancellationToken);
         content!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
@@ -234,13 +242,13 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         var createdId = await Utils.InsertTestUser(_client);
 
         // Act
-        var response = await _client.DeleteAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId));
+        var response = await _client.DeleteAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        var getUserResponse = await _client.GetAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId));
+        var getUserResponse = await _client.GetAsync(string.Concat(Constants.BaseAddressUserEndpoint, createdId), _cancellationToken);
         getUserResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        var content = await getUserResponse.Content.ReadFromJsonAsync<UserDto>();
+        var content = await getUserResponse.Content.ReadFromJsonAsync<UserDto>(_cancellationToken);
         content!.Active.Should().Be(false);
     }
 
@@ -248,7 +256,7 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     public async Task DeleteUserAsync_ShouldReturnNotFound_WhenIdDoesntExist()
     {
         // Act
-        var response = await _client.DeleteAsync(string.Concat(Constants.BaseAddressUserEndpoint, 100));
+        var response = await _client.DeleteAsync(string.Concat(Constants.BaseAddressUserEndpoint, 100), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -264,16 +272,16 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");
-        var response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
+        var response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        // If this operation is successfull, 
+        // If this operation is successfull,
         // we can infer previous operation really updated the password
         // in the database
         dto = new ChangePasswordRequest("Mn!90..pT", Utils.TestUserPassword);
-        response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
+        response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto), _cancellationToken);
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
@@ -282,18 +290,18 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
     {
         // Arrange
         ChangePasswordRequest dto = new ChangePasswordRequest(ValidPassword, ".");
-        
+
         var expectedErrorResponse = ErrorResponse.CreateSingleErrorDetail(
-            "Error validating property 'NewPassword'.", 
+            "Error validating property 'NewPassword'.",
             ValidationMessages.InvalidPassword);
 
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 2, "/password");
-        var response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto));
+        var response = await _client.PutAsync(url, Utils.GetJsonContentFromObject(dto), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var responseContent = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var responseContent = await response.Content.ReadFromJsonAsync<ErrorResponse>(_cancellationToken);
         responseContent!.Should().BeEquivalentTo(expectedErrorResponse);
     }
 
@@ -306,8 +314,9 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, 200, "/password");
         var response = await _client.PutAsync(
-            requestUri: url, 
-            content: Utils.GetJsonContentFromObject(dto)
+            requestUri: url,
+            content: Utils.GetJsonContentFromObject(dto),
+            cancellationToken: _cancellationToken
         );
 
         // Assert
@@ -325,8 +334,9 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
         // Act
         var url = string.Concat(Constants.BaseAddressUserEndpoint, createdId, "/password");
         var response = await _client.PutAsync(
-            requestUri: url, 
-            content: Utils.GetJsonContentFromObject(dto)
+            requestUri: url,
+            content: Utils.GetJsonContentFromObject(dto),
+            cancellationToken: _cancellationToken
         );
 
         // Assert

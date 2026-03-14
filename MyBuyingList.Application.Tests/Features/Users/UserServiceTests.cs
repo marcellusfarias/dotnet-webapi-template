@@ -1,6 +1,7 @@
 using MyBuyingList.Application.Features.Users.Services;
 using MyBuyingList.Application.Features.Users;
 using MyBuyingList.Application.Features.Users.DTOs;
+using MyBuyingList.Application.Common.Models;
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Application.Common.Interfaces;
 using System.Net.Mail;
@@ -35,7 +36,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnUserDtoList_WhenThereAreUsers()
+    public async Task GetAllUsersAsync_ShouldReturnPagedResult_WhenThereAreUsers()
     {
         //Arrange
         User user1 = _fixture.Create<User>();
@@ -43,35 +44,41 @@ public class UserServiceTests
         User user3 = _fixture.Create<User>();
 
         List<User> mockedUsers = [user1, user2, user3];
+        var pagedUsers = new PagedResult<User>(mockedUsers, DefaultPage, mockedUsers.Count, 1);
         _userRepositoryMock
             .GetAllAsync(DefaultPage, CancellationToken.None)
-            .Returns(mockedUsers);
+            .Returns(pagedUsers);
 
         //Act
-        var returnUsers = await _sut.GetAllUsersAsync(DefaultPage, CancellationToken.None);
+        var result = await _sut.GetAllUsersAsync(DefaultPage, CancellationToken.None);
 
         //Assert
         UserDto userDto1 = new UserDto(user1.Id, user1.UserName, user1.Email, user1.Active);
         UserDto userDto2 = new UserDto(user2.Id, user2.UserName, user2.Email, user2.Active);
         UserDto userDto3 = new UserDto(user3.Id, user3.UserName, user3.Email, user3.Active);
-        var expectedUserDtos = new List<UserDto>() { userDto1, userDto2, userDto3 };
 
-        returnUsers.Should().BeEquivalentTo(expectedUserDtos);
+        result.Data.Should().BeEquivalentTo([userDto1, userDto2, userDto3]);
+        result.Page.Should().Be(DefaultPage);
+        result.TotalCount.Should().Be(mockedUsers.Count);
+        result.TotalPages.Should().Be(1);
     }
 
     [Fact]
-    public async Task GetAllUsersAsync_ShouldReturnEmptyList_WhenThereAreNoUsers()
+    public async Task GetAllUsersAsync_ShouldReturnEmptyData_WhenThereAreNoUsers()
     {
         //Arrange
+        var pagedUsers = new PagedResult<User>([], DefaultPage, 0, 0);
         _userRepositoryMock
             .GetAllAsync(DefaultPage, CancellationToken.None)
-            .Returns([]);
+            .Returns(pagedUsers);
 
         //Act
-        var users = await _sut.GetAllUsersAsync(DefaultPage, CancellationToken.None);
+        var result = await _sut.GetAllUsersAsync(DefaultPage, CancellationToken.None);
 
         //Assert
-        users.Should().BeEmpty();
+        result.Data.Should().BeEmpty();
+        result.TotalCount.Should().Be(0);
+        result.TotalPages.Should().Be(0);
     }
 
     [Fact]

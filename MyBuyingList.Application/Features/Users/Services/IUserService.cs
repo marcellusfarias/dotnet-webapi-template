@@ -1,4 +1,5 @@
-﻿using MyBuyingList.Application.Features.Users.DTOs;
+﻿using MyBuyingList.Application.Common.Models;
+using MyBuyingList.Application.Features.Users.DTOs;
 
 namespace MyBuyingList.Application.Features.Users.Services;
 
@@ -17,12 +18,12 @@ public interface IUserService
     Task<UserDto> GetUserAsync(int id, CancellationToken token);
 
     /// <summary>
-    /// Retrieves a paginated list of all users.
+    /// Retrieves a paginated list of all users along with pagination metadata.
     /// </summary>
     /// <param name="page">The page number (1-based).</param>
     /// <param name="token">Cancellation token.</param>
-    /// <returns>A collection of user data.</returns>
-    Task<IEnumerable<UserDto>> GetAllUsersAsync(int page, CancellationToken token);
+    /// <returns>A paged result containing user data and pagination metadata.</returns>
+    Task<PagedResult<UserDto>> GetAllUsersAsync(int page, CancellationToken token);
 
     /// <summary>
     /// Creates a new user with the provided data.

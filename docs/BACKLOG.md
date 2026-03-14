@@ -17,7 +17,6 @@
 
 * Implement a `/health` endpoint
 * Configure CORS policy
-* Return pagination metadata (`totalCount`, `page`, `totalPages`) from paginated endpoints
 * Make request buffering opt-in per endpoint instead of globally enabled for all requests
 
 ### Authentication

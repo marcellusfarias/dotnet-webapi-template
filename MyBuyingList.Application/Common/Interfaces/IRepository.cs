@@ -1,4 +1,5 @@
-﻿using MyBuyingList.Domain.Common;
+﻿using MyBuyingList.Application.Common.Models;
+using MyBuyingList.Domain.Common;
 
 namespace MyBuyingList.Application.Common.Interfaces;
 
@@ -17,12 +18,12 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
     Task<TEntity?> GetAsync(int id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Retrieves a paginated list of entities.
+    /// Retrieves a paginated list of entities along with pagination metadata.
     /// </summary>
     /// <param name="page">The page number (1-based).</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>A list of entities for the specified page.</returns>
-    Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken);
+    /// <returns>A paged result containing the entities and pagination metadata.</returns>
+    Task<PagedResult<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds a new entity to the database.

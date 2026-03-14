@@ -15,6 +15,14 @@ if (expression)
 }
 ```
 
+#### CancelationToken on integration tests
+
+Ensure we have a CancelationToken on integration tests, following the following pattern and that we pass then around.
+
+```csharp
+private readonly CancellationToken _cancellationToken = TestContext.Current.CancellationToken;
+```
+
 ### ARCHITECTURE
 
 When implementing a new endpoint, you need to add a new .http file under the Http folder, following the folder structure, where each folder represents a controller.

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
+using MyBuyingList.Application.Common.Models;
 using MyBuyingList.Domain.Common;
 
 namespace MyBuyingList.Infrastructure.Repositories;
@@ -36,22 +37,25 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
         }
     }
 
-    public async Task<List<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<TEntity>> GetAllAsync(int page, CancellationToken cancellationToken = default)
     {
         try
         {
-            var entities = await _context
+            var totalCount = await _context.Set<TEntity>().CountAsync(cancellationToken);
+            var items = await _context
                 .Set<TEntity>()
                 .AsNoTracking()
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize)
                 .ToListAsync(cancellationToken);
 
-            return entities;
+            var totalPages = (int)Math.Ceiling((double)totalCount / _pageSize);
+
+            return new PagedResult<TEntity>(items, page, totalCount, totalPages);
         }
         catch(OperationCanceledException)
-        { 
-            throw; 
+        {
+            throw;
         }
         catch (Exception ex)
         {
