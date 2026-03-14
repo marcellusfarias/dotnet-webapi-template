@@ -2,8 +2,6 @@
 
 ### Infrastructure
 
-* Roll out new versions incrementally across replicas
-* Halt the rollout and remove unhealthy containers if a health check fails during deployment
 * Fail the pipeline if any service is not healthy after deployment
 
 ### Observability
