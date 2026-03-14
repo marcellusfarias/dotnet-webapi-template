@@ -74,8 +74,15 @@ jobs:
           
           # Pull and restart
           docker stack deploy -c docker-compose.yml -c docker-compose.production.yml myapp
-
-          echo "'docker stack deploy' completed"
+          # Wait for service to stabilize — exits non-zero if rolled back or failed
+          if ! docker service update --detach=false myapp_api; then
+            echo "❌ Service update failed or was rolled back"
+            echo "--- Service logs ---"
+            docker service logs --tail 50 myapp_api
+            exit 1
+          fi
+        
+          echo "✅ 'docker stack deploy' completed successfully"
           
           # Cleanup
           docker image prune -af

@@ -1,9 +1,5 @@
 ## Backlog
 
-### Infrastructure
-
-* Fail the pipeline if any service is not healthy after deployment
-
 ### Observability
 
 * Set up an observability stack covering metrics, logs, and traces (Prometheus, Grafana, Loki or equivalent)
