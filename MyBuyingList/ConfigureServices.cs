@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Web.Middlewares.Authorization;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using MyBuyingList.Application.Common.Options;
+using MyBuyingList.Infrastructure;
 
 namespace MyBuyingList.Web;
 
@@ -18,6 +19,8 @@ internal static class ConfigureServices
         services.AddRateLimitService(configuration);
         services.AddAuthorizationServices();
         services.AddSwaggerConfiguration();
+        services.AddHealthChecks()
+            .AddDbContextCheck<ApplicationDbContext>();
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
     }

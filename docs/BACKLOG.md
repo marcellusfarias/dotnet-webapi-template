@@ -15,7 +15,6 @@
 
 ### API
 
-* Implement a `/health` endpoint
 * Configure CORS policy
 * Make request buffering opt-in per endpoint instead of globally enabled for all requests
 
