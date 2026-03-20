@@ -27,11 +27,12 @@ RUN dotnet build "MyBuyingList.Web.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "MyBuyingList.Web.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Install curl, needed for healthcheck 
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
 # Set the final image
 FROM base AS final
 WORKDIR /app
+
+# Install curl, needed for healthcheck 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MyBuyingList.Web.dll"]
