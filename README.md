@@ -220,6 +220,8 @@ sudo chmod 600 /etc/letsencrypt/live/<your-domain>/privkey.pem
 sudo chmod 644 /etc/letsencrypt/live/<your-domain>/fullchain.pem
 ```
 
+> **Note:** While using a self-signed certificate, the healthcheck in `docker-compose.production.yml` uses `curl -k` to skip certificate validation. Once a valid certificate is installed, remove the `-k` flag from the healthcheck command.
+
 **Replace with a Let's Encrypt certificate** once the domain is pointing to your VPS ([Certbot instructions](https://certbot.eff.org/instructions?ws=other&os=snap)):
 
 ```bash
