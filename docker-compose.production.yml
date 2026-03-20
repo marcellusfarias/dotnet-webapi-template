@@ -16,12 +16,12 @@ services:
       - ConnectionStrings__DefaultConnection
       - AdminSettings__Password
       - AdminSettings__Email
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "-k", "https://localhost/health"]
-#      interval: 30s
-#      timeout: 10s
-#      retries: 3
-#      start_period: 15s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 #    deploy:
 #      replicas: 1
 #      resources:
