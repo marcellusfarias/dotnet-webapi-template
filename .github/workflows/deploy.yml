@@ -89,10 +89,10 @@ jobs:
           
           # Even if deploy exited 0, check what image is actually running
           # (swarm may have silently rolled back)
-          RUNNING_IMAGE=$(docker service inspect myapp_api --format='{{.Spec.TaskTemplate.ContainerSpec.Image}}' | cut -d'@' -f2)
+          RUNNING_DIGEST=$(docker service inspect myapp_api --format='{{.Spec.TaskTemplate.ContainerSpec.Image}}' | cut -d'@' -f2)
           echo "Running image: $RUNNING_DIGEST"
-        
-          if [[ "$RUNNING_DIGEST" != *"$NEW_DIGEST"* ]]; then
+          
+          if [[ "$RUNNING_DIGEST" != "$NEW_DIGEST" ]]; then
             echo "❌ Rollback detected — running image does not match expected"
             echo "--- Service logs ---"
             docker service logs -t --tail 50 myapp_api
