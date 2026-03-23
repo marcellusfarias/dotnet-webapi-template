@@ -2,6 +2,8 @@ using FluentValidation;
 using FluentValidation.Resources;
 using MyBuyingList.Web;
 
+throw new NotImplementedException();
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(opt =>
