@@ -72,6 +72,9 @@ jobs:
           
           echo "Logged in to docker registry, deploying services"
           
+          # Pull latest image explicitly so we know it's fresh
+          docker pull ghcr.io/marcellusfarias/dotnet-webapi-template:latest
+          
           NEW_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/marcellusfarias/dotnet-webapi-template:latest)
           echo "Expected image digest: $NEW_DIGEST"
           
