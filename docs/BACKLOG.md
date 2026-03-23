@@ -49,3 +49,4 @@ Create folder structure for AI agents and implement a simple agent that can perf
 * Output caching with Redis
 * Container resource limits
 * Run containers as non-root users
+* Change the logic of deploy. Instead of SSH into the VPS with Github actions, we should make the VPS pull the changes, so we can restrict IPs that can actually SSH into VPS by using Tailgate

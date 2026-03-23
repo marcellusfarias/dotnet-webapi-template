@@ -75,8 +75,9 @@ jobs:
           # Pull latest image explicitly so we know it's fresh
           docker pull ghcr.io/marcellusfarias/dotnet-webapi-template:latest
           
-          NEW_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/marcellusfarias/dotnet-webapi-template:latest)
-          echo "Expected image digest: $NEW_DIGEST"
+          # cut -d'@' -f2 splits the string on @ and takes the second part
+          NEW_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/marcellusfarias/dotnet-webapi-template:latest | cut -d'@' -f2)
+          echo "Expected digest: $NEW_DIGEST"
           
           # Wait for service to stabilize — exits non-zero if rolled back or failed
           if ! docker stack deploy -c docker-compose.yml -c docker-compose.production.yml --detach=false myapp; then
@@ -88,7 +89,7 @@ jobs:
           
           # Even if deploy exited 0, check what image is actually running
           # (swarm may have silently rolled back)
-          RUNNING_DIGEST=$(docker service inspect myapp_api --format='{{with index .Spec.TaskTemplate.ContainerSpec.Image}}{{.}}{{end}}')
+          RUNNING_IMAGE=$(docker service inspect myapp_api --format='{{.Spec.TaskTemplate.ContainerSpec.Image}}' | cut -d'@' -f2)
           echo "Running image: $RUNNING_DIGEST"
         
           if [[ "$RUNNING_DIGEST" != *"$NEW_DIGEST"* ]]; then
