@@ -19,7 +19,7 @@ services:
       - AdminSettings__Email
     healthcheck:
       # Use APPLICATION_DOMAIN with --resolve so TLS verification succeeds without -k
-      test: ["CMD", "sh", "-c", "curl -f --resolve \"$APPLICATION_DOMAIN:443:127.0.0.1\" https://$APPLICATION_DOMAIN:443/health"]
+      test: ["CMD", "sh", "-c", "curl -f --resolve \"$$APPLICATION_DOMAIN:443:127.0.0.1\" https://$$APPLICATION_DOMAIN:443/health"]
       interval: 30s
       timeout: 10s
       retries: 2
