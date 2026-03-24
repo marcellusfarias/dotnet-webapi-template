@@ -9,6 +9,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/fullchain.pem
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/privkey.pem
+      - APPLICATION_DOMAIN=${APPLICATION_DOMAIN}
     volumes:
       - /etc/letsencrypt/live/${APPLICATION_DOMAIN}:/https:ro
     secrets:
