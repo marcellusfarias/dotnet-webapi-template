@@ -73,10 +73,10 @@ jobs:
           echo "Logged in to docker registry, deploying services"
           
           # Pull latest image explicitly so we know it's fresh
-          docker pull ghcr.io/marcellusfarias/dotnet-webapi-template:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
           # cut -d'@' -f2 splits the string on @ and takes the second part
-          NEW_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ghcr.io/marcellusfarias/dotnet-webapi-template:latest | cut -d'@' -f2)
+          NEW_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest | cut -d'@' -f2)
           echo "Expected digest: $NEW_DIGEST"
           
           # Wait for service to stabilize — exits non-zero if rolled back or failed
