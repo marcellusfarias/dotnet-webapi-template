@@ -220,7 +220,7 @@ sudo chmod 600 /etc/letsencrypt/live/<your-domain>/privkey.pem
 sudo chmod 644 /etc/letsencrypt/live/<your-domain>/fullchain.pem
 ```
 
-> **Note:** While using a self-signed certificate, the healthcheck in `docker-compose.production.yml` uses `curl -k` to skip certificate validation. Once a valid certificate is installed, remove the `-k` flag from the healthcheck command.
+> **Note:** Health check intentionally skips TLS verification. Reason for that is that we don't want to app to keep restarting if the certificate is not valid. We should rely on something else for alerting on certificate expiration.
 
 **Replace with a Let's Encrypt certificate** once the domain is pointing to your VPS ([Certbot instructions](https://certbot.eff.org/instructions?ws=other&os=snap)):
 
