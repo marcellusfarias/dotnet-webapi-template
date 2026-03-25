@@ -2,6 +2,7 @@
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Infrastructure.Persistence.Seeders;
 using MyBuyingList.Web.Middlewares;
+using MyBuyingList.Web.Middlewares.CorrelationId;
 
 namespace MyBuyingList.Web;
 
@@ -38,6 +39,7 @@ internal static class ConfigureApp
 
     private static void AddMiddlewares(this WebApplication app)
     {
+        app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseMiddleware<ErrorHandlingMiddleware>();
         app.UseRouting();
         app.UseRateLimiter();

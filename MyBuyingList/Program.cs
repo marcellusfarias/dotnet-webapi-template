@@ -6,8 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(opt =>
 {
-    // Only config that I haven't found how to configure in appsettings.
-    opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled; 
+    opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
+    opt.IncludeScopes = true;
 });
 
 string secretsLocation = builder.Configuration["SecretsLocation"]

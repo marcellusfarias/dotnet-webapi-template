@@ -4,6 +4,7 @@ using MyBuyingList.Application;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using MyBuyingList.Web.Middlewares.Authorization;
+using MyBuyingList.Web.Middlewares.CorrelationId;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using MyBuyingList.Application.Common.Options;
 using MyBuyingList.Infrastructure;
@@ -21,6 +22,8 @@ internal static class ConfigureServices
         services.AddSwaggerConfiguration();
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
+        services.AddScoped<CorrelationIdProvider>();
+        services.AddScoped<ICorrelationIdProvider>(sp => sp.GetRequiredService<CorrelationIdProvider>());
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
     }
