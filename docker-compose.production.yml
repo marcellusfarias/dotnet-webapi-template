@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.7'
 
 # This is a production-ready docker compose file.
 # It's intended to be used in Docker Swarm mode.
@@ -9,14 +9,34 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/fullchain.pem
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=/https/privkey.pem
-    volumes: 
+    volumes:
       - /etc/letsencrypt/live/${APPLICATION_DOMAIN}:/https:ro
     secrets:
       - JwtSettings__SigningKey
       - ConnectionStrings__DefaultConnection
       - AdminSettings__Password
       - AdminSettings__Email
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://127.0.0.1:443/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 15s
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        monitor: 90s
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      
 secrets:
   JwtSettings__SigningKey:
     external: true

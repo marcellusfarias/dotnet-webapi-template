@@ -46,6 +46,7 @@ internal static class ConfigureApp
         app.UseAuthorization();
         app.EnableRequestBuffering();
         app.MapControllers();
+        app.MapHealthChecks("/health").AllowAnonymous();
     }
 
     private static void AddSwagger(this WebApplication app)

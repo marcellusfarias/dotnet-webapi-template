@@ -1,11 +1,5 @@
 ## Backlog
 
-### Infrastructure
-
-* Roll out new versions incrementally across replicas
-* Halt the rollout and remove unhealthy containers if a health check fails during deployment
-* Fail the pipeline if any service is not healthy after deployment
-
 ### Observability
 
 * Set up an observability stack covering metrics, logs, and traces (Prometheus, Grafana, Loki or equivalent)
@@ -15,7 +9,6 @@
 
 ### API
 
-* Implement a `/health` endpoint
 * Configure CORS policy
 * Make request buffering opt-in per endpoint instead of globally enabled for all requests
 
@@ -56,3 +49,4 @@ Create folder structure for AI agents and implement a simple agent that can perf
 * Output caching with Redis
 * Container resource limits
 * Run containers as non-root users
+* Change the logic of deploy. Instead of SSH into the VPS with Github actions, we should make the VPS pull the changes, so we can restrict IPs that can actually SSH into VPS by using Tailgate
