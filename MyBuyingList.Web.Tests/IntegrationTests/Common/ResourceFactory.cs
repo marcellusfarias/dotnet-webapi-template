@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Infrastructure;
+using MyBuyingList.Web.Tests.IntegrationTests.Common.Logging;
 using System.Net.Http.Headers;
 using MyBuyingList.Infrastructure.Persistence.Seeders;
 using Testcontainers.PostgreSql;
@@ -22,6 +24,7 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public IConfiguration Configuration { get; private set; } = null!;
     public HttpClient HttpClient { get; private set; } = null!;
+    public FakeLogCollector LogCollector { get; } = new FakeLogCollector();
 
     public ResourceFactory()
     {
@@ -46,7 +49,9 @@ public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         builder.UseConfiguration(manager);
         Configuration = manager;
-        
+
+        builder.ConfigureLogging(logging => logging.AddProvider(new FakeLoggerProvider(LogCollector)));
+
         builder.ConfigureTestServices(services =>
         {
             // Replace with proper DbContext
