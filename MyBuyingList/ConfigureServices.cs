@@ -15,9 +15,9 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureServices
 {
-    internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    internal static void AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddExternalServices(logger, configuration);
+        services.AddExternalServices(configuration);
 
         services.AddRateLimitService(configuration);
         services.AddAuthorizationServices();
@@ -88,9 +88,9 @@ internal static class ConfigureServices
         services.Configure<LockoutOptions>(configuration.GetSection(LockoutOptions.SectionName));
     }
 
-    private static void AddExternalServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    private static void AddExternalServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInfrastructureServices(logger, configuration);
+        services.AddInfrastructureServices(configuration);
         services.AddApplicationServices();
     }
 }

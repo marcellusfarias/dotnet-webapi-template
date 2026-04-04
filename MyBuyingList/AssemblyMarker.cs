@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace MyBuyingList.Web;
 
-public class AssemblyMarker
+[ExcludeFromCodeCoverage]
+public sealed class AssemblyMarker
 {
-    
 }

@@ -22,7 +22,7 @@ if (builder.Environment.EnvironmentName is ("Test" or "Development"))
 
 builder.Configuration.AddKeyPerFile(directoryPath: secretsLocation, optional: false, reloadOnChange: true);
 
-builder.Services.AddServices(GetLogger(builder.Configuration), builder.Configuration);
+builder.Services.AddServices(builder.Configuration);
 
 var app = builder.Build();
 await app.StartApplication();
@@ -33,18 +33,4 @@ ValidatorOptions.Global.LanguageManager = new LanguageManager()
     Culture = System.Globalization.CultureInfo.GetCultureInfo("en"),
 };
 
-app.Run();
-
-ILogger<Program> GetLogger(IConfiguration configuration)
-{
-    // 1. Manually create a logger factory
-    using var loggerFactory = LoggerFactory.Create(loggingBuilder => 
-    {
-        loggingBuilder.AddConsole();
-        loggingBuilder.AddSeq(configuration.GetSection("Seq"));
-    });
-
-// 2. Create a logger instance
-    ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
-    return logger;
-}
+await app.RunAsync();
