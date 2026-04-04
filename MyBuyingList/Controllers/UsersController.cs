@@ -117,12 +117,4 @@ public class UsersController : ApiControllerBase
         return NoContent();
     }
 
-    private static string SanitizeForLog(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-            return input;
-
-        var sanitized = input.Replace("\r", string.Empty).Replace("\n", string.Empty);
-        return sanitized.Length > 200 ? sanitized[..200] : sanitized;
-    }
 }
