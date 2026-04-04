@@ -3,8 +3,10 @@ using MyBuyingList.Web.Filters;
 using MyBuyingList.Application;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Web.Middlewares.Authorization;
 using MyBuyingList.Web.Middlewares.CorrelationId;
+using MyBuyingList.Web.Services;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using MyBuyingList.Application.Common.Options;
 using MyBuyingList.Infrastructure;
@@ -22,6 +24,8 @@ internal static class ConfigureServices
         services.AddSwaggerConfiguration();
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<CorrelationIdProvider>();
         services.AddScoped<ICorrelationIdProvider>(sp => sp.GetRequiredService<CorrelationIdProvider>());
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
