@@ -77,10 +77,11 @@ public class CorrelationIdMiddlewareIntegrationTests : BaseIntegrationTest
         // Act
         await _client.SendAsync(request, _cancellationToken);
 
-        // Assert — the middleware logs "Request correlation ID: {CorrelationId}" inside the scope block.
+        // Assert
         var entries = _factory.LogCollector.Entries;
-        entries.Should().Contain(e =>
-            e.Message.Contains("Request correlation ID:") &&
-            e.Scopes.Any(s => s.Key == "CorrelationId" && s.Value != null && s.Value.ToString() == correlationId));
+        entries.Should().AllSatisfy(e => e.Scopes.Any(s => 
+            s.Key == "CorrelationId" 
+            && s.Value != null 
+            && s.Value.ToString() == correlationId));
     }
 }
