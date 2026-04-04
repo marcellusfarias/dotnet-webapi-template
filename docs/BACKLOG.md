@@ -3,16 +3,11 @@
 ### API
 
 * Configure CORS policy
-* Make request buffering opt-in per endpoint instead of globally enabled for all requests
 
 ### Authentication
 
 * Implement refresh token support
-
-### Infrastructure
-
-* Avoid swallowing the original exception in repository methods — distinguish between known DB errors (e.g., unique constraint violation) and unexpected failures instead of wrapping all as `DatabaseException`
-
+  
 ### Template
 
 * Convert the project into a proper `dotnet new` template so the solution name, namespaces and project names are replaced automatically on creation

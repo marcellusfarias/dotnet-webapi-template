@@ -3,7 +3,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MyBuyingList.Application.Common.Exceptions;
-using System.Text.Json;
 
 namespace MyBuyingList.Web.Filters;
 
@@ -19,7 +18,7 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
     }
 
     /// <summary>
-    /// This is a filter intended to substitute FluentValidation.AspNetCore automatic validation and add support to async methods. 
+    /// This is a filter intended to substitute FluentValidation.AspNetCore automatic validation and add support to async methods.
     /// It validates automatically only body parameters (not query string nor route), but it may be extended in the future as needed.
     /// </summary>
     /// <param name="context"></param>
@@ -29,32 +28,22 @@ public class RequestBodyValidationFilter : IAsyncActionFilter
     {
         try
         {
-            Type? modelType = context.ActionDescriptor.Parameters
-                .FirstOrDefault(p => p.BindingInfo?.BindingSource == BindingSource.Body && p.ParameterType.IsClass)?.ParameterType;
+            var bodyParameter = context.ActionDescriptor.Parameters
+                .FirstOrDefault(p => p.BindingInfo?.BindingSource == BindingSource.Body && p.ParameterType.IsClass);
 
-            if (modelType is not null)
+            if (bodyParameter is not null)
             {
-                Type validatorType = typeof(IValidator<>).MakeGenericType(modelType);
+                Type validatorType = typeof(IValidator<>).MakeGenericType(bodyParameter.ParameterType);
                 var validator = _serviceProvider.GetService(validatorType);
 
                 // If there is any Validator on the DI Container, it's going to apply the validation.
-                if (validator is not null)
+                if (validator is not null
+                    && context.ActionArguments.TryGetValue(bodyParameter.Name, out var parameterValue)
+                    && parameterValue is not null)
                 {
-                    var httpRequestBody = context.HttpContext.Request.Body;
-
-                    if (!httpRequestBody.CanSeek)
-                    {
-                        throw new InvalidOperationException("Cannot seek request body. Ensure request buffering is enabled.");
-                    }
-
-                    httpRequestBody.Seek(0, SeekOrigin.Begin); // Rewind the stream
-
-                    using var reader = new StreamReader(httpRequestBody);
-                    var bodyContent = await reader.ReadToEndAsync();
-                    var parameterValue = JsonSerializer.Deserialize(bodyContent, modelType);
                     var validateMethod = validatorType.GetMethod("ValidateAsync")!;
 
-                    var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator, 
+                    var validationResultTask = (Task<ValidationResult>)validateMethod.Invoke(validator,
                     [
                         parameterValue,
                         CancellationToken.None

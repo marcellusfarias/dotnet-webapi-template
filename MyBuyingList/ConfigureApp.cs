@@ -46,7 +46,6 @@ internal static class ConfigureApp
         app.AddSwagger();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.EnableRequestBuffering();
         app.MapControllers();
         app.MapHealthChecks("/health").AllowAnonymous();
     }
@@ -61,14 +60,4 @@ internal static class ConfigureApp
         });
     }
 
-    private static void EnableRequestBuffering(this WebApplication app)
-    {
-        // Needed for RequestBodyValidationFilter, so it can access the request body more than one time for doing the validation.
-        // TODO: investigate performance issues
-        app.Use((context, next) =>
-        {
-            context.Request.EnableBuffering();
-            return next();
-        });
-    }
 }
