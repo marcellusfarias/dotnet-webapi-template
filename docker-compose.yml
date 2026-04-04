@@ -7,3 +7,15 @@ services:
     ports:
         - "8080:443"
 
+  seq:
+    image: datalust/seq:2024.3
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - seq-data:/data
+
+volumes:
+  seq-data:

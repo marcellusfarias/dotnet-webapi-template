@@ -1,12 +1,5 @@
 ## Backlog
 
-### Observability
-
-* Set up an observability stack covering metrics, logs, and traces (Prometheus, Grafana, Loki or equivalent)
-* Instrument the application with OpenTelemetry
-* Define the log shipping strategy — evaluate a sidecar collector (e.g., Promtail, Fluentd) vs. the Docker Loki log driver
-* Introduce a correlation ID middleware to generate and propagate `X-Correlation-ID` across requests
-
 ### API
 
 * Configure CORS policy
@@ -44,9 +37,15 @@
 Create folder structure for AI agents and implement a simple agent that can perform a task (e.g., fetch data from an API, process it, and return results)
 
 
-### Future
+### Future or nice-to-have
 
 * Output caching with Redis
 * Container resource limits
 * Run containers as non-root users
 * Change the logic of deploy. Instead of SSH into the VPS with Github actions, we should make the VPS pull the changes, so we can restrict IPs that can actually SSH into VPS by using Tailgate
+* Observability:
+  * Add support for traces and metrics
+  * Configure alerts
+  * Instrument the application with OpenTelemetry
+  * We currently use Seq. That means it's a push strategy rather than pull when compared with Loki/Graphana. We may eventually lose some logs if Seq is down, which is unlikely. If we want to be really thourough, we can install Serilog, as it buffers the logs into a local file while Seq is down. 
+  * Create init only script for Seq in case we ever delete the volume we don't need to configure it all again

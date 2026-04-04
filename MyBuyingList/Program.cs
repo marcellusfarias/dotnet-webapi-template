@@ -3,12 +3,14 @@ using FluentValidation.Resources;
 using MyBuyingList.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(opt =>
 {
-    // Only config that I haven't found how to configure in appsettings.
-    opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled; 
+    opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;
+    opt.IncludeScopes = false;
 });
+builder.Logging.AddSeq(builder.Configuration.GetSection("Seq"));
 
 string secretsLocation = builder.Configuration["SecretsLocation"]
     ?? throw new InvalidOperationException("SecretsLocation not found in configuration.");

@@ -64,12 +64,11 @@ public class UsersController : ApiControllerBase
         CreateUserRequest createUserDto,
         CancellationToken token)
     {
-        var guid = Guid.NewGuid();
-        _logger.LogInformation("{Guid} - Create user {UserName}", guid, SanitizeForLog(createUserDto.UserName));
+        _logger.LogInformation("Create user {UserName}", SanitizeForLog(createUserDto.UserName));
 
         var userId = await _userService.CreateAsync(createUserDto, token);
 
-        _logger.LogInformation("{Guid} - Created with id {UserId}", guid, userId);
+        _logger.LogInformation("Created with id {UserId}", userId);
 
         return new ObjectResult(userId) { StatusCode = StatusCodes.Status201Created };
     }
@@ -88,12 +87,11 @@ public class UsersController : ApiControllerBase
         ChangePasswordRequest updateUserPasswordDto,
         CancellationToken token)
     {
-        var guid = Guid.NewGuid();
-        _logger.LogInformation("{Guid} - Change password from user {Id}", guid, id);
+        _logger.LogInformation("Change password from user {Id}", id);
 
         await _userService.ChangeUserPasswordAsync(id, updateUserPasswordDto.OldPassword, updateUserPasswordDto.NewPassword, token);
 
-        _logger.LogInformation("{Guid} - Password from user {Id} updated", guid, id);
+        _logger.LogInformation("Password from user {Id} updated", id);
 
         return NoContent();
     }
@@ -110,12 +108,11 @@ public class UsersController : ApiControllerBase
         [FromRoute] int id,
         CancellationToken token)
     {
-        var guid = Guid.NewGuid();
-        _logger.LogInformation("{Guid} - Delete user {Id}", guid, id);
+        _logger.LogInformation("Delete user {Id}", id);
 
         await _userService.DeleteAsync(id, token);
 
-        _logger.LogInformation("{Guid} - User {Id} deleted", guid, id);
+        _logger.LogInformation("User {Id} deleted", id);
 
         return NoContent();
     }

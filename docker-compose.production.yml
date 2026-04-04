@@ -37,6 +37,14 @@ services:
         parallelism: 1
         order: stop-first
       
+  seq:
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+
 secrets:
   JwtSettings__SigningKey:
     external: true

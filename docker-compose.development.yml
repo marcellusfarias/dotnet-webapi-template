@@ -18,6 +18,7 @@ services:
         - ./MyBuyingList/local/secrets/:/run/secrets/
     depends_on:
       - db
+      - seq
     networks:
       - db-network
 
@@ -42,6 +43,10 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+    networks:
+      - db-network
+
+  seq:
     networks:
       - db-network
      
