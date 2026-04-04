@@ -11,6 +11,8 @@ public class PasswordValidatorTests
     [InlineData("Password123%")]
     [InlineData("123@#$%Ps")]
     [InlineData("Ps987654321@#$%&*+_()':;?.,![]\\-")]
+    [InlineData("Password123@VeryLongPasswordVeryVeryLongVeryLongNotTooLong")] // 59 chars - valid under 72 limit
+    [InlineData("Password1@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 72 chars - max allowed
     public void PasswordValidatorIsValidPassword_ShouldReturnTrue_WhenPasswordIsValid(string password)
     {
         // Act
@@ -28,7 +30,7 @@ public class PasswordValidatorTests
     [InlineData("password123!")] // no upper case
     [InlineData("PASSWORD123!")] // no lower case
     [InlineData("PASSWORd!")] // no number
-    [InlineData("Password123@VeryLongPasswordVeryVeryLongVeryLongNotTooLong")] // max 32 chars
+    [InlineData("Password1@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")] // 73 chars - exceeds BCrypt 72-byte limit
     public void PasswordValidatorIsValidPassword_ShouldReturnFalse_WhenPasswordIsNotValid(string password)
     {
         // Act

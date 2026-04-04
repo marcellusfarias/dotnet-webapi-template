@@ -45,6 +45,7 @@ public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEnti
             var items = await _context
                 .Set<TEntity>()
                 .AsNoTracking()
+                .OrderBy(x => x.Id)
                 .Skip((page - 1) * _pageSize)
                 .Take(_pageSize)
                 .ToListAsync(cancellationToken);

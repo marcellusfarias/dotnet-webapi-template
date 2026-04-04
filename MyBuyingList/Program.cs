@@ -22,20 +22,15 @@ if (builder.Environment.EnvironmentName is ("Test" or "Development"))
 
 builder.Configuration.AddKeyPerFile(directoryPath: secretsLocation, optional: false, reloadOnChange: true);
 
-var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!; // TODO: fix warning in the future.
-builder.Services.AddServices(logger, builder.Configuration);
+builder.Services.AddServices(builder.Configuration);
 
 var app = builder.Build();
 await app.StartApplication();
-logger.LogInformation("Running app...");
+app.Logger.LogInformation("Running app...");
 
 ValidatorOptions.Global.LanguageManager = new LanguageManager()
 {
     Culture = System.Globalization.CultureInfo.GetCultureInfo("en"),
 };
 
-app.Run();
-
-// This class exists for the Integration Tests.
-// TODO: read and check if there is a better approach https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0
-public partial class Program { }
+await app.RunAsync();

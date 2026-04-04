@@ -17,7 +17,7 @@ using Testcontainers.PostgreSql;
 namespace MyBuyingList.Web.Tests.IntegrationTests.Common;
 
 // Video I got inspired by: https://www.youtube.com/watch?v=E4TeWBFzcCw
-public class ResourceFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class ResourceFactory : WebApplicationFactory<AssemblyMarker>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer;
     private readonly int _exposedPort = new Random().Next(1000, 10000);

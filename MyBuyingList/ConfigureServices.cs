@@ -3,8 +3,10 @@ using MyBuyingList.Web.Filters;
 using MyBuyingList.Application;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Web.Middlewares.Authorization;
 using MyBuyingList.Web.Middlewares.CorrelationId;
+using MyBuyingList.Web.Services;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 using MyBuyingList.Application.Common.Options;
 using MyBuyingList.Infrastructure;
@@ -13,15 +15,17 @@ namespace MyBuyingList.Web;
 
 internal static class ConfigureServices
 {
-    internal static void AddServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    internal static void AddServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddExternalServices(logger, configuration);
+        services.AddExternalServices(configuration);
 
         services.AddRateLimitService(configuration);
         services.AddAuthorizationServices();
         services.AddSwaggerConfiguration();
         services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<CorrelationIdProvider>();
         services.AddScoped<ICorrelationIdProvider>(sp => sp.GetRequiredService<CorrelationIdProvider>());
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
@@ -84,9 +88,9 @@ internal static class ConfigureServices
         services.Configure<LockoutOptions>(configuration.GetSection(LockoutOptions.SectionName));
     }
 
-    private static void AddExternalServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    private static void AddExternalServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddInfrastructureServices(logger, configuration);
+        services.AddInfrastructureServices(configuration);
         services.AddApplicationServices();
     }
 }

@@ -54,4 +54,41 @@ public class PasswordEncryptionServiceTests
         // Assure
         result.Should().Be(expectedResult);
     }
+
+    [Fact]
+    public void HashPassword_BcryptTruncatesInputAt72Bytes()
+    {
+        // Passwords grow in 10-char steps, each step using a different character
+        // so content genuinely differs up to the 72-byte boundary.
+        var p52 = new string('A', 52);
+        var p62 = new string('A', 52) + new string('B', 10);
+        var p72 = new string('A', 52) + new string('B', 10) + new string('C', 10);
+        // p82 shares its first 72 chars with p72 — only chars 73-82 differ.
+        var p82 = new string('A', 52) + new string('B', 10) + new string('C', 10) + new string('D', 10);
+
+        var hash52 = _sut.HashPassword(p52);
+        var hash62 = _sut.HashPassword(p62);
+        var hash72 = _sut.HashPassword(p72);
+
+        // Within 72 bytes: distinct passwords do not cross-verify.
+        _sut.VerifyPassword(p62, hash52).Should().BeFalse();
+        _sut.VerifyPassword(p72, hash62).Should().BeFalse();
+
+        // Beyond 72 bytes: BCrypt silently ignores chars 73+, so p82 is treated
+        // identically to p72. This is why PasswordValidator enforces a 72-char max.
+        _sut.VerifyPassword(p82, hash72).Should().BeTrue();
+    }
+
+    [Fact]
+    public void VerifyPassword_ReturnsTrueForPasswordsDifferingOnlyBeyond72Chars()
+    {
+        // A password of exactly 72 chars and one with an extra char appended
+        // are indistinguishable to BCrypt due to its 72-byte input truncation.
+        var password72 = new string('A', 72);
+        var password73 = new string('A', 72) + "X";
+
+        var hash = _sut.HashPassword(password72);
+
+        _sut.VerifyPassword(password73, hash).Should().BeTrue();
+    }
 }

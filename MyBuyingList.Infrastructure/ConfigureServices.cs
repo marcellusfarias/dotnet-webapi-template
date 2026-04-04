@@ -14,9 +14,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, ILogger logger, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDatabaseContext(configuration, logger);
+        services.AddDatabaseContext(configuration);
         services.AddRepositories(configuration);
         services.AddJwtAuthentication();
         services.AddAdminSeeder();
@@ -45,9 +45,9 @@ public static class ConfigureServices
         services.AddScoped<IUserRepository, UserRepository>();
     }
 
-    private static void AddDatabaseContext(this IServiceCollection services, IConfiguration configuration, ILogger logger)
+    private static void AddDatabaseContext(this IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = GetConnectionString(configuration, logger);
+        string connectionString = GetConnectionString(configuration);
 
         services.AddDbContext<ApplicationDbContext>(
                 options =>
@@ -61,12 +61,11 @@ public static class ConfigureServices
         services.AddScoped<ApplicationDbContext>();
     }
 
-    private static string GetConnectionString(IConfiguration configuration, ILogger logger)
+    private static string GetConnectionString(IConfiguration configuration)
     {
         string? connectionString = configuration.GetConnectionString("DefaultConnection");
         if (connectionString == null)
         {
-            logger.LogError("Connection string 'DefaultConnection' not found in configuration.");
             throw new InvalidOperationException("Connection string 'DefaultConnection' not found in configuration.");
         }
 
