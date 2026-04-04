@@ -9,17 +9,9 @@
 
 * Implement refresh token support
 
-### Domain
-
-* Enforce the `EmailAddress` value object on the `User` entity instead of using a plain `string`
-
 ### Infrastructure
 
 * Avoid swallowing the original exception in repository methods — distinguish between known DB errors (e.g., unique constraint violation) and unexpected failures instead of wrapping all as `DatabaseException`
-
-### Code Quality
-
-* Fix the `BuildServiceProvider()` call in `Program.cs` — it creates a second DI container and causes singletons to be instantiated twice
 
 ### Template
 

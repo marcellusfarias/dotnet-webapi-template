@@ -22,12 +22,11 @@ if (builder.Environment.EnvironmentName is ("Test" or "Development"))
 
 builder.Configuration.AddKeyPerFile(directoryPath: secretsLocation, optional: false, reloadOnChange: true);
 
-var logger = builder.Services.BuildServiceProvider().GetService<ILogger<Program>>()!; // TODO: fix warning in the future.
-builder.Services.AddServices(logger, builder.Configuration);
+builder.Services.AddServices(GetLogger(builder.Configuration), builder.Configuration);
 
 var app = builder.Build();
 await app.StartApplication();
-logger.LogInformation("Running app...");
+app.Logger.LogInformation("Running app...");
 
 ValidatorOptions.Global.LanguageManager = new LanguageManager()
 {
@@ -36,6 +35,16 @@ ValidatorOptions.Global.LanguageManager = new LanguageManager()
 
 app.Run();
 
-// This class exists for the Integration Tests.
-// TODO: read and check if there is a better approach https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0
-public partial class Program { }
+ILogger<Program> GetLogger(IConfiguration configuration)
+{
+    // 1. Manually create a logger factory
+    using var loggerFactory = LoggerFactory.Create(loggingBuilder => 
+    {
+        loggingBuilder.AddConsole();
+        loggingBuilder.AddSeq(configuration.GetSection("Seq"));
+    });
+
+// 2. Create a logger instance
+    ILogger<Program> logger = loggerFactory.CreateLogger<Program>();
+    return logger;
+}
