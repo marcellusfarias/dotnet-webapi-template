@@ -32,6 +32,9 @@ public static class PasswordValidator
         if (!UpperCaseRegex.IsMatch(password))
             return false;
 
-        return password.Length is >= 8 and <= 32;
+        // Maximum is 72 characters because BCrypt silently truncates input beyond 72 bytes.
+        // All allowed characters are ASCII (1 byte each), so 72 chars == 72 bytes with no truncation risk.
+        // This also satisfies the NIST SP 800-63B recommendation of accepting at least 64 characters.
+        return password.Length is >= 8 and <= 72;
     }
 }

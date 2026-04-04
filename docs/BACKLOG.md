@@ -8,25 +8,18 @@
 ### Authentication
 
 * Implement refresh token support
-* Increase maximum password length from 32 to at least 64 characters (NIST SP 800-63B recommendation)
 
 ### Domain
 
 * Enforce the `EmailAddress` value object on the `User` entity instead of using a plain `string`
-* Implement a `SaveChanges` interceptor to automatically populate `BaseAuditableEntity` fields (`CreatedAt`, `LastModifiedAt`, etc.)
 
 ### Infrastructure
 
 * Avoid swallowing the original exception in repository methods — distinguish between known DB errors (e.g., unique constraint violation) and unexpected failures instead of wrapping all as `DatabaseException`
 
-### Application
-
-* Introduce `ICurrentUserService` — a scoped service that exposes the authenticated user's ID and claims from the JWT, so controllers and services don't need to resolve identity manually
-
 ### Code Quality
 
 * Fix the `BuildServiceProvider()` call in `Program.cs` — it creates a second DI container and causes singletons to be instantiated twice
-* Move `SanitizeForLog` out of individual controllers and into `ApiControllerBase`
 
 ### Template
 
@@ -49,3 +42,4 @@ Create folder structure for AI agents and implement a simple agent that can perf
   * Instrument the application with OpenTelemetry
   * We currently use Seq. That means it's a push strategy rather than pull when compared with Loki/Graphana. We may eventually lose some logs if Seq is down, which is unlikely. If we want to be really thourough, we can install Serilog, as it buffers the logs into a local file while Seq is down. 
   * Create init only script for Seq in case we ever delete the volume we don't need to configure it all again
+* Implement a `SaveChanges` interceptor to automatically populate `BaseAuditableEntity` fields (`CreatedAt`, `LastModifiedAt`, etc.)
