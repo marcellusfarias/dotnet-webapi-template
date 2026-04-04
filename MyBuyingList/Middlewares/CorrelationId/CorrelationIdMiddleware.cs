@@ -16,7 +16,7 @@ public class CorrelationIdMiddleware
     {
         var correlationId = context.Request.Headers[HeaderName].FirstOrDefault();
 
-        if (string.IsNullOrWhiteSpace(correlationId))
+        if (string.IsNullOrWhiteSpace(correlationId) || !IsValid(correlationId))
         {
             correlationId = Guid.NewGuid().ToString();
         }
@@ -33,5 +33,21 @@ public class CorrelationIdMiddleware
         {
             await _next(context);
         }
+    }
+
+    // Valid: printable ASCII (0x20–0x7E), max 128 characters.
+    // Anything else (control chars, newlines, non-ASCII) is rejected and a new ID is generated.
+    private static bool IsValid(string value)
+    {
+        if (value.Length > 128)
+            return false;
+
+        foreach (char c in value)
+        {
+            if (c < 0x20 || c > 0x7E)
+                return false;
+        }
+
+        return true;
     }
 }

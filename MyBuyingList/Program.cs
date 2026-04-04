@@ -4,6 +4,7 @@ using MyBuyingList.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(opt =>
 {
     opt.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Enabled;

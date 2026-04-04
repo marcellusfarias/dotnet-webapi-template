@@ -63,6 +63,25 @@ public class CorrelationIdMiddlewareIntegrationTests : BaseIntegrationTest
         response.Headers.GetValues(CorrelationIdMiddleware.HeaderName).First().Should().NotBeNullOrWhiteSpace();
     }
 
+    [Theory]
+    [InlineData("evil\ninjected-header: value")]
+    [InlineData("evil\rvalue")]
+    [InlineData("toolong_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")]
+    public async Task Request_WithInvalidCorrelationIdHeader_ResponseContainsGeneratedId(string invalidCorrelationId)
+    {
+        // Arrange
+        using var request = new HttpRequestMessage(HttpMethod.Get, "api/users");
+        request.Headers.TryAddWithoutValidation(CorrelationIdMiddleware.HeaderName, invalidCorrelationId);
+        request.Headers.Authorization = _client.DefaultRequestHeaders.Authorization;
+
+        // Act
+        var response = await _client.SendAsync(request, _cancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Headers.GetValues(CorrelationIdMiddleware.HeaderName).First().Should().NotBe(invalidCorrelationId);
+    }
+
     [Fact]
     public async Task Request_WithCorrelationIdHeader_CorrelationIdAppearsInLogs()
     {
@@ -79,6 +98,7 @@ public class CorrelationIdMiddlewareIntegrationTests : BaseIntegrationTest
 
         // Assert
         var entries = _factory.LogCollector.Entries;
+        entries.Count.Should().BeGreaterThan(0);
         entries.Should().AllSatisfy(e => e.Scopes.Any(s => 
             s.Key == "CorrelationId" 
             && s.Value != null 
