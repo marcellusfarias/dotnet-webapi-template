@@ -15,6 +15,8 @@ if (expression)
 }
 ```
 
+On creating new Configuration, never use Cascade delete style. Always use Restrict.
+
 #### CancelationToken on integration tests
 
 Ensure we have a CancelationToken on integration tests, following the following pattern and that we pass then around.

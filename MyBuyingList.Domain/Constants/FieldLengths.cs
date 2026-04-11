@@ -10,6 +10,9 @@ public static class FieldLengths
     // Role
     public const int ROLE_NAME_MAX_LENGTH = 32;
 
+    // RefreshToken
+    public const int REFRESH_TOKEN_HASH_MAX_LENGTH = 64;
+
     // User
     public const int USER_USERNAME_MIN_LENGTH = 3;
     public const int USER_USERNAME_MAX_LENGTH = 32;

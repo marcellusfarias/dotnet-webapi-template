@@ -6,3 +6,11 @@ Content-Type: application/json
   "Password": "Admin123\\!"
 }
 
+###
+
+POST https://localhost:8080/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "<refresh_token_from_login>"
+}

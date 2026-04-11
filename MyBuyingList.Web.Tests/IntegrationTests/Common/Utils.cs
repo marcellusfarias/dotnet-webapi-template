@@ -1,4 +1,5 @@
-﻿using MyBuyingList.Application.Features.Users.DTOs;
+﻿using MyBuyingList.Application.Features.Login.DTOs;
+using MyBuyingList.Application.Features.Users.DTOs;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
@@ -21,7 +22,7 @@ public static class Utils
                 
         var response = await client.PostAsync(
             requestUri: Constants.BaseAddressUserEndpoint, 
-            content: Utils.GetJsonContentFromObject(newUser)
+            content: GetJsonContentFromObject(newUser)
         );
 
         if (response.StatusCode != HttpStatusCode.Created)
@@ -31,6 +32,14 @@ public static class Utils
 
         var content = await response.Content.ReadFromJsonAsync<int>();
         return content;
+    }
+
+    public static async Task<LoginResponse> LoginAsync(HttpClient client)
+    {
+        var loginDto = new LoginRequest { Username = TestUserUsername, Password = TestUserPassword };
+        var response = await client.PostAsync(Constants.AddressAuthenticationEndpoint, GetJsonContentFromObject(loginDto));
+        var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
+        return loginResponse!;
     }
 
     public static StringContent GetJsonContentFromObject(object content)

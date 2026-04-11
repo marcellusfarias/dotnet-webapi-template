@@ -11,4 +11,9 @@ public class AuthenticationException : Exception, IFormattedResponseException
     {
         Error = ErrorResponse.CreateSingleErrorDetail(string.Format(ResponseTitle, username), details);
     }
+
+    public AuthenticationException(string details) : base(details)
+    {
+        Error = ErrorResponse.CreateSingleErrorDetail("Error on authentication process",details);
+    }
 }

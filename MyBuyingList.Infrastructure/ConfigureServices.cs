@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using MyBuyingList.Infrastructure;
-using MyBuyingList.Infrastructure.Repositories;
-using MyBuyingList.Infrastructure.Authentication.JwtSetup;
-using MyBuyingList.Infrastructure.Persistence.Seeders;
+using Microsoft.Extensions.DependencyInjection;
 using MyBuyingList.Application.Common.Interfaces;
-using MyBuyingList.Infrastructure.Authentication.Services;
 using MyBuyingList.Application.Features.Users;
+using MyBuyingList.Infrastructure.Authentication.JwtSetup;
+using MyBuyingList.Infrastructure.Authentication.Services;
+using MyBuyingList.Infrastructure.BackgroundServices;
+using MyBuyingList.Infrastructure.Persistence.Seeders;
+using MyBuyingList.Infrastructure.Repositories;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace MyBuyingList.Infrastructure;
 
 public static class ConfigureServices
 {
@@ -36,13 +36,15 @@ public static class ConfigureServices
             .AddJwtBearer();
         services.ConfigureOptions<JwtOptionsSetup>();
         services.ConfigureOptions<JwtBearerOptionsSetup>();
-        services.AddTransient<IJwtProvider, JwtProvider>();
+        services.AddScoped<IJwtProvider, JwtProvider>(); // TODO: change to singleton. Should inject IServiceScopeFactory because of IUserRepository
     }    
 
     private static void AddRepositories(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RepositorySettings>(configuration.GetSection("RepositorySettings"));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddHostedService<RefreshTokenCleanupService>();
     }
 
     private static void AddDatabaseContext(this IServiceCollection services, IConfiguration configuration)

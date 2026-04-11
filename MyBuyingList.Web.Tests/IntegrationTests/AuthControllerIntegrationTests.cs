@@ -1,7 +1,7 @@
-﻿using MyBuyingList.Application.Features.Login.DTOs;
+using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Web.Tests.IntegrationTests.Common;
 using System.Net;
-using System.Text.Json;
+using System.Net.Http.Json;
 
 namespace MyBuyingList.Web.Tests.IntegrationTests;
 
@@ -10,14 +10,17 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
 {
     private readonly HttpClient _client;
     private readonly CancellationToken _cancellationToken = TestContext.Current.CancellationToken;
+
     public AuthControllerIntegrationTests(ResourceFactory resourceFactory)
         : base(resourceFactory)
     {
         _client = resourceFactory.HttpClient;
     }
 
+    #region Authenticate
+    
     [Fact]
-    public async Task Authenticate_ReturnsToken_WhenCredentialsAreValid()
+    public async Task Authenticate_ReturnsLoginResponse_WhenCredentialsAreValid()
     {
         // Arrange
         await Utils.InsertTestUser(_client);
@@ -29,13 +32,18 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         };
 
         // Act
-        var url = Constants.AddressAuthenticationEndpoint;
-        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
+        var response = await _client.PostAsync(Constants.AddressAuthenticationEndpoint, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var responseContent = await response.Content.ReadAsStringAsync(_cancellationToken);
-        responseContent.Should().NotBeNull();
+        var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(_cancellationToken);
+        loginResponse.Should().NotBeNull();
+        loginResponse!.AccessToken.Should().NotBeNullOrEmpty();
+        loginResponse.RefreshToken.Should().NotBeNullOrEmpty();
+        // AccessTokenExpiresAt is computed server-side from JwtSettings.ExpirationTime;
+        // assert it was set recently rather than asserting a specific future offset.
+        loginResponse.AccessTokenExpiresAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromMinutes(6));
+        loginResponse.RefreshTokenExpiresAt.Should().BeAfter(DateTimeOffset.UtcNow);
     }
 
     [Fact]
@@ -44,17 +52,14 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange
         await Utils.InsertTestUser(_client);
 
-        var invalidPassword = string.Concat(Utils.TestUserPassword, ".");
-
         var loginDto = new LoginRequest
         {
             Username = Utils.TestUserUsername,
-            Password = invalidPassword
+            Password = string.Concat(Utils.TestUserPassword, ".")
         };
 
-        // Act        
-        var url = Constants.AddressAuthenticationEndpoint;
-        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
+        // Act
+        var response = await _client.PostAsync(Constants.AddressAuthenticationEndpoint, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -66,16 +71,14 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange — create a test user and exhaust MaxFailedAttempts (3 in test config)
         await Utils.InsertTestUser(_client);
 
-        var invalidPassword = string.Concat(Utils.TestUserPassword, ".");
         var loginDtoWrong = new LoginRequest
         {
             Username = Utils.TestUserUsername,
-            Password = invalidPassword
+            Password = string.Concat(Utils.TestUserPassword, ".")
         };
 
         var url = Constants.AddressAuthenticationEndpoint;
 
-        // Send MaxFailedAttempts wrong attempts to trigger lockout
         for (int i = 0; i < 3; i++)
         {
             await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDtoWrong), _cancellationToken);
@@ -96,11 +99,10 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange — create test user and trigger lockout
         await Utils.InsertTestUser(_client);
 
-        var invalidPassword = string.Concat(Utils.TestUserPassword, ".");
         var loginDtoWrong = new LoginRequest
         {
             Username = Utils.TestUserUsername,
-            Password = invalidPassword
+            Password = string.Concat(Utils.TestUserPassword, ".")
         };
 
         var url = Constants.AddressAuthenticationEndpoint;
@@ -117,7 +119,7 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
             Password = Utils.TestUserPassword
         };
 
-        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDtoCorrect),  _cancellationToken);
+        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDtoCorrect), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -131,11 +133,10 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
         // Arrange — create test user and trigger lockout
         await Utils.InsertTestUser(_client);
 
-        var invalidPassword = string.Concat(Utils.TestUserPassword, ".");
         var loginDtoWrong = new LoginRequest
         {
             Username = Utils.TestUserUsername,
-            Password = invalidPassword
+            Password = string.Concat(Utils.TestUserPassword, ".")
         };
 
         var url = Constants.AddressAuthenticationEndpoint;
@@ -175,11 +176,104 @@ public class AuthControllerIntegrationTests : BaseIntegrationTest
             Password = password
         };
 
-        // Act        
-        var url = Constants.AddressAuthenticationEndpoint;
-        var response = await _client.PostAsync(url, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
+        // Act
+        var response = await _client.PostAsync(Constants.AddressAuthenticationEndpoint, Utils.GetJsonContentFromObject(loginDto), _cancellationToken);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+
+
+    #endregion
+    
+    #region Refresh tests
+    
+    [Fact]
+    public async Task Refresh_ReturnsNewLoginResponse_WhenRefreshTokenIsValid()
+    {
+        // Arrange
+        await Utils.InsertTestUser(_client);
+        var loginResponse = await Utils.LoginAsync(_client);
+
+        var refreshRequest = new RefreshRequest { RefreshToken = loginResponse.RefreshToken };
+
+        // Act
+        var response = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(refreshRequest), _cancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var newLoginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>(_cancellationToken);
+        newLoginResponse.Should().NotBeNull();
+        newLoginResponse!.AccessToken.Should().NotBeNullOrEmpty();
+        newLoginResponse.RefreshToken.Should().NotBeNullOrEmpty();
+        newLoginResponse.RefreshToken.Should().NotBe(loginResponse.RefreshToken);
+        newLoginResponse.AccessTokenExpiresAt.Should().BeCloseTo(DateTimeOffset.UtcNow, TimeSpan.FromMinutes(6));
+        newLoginResponse.RefreshTokenExpiresAt.Should().BeAfter(DateTimeOffset.UtcNow);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsUnauthorized_WhenRefreshTokenIsInvalid()
+    {
+        // Arrange
+        var refreshRequest = new RefreshRequest { RefreshToken = "invalid-token" };
+
+        // Act
+        var response = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(refreshRequest), _cancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsUnauthorizedAndRevokeAllTokens_WhenRefreshTokenIsUsedTwice()
+    {
+        // Arrange
+        await Utils.InsertTestUser(_client);
+        var loginResponse = await Utils.LoginAsync(_client);
+        var secondLoginResponse = await Utils.LoginAsync(_client);
+
+        var refreshRequest = new RefreshRequest { RefreshToken = loginResponse.RefreshToken };
+        var secondRefreshRequest = new RefreshRequest { RefreshToken = secondLoginResponse.RefreshToken };
+
+        // Use the refresh token once (rotates it)
+        await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(refreshRequest), _cancellationToken);
+
+        // Act
+        
+        // Reuse the same (now revoked) refresh token
+        var response = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(refreshRequest), _cancellationToken);
+
+        // Tries to use other token
+        var secondResponse = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(secondRefreshRequest), _cancellationToken);
+        
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        secondResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_ReturnsBadRequest_WhenRefreshTokenIsEmpty()
+    {
+        // Arrange
+        var refreshRequest = new RefreshRequest { RefreshToken = "" };
+
+        // Act
+        var response = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(refreshRequest), _cancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+    
+    [Fact]
+    public async Task Refresh_ReturnsBadRequest_WhenRefreshTokenIsMissing()
+    {
+        // Act
+        var response = await _client.PostAsync(Constants.AddressRefreshTokenEndpoint, Utils.GetJsonContentFromObject(string.Empty), _cancellationToken);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    #endregion
+    
 }

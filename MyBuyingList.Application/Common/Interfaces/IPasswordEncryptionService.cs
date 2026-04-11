@@ -19,4 +19,6 @@ public interface IPasswordEncryptionService
     /// <param name="hashedPassword">The hashed password to compare against.</param>
     /// <returns>True if passwords match; otherwise, false.</returns>
     bool VerifyPassword(string password, string hashedPassword);
+    
+    string ComputeRefreshTokenHash(string rawToken);
 }
