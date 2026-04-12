@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyBuyingList.Application.Common.Interfaces;
 using MyBuyingList.Application.Features.Login.DTOs;
+using System.Net.Http.Json;
 using MyBuyingList.Domain.Entities;
 using MyBuyingList.Infrastructure;
 using MyBuyingList.Web.Tests.IntegrationTests.Common.Logging;
@@ -89,9 +90,9 @@ public class ResourceFactory : WebApplicationFactory<AssemblyMarker>, IAsyncLife
         };
 
         var response = await client.PostAsync("api/auth", Utils.GetJsonContentFromObject(loginDto));
-        var token = await response.Content.ReadAsStringAsync();
+        var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
 
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse!.AccessToken);
 
         HttpClient = client;
     }

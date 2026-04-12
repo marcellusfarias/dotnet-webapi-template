@@ -1,9 +1,12 @@
-﻿using MyBuyingList.Application.Common.Exceptions;
+﻿using System.Security.Cryptography;
+using System.Text;
+using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Common.Interfaces;
 using BC = BCrypt.Net.BCrypt;
 
 namespace MyBuyingList.Application.Common.Services;
 
+// TODO: no reason for this to be a service, should be a static helper class for crypto/hashing functions
 public class PasswordEncryptionService : IPasswordEncryptionService
 {
     private const int WorkingFactor = 12;
@@ -31,5 +34,11 @@ public class PasswordEncryptionService : IPasswordEncryptionService
         {
             throw new InternalServerErrorException(ex, "Failure while validating passwords. Please, contact administrator.");
         }
+    }
+
+    public string ComputeRefreshTokenHash(string rawToken)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(rawToken));
+        return Convert.ToHexString(bytes).ToLower();
     }
 }

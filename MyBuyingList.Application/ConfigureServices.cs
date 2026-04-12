@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Reflection;
 using FluentValidation;
 using MyBuyingList.Application.Features.Login.Services;
@@ -27,7 +26,7 @@ public static class ConfigureServices
     private static void AddServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.AddTransient<IPasswordEncryptionService, PasswordEncryptionService>();
     }
 }

@@ -30,6 +30,10 @@ internal static class ConfigureServices
         services.AddScoped<ICorrelationIdProvider>(sp => sp.GetRequiredService<CorrelationIdProvider>());
         services.AddControllers(options => options.Filters.Add(typeof(RequestBodyValidationFilter)));
         services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+        services.AddOptions<RefreshTokenOptions>()
+            .BindConfiguration(RefreshTokenOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
     }
 
     private static void AddSwaggerConfiguration(this IServiceCollection services)
@@ -84,7 +88,6 @@ internal static class ConfigureServices
             options.AddPolicy<IPAddress, AuthenticationRateLimiterPolicy>(AuthenticationRateLimiterPolicy.PolicyName);
         });
         
-        // Lockout
         services.Configure<LockoutOptions>(configuration.GetSection(LockoutOptions.SectionName));
     }
 

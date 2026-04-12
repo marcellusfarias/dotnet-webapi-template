@@ -4,6 +4,7 @@ public static class Constants
 {
     public const string ResourceFactoryCollection = "ResourceFactoryCollection";
     public const string BaseAddressUserEndpoint = "api/users/";
-    public const string AddressAuthenticationEndpoint = "api/auth?username={0}&password={1}";
+    public const string AddressAuthenticationEndpoint = "api/auth";
+    public const string AddressRefreshTokenEndpoint = "api/auth/refresh";
     public const string AddressHealthEndpoint = "health";
 }

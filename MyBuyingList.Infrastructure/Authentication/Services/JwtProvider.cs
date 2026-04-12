@@ -12,15 +12,17 @@ namespace MyBuyingList.Infrastructure.Authentication.Services;
 
 public class JwtProvider : IJwtProvider
 {
+    private readonly JwtSecurityTokenHandler _tokenHandler = new();
     private readonly JwtOptions _options;
     private readonly IUserRepository _userRepository;
+    
     public JwtProvider(IOptions<JwtOptions> options, IUserRepository userRepository)
     {
         _userRepository = userRepository;
         _options = options.Value;
     }
 
-    public async Task<string> GenerateTokenAsync(int userId, CancellationToken cancellationToken)
+    public async Task<(string Value, DateTimeOffset ExpiresAt)> GenerateTokenAsync(int userId, CancellationToken cancellationToken)
     {
         var permissions = await GetPermissionsAsync(userId, cancellationToken);
 
@@ -36,18 +38,20 @@ public class JwtProvider : IJwtProvider
 
         permissions.ForEach(permission => claims.Add(new(CustomClaims.Permissions, permission)));
 
+        var expiresAt = DateTimeOffset.UtcNow.AddSeconds(_options.ExpirationTime);
+
         var token = new JwtSecurityToken(
             _options.Issuer,
             _options.Audience,
             claims,
             null,
-            DateTime.UtcNow.AddSeconds(_options.ExpirationTime),
+            expiresAt.UtcDateTime,
             signingCredentials
             );
 
-        string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
+        string tokenValue = _tokenHandler.WriteToken(token);
 
-        return tokenValue;
+        return (tokenValue, expiresAt);
     }
 
     private async Task<List<string>> GetPermissionsAsync(int userId, CancellationToken token)

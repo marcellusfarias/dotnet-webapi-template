@@ -1,25 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using MyBuyingList.Application.Common.Exceptions;
 using MyBuyingList.Application.Features.Login.DTOs;
 using MyBuyingList.Application.Features.Login.Services;
 using MyBuyingList.Web.Middlewares.RateLimiting;
 
 namespace MyBuyingList.Web.Controllers;
+
 public class AuthController : ApiControllerBase
 {
-    private readonly ILoginService _loginService;
+    private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(ILoginService loginService, ILogger<AuthController> logger)
+    public AuthController(IAuthService authService, ILogger<AuthController> logger)
     {
-        _loginService = loginService;
+        _authService = authService;
         _logger = logger;
     }
 
     [EnableRateLimiting(AuthenticationRateLimiterPolicy.PolicyName)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
-    [HttpPost, Produces("text/plain")]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+    [HttpPost]
     public async Task<IActionResult> Authenticate(
         [FromBody] LoginRequest loginDto,
         CancellationToken token)
@@ -27,16 +31,23 @@ public class AuthController : ApiControllerBase
         var safeUsername = SanitizeForLog(loginDto.Username);
         _logger.LogInformation("Authenticate user {LoginRequestUsername}", safeUsername);
 
-        var jwtToken = await _loginService.AuthenticateAndReturnJwtTokenAsync(loginDto, token);
-
-        if(string.IsNullOrEmpty(jwtToken))
-        {
-            _logger.LogInformation("Unauthorized {LoginRequestUsername}", safeUsername);
-            return Unauthorized();
-        }
+        var loginResponse = await _authService.AuthenticateAsync(loginDto, token);
 
         _logger.LogInformation("Authenticated {LoginRequestUsername}", safeUsername);
-        return Ok(jwtToken);
+        return Ok(loginResponse);
     }
 
+    [EnableRateLimiting(AuthenticationRateLimiterPolicy.PolicyName)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(
+        [FromBody] RefreshRequest refreshRequest,
+        CancellationToken token)
+    {
+        var loginResponse = await _authService.RefreshAsync(refreshRequest, token);
+        return Ok(loginResponse);
+    }
 }

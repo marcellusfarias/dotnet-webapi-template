@@ -86,10 +86,10 @@ public class UserControllerIntegrationTests : BaseIntegrationTest
 
         var url = Constants.AddressAuthenticationEndpoint;
         var tokenResponse = await _client.PostAsync(url, Utils.GetJsonContentFromObject(dto), _cancellationToken);
-        var token = await tokenResponse.Content.ReadAsStringAsync(_cancellationToken);
+        var loginResponse = await tokenResponse.Content.ReadFromJsonAsync<LoginResponse>(_cancellationToken);
 
         var auth = _client.DefaultRequestHeaders.Authorization;
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse!.AccessToken);
 
         // Act
         var response = await _client.GetAsync("api/users", _cancellationToken);
