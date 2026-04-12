@@ -6,7 +6,6 @@ The deployment story is also included: multi-stage Dockerfile, Docker Swarm comp
 
 ## Summary
 
-- [Using the template](#using-the-template)
 - [Features implemented](#features-implemented)
   - [Architecture and DDD](#architecture-and-ddd)
   - [API Contracts and Documentation](#api-contracts-and-documentation)
@@ -190,6 +189,40 @@ There are three test projects:
 
 * [.NET 8 SDK](https://dotnet.microsoft.com/download)
 * [Docker](https://www.docker.com/)
+
+## Using the template
+
+### Install
+
+```bash
+dotnet new install marcellusfarias/dotnet-webapi-template
+```
+
+Or install directly from a local clone:
+
+```bash
+dotnet new install .
+```
+
+### Create a new project
+
+```bash
+dotnet new mf-webapi --name YourProjectName --GithubRepo your-github-username/your-repo-name
+```
+
+| Option | Required | Description |
+|---|---|---|
+| `--name` | Yes | Solution and project name — replaces all namespaces, folder names and file names |
+| `--GithubRepo` | No | GitHub repository in `owner/repo-name` format, used for the container image reference in `docker-compose.production.yml`. Defaults to `your-github-username/your-repo-name` |
+
+### Example
+
+```bash
+dotnet new mf-webapi --name TodoApi --GithubRepo octocat/todo-api
+```
+
+This produces a fully working solution named `TodoApi` with the correct namespaces, project references, Docker configuration and CI/CD workflow — no manual find-and-replace needed.
+
 
 ### Run locally
 
