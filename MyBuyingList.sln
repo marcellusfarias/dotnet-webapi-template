@@ -47,6 +47,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci/cd", "ci/cd", "{BE98E3E7
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "plans", "plans", "{8A328A00-904B-49A3-9788-7494FB611E4D}"
+	ProjectSection(SolutionItems) = preProject
+		docs\plans\dotnet-template-plan.md = docs\plans\dotnet-template-plan.md
+		docs\plans\refresh-token-plan.md = docs\plans\refresh-token-plan.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +138,7 @@ Global
 		{A7261498-4A33-4B3E-AE59-637409B0A760} = {EA8D2936-F3EE-431E-95C1-445BA153829A}
 		{67DDCE10-2E6A-472E-9424-238C30C1E02C} = {EA8D2936-F3EE-431E-95C1-445BA153829A}
 		{BA177695-39A6-43E8-8FFF-45B5268143B7} = {0F13E070-3496-4EF1-9731-23DFDBF271A4}
+		{8A328A00-904B-49A3-9788-7494FB611E4D} = {E11C2A77-7EAA-4FFC-AF0A-48135E899AA8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A042ADF-ED3D-4204-BD0C-DF69CC22682E}

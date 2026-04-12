@@ -1,5 +1,65 @@
 # Dotnet WebAPI Template
 
+## Summary
+
+- [Using the template](#using-the-template)
+- [Features implemented](#features-implemented)
+  - [Architecture and DDD](#architecture-and-ddd)
+  - [API Contracts and Documentation](#api-contracts-and-documentation)
+  - [Docker](#docker)
+  - [Middlewares, Filters and Exception/Error Handling](#middlewares-filters-and-exceptionerror-handling)
+  - [Rate Limiting](#rate-limiting)
+  - [Authentication and Authorization](#authentication-and-authorization)
+  - [Refresh Tokens](#refresh-tokens)
+  - [Account Lockout](#account-lockout)
+  - [Database and EFCore](#database-and-efcore)
+  - [Logging](#logging)
+  - [Network](#network)
+  - [Testing](#testing)
+- [How to](#how-to)
+  - [Using the template](#using-the-template)
+  - [Prerequisites](#prerequisites)
+  - [Run locally](#run-locally)
+  - [Run in production](#run-in-production)
+  - [Run tests](#run-tests)
+
+---
+
+## Using the template
+
+### Install
+
+```bash
+dotnet new install marcellusfarias/dotnet-webapi-template
+```
+
+Or install directly from a local clone:
+
+```bash
+dotnet new install .
+```
+
+### Create a new project
+
+```bash
+dotnet new mf-webapi --name YourProjectName --GithubRepo your-github-username/your-repo-name
+```
+
+| Option | Required | Description |
+|---|---|---|
+| `--name` | Yes | Solution and project name — replaces all namespaces, folder names and file names |
+| `--GithubRepo` | No | GitHub repository in `owner/repo-name` format, used for the container image reference in `docker-compose.production.yml`. Defaults to `your-github-username/your-repo-name` |
+
+### Example
+
+```bash
+dotnet new mf-webapi --name TodoApi --GithubRepo octocat/todo-api
+```
+
+This produces a fully working solution named `TodoApi` with the correct namespaces, project references, Docker configuration and CI/CD workflow — no manual find-and-replace needed.
+
+---
+
 This project aims to be a template for new WebAPI projects. It already sets up:
 
 Tech stack:
@@ -184,6 +244,12 @@ There are three test projects:
      docker compose -f docker-compose.development.yml up -d
      ```
    > **Before running**, open `docker-compose.development.yml` and review the volume mappings under the `api` service. The file is pre-configured for **macOS** (`~/.aspnet/dev-certs/https`). If you are on **Windows**, comment out the macOS lines and uncomment the Windows lines as shown in the comments inside the file.
+   >
+   > Also update `ASPNETCORE_Kestrel__Certificates__Default__Path` in `docker-compose.development.yml` to match your local dev certificate filename. You can find the correct filename by running:
+   > ```bash
+   > ls ~/.aspnet/dev-certs/https/
+   > ```
+   > Then set the value to `/etc/ssl/certs/<your-cert-filename>.pfx`.
 4. Run the application. Choose one of two approaches:
    - **API inside Docker** (recommended — API and DB share the same network): Docker Compose already handles this; no further steps needed.
    - **API outside Docker** (`dotnet run`): open `MyBuyingList/appsettings.Development.json`, copy the connection string commented as `// If running locally (not container)`, and paste it as the content of `MyBuyingList/local/secrets/ConnectionStrings__DefaultConnection`. Then run:

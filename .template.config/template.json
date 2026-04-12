@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "marcellusfarias",
+  "classifications": ["Web", "API"],
+  "identity": "marcellusfarias.WebApi.Template",
+  "name": "Dotnet WebAPI Template",
+  "shortName": "mf-webapi",
+  "sourceName": "MyBuyingList",
+  "preferNameDirectory": true,
+  "symbols": {
+    "GithubRepo": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "your-github-username/your-repo-name",
+      "replaces": "marcellusfarias/dotnet-webapi-template",
+      "description": "GitHub repository in owner/repo-name format — used for the container image reference in docker-compose.production.yml"
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            ".git/**",
+            ".idea/**",
+            ".claude/**",
+            "CLAUDE.md",
+            "docs/plans/**",
+            "docs/BACKLOG.md",
+            "*.DotSettings.user",
+            "bin/**",
+            "obj/**",
+            "**/bin/**",
+            "**/obj/**"
+          ]
+        }
+      ]
+    }
+  ]
+}
