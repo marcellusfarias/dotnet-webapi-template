@@ -120,12 +120,10 @@ public class AuthService : IAuthService
             throw new AuthenticationException("Expired refresh token.");
         }
 
-        await _refreshTokenRepository.RevokeAsync(storedToken, cancellationToken);
-        
         var (accessToken, accessTokenExpiresAt) = await _jwtProvider.GenerateTokenAsync(storedToken.UserId, cancellationToken);
         var (rawToken, newTokenEntity) = CreateRefreshToken(storedToken.UserId, _refreshTokenOptions.ExpirationDays);
 
-        await _refreshTokenRepository.AddAsync(newTokenEntity, cancellationToken);
+        await _refreshTokenRepository.RevokeAndAddAsync(storedToken, newTokenEntity, cancellationToken);
         
         return new LoginResponse
         {

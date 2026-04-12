@@ -12,7 +12,7 @@ token is long-lived, opaque, single-use, and stored (hashed) in the database.
 
 | Decision | Choice | Reason |
 |---|---|---|
-| Token format | Cryptographically random bytes, base64url-encoded | Opaque, unforgeable, no claims leakage |
+| Token format | Cryptographically random bytes, standard base64-encoded | Opaque, unforgeable, no claims leakage |
 | DB storage | SHA-256 hash of the raw token | Raw token never at rest; hash alone is useless to an attacker |
 | Rotation | New refresh token issued on every use (old one revoked) | Limits replay window; theft becomes detectable |
 | Reuse detection | `IsRevoked` flag; reuse of a revoked token revokes all tokens for that user + logs a security warning | Detects token theft |
@@ -159,7 +159,7 @@ token is long-lived, opaque, single-use, and stored (hashed) in the database.
 {
   "accessToken": "eyJ...",
   "accessTokenExpiresAt": "2026-04-05T14:32:00+00:00",
-  "refreshToken": "base64url-random-token",
+  "refreshToken": "base64-random-token",
   "refreshTokenExpiresAt": "2026-04-12T14:32:00+00:00"
 }
 // 401 Unauthorized — unchanged
@@ -168,7 +168,7 @@ token is long-lived, opaque, single-use, and stored (hashed) in the database.
 ### `POST /api/auth/refresh` (new)
 ```json
 // Request
-{ "refreshToken": "base64url-random-token" }
+{ "refreshToken": "base64-random-token" }
 
 // 200 OK
 {

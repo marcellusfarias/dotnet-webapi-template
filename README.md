@@ -98,6 +98,31 @@ Request flow:
 
 Permissions are defined as constants in the Domain layer (`Policies` class) and are seeded into the database via migrations, which keeps code and database in sync.
 
+### Refresh Tokens
+
+After a successful login, the API returns both a short-lived **access token** (JWT) and a long-lived **refresh token** (opaque). When the access token expires, clients can exchange the refresh token for a new pair without re-authenticating.
+
+**Security properties:**
+
+* The raw token is never stored. Only its SHA-256 hash is persisted in the `refresh_tokens` table.
+* Tokens are **single-use** — each exchange rotates the refresh token and invalidates the previous one.
+* **Reuse detection**: if a revoked token is presented, all refresh tokens for that user are immediately revoked across all sessions and a warning is logged. This is a deliberate trade-off between security and convenience (see `BACKLOG.md` for the token-families alternative).
+* A background service (`RefreshTokenCleanupService`) runs every 24 hours to delete expired tokens and old revoked tokens beyond the retention window.
+
+**Endpoints:**
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/auth` | Authenticate — returns `accessToken` + `refreshToken` |
+| `POST` | `/api/auth/refresh` | Exchange a refresh token for a new pair |
+
+Configuration is read from `appsettings.json` under the `RefreshTokenOptions` key:
+
+| Option | Default | Description |
+|---|---|---|
+| `ExpirationDays` | `1` | How long a refresh token is valid |
+| `RevokedTokenRetentionDays` | `30` | How long revoked tokens are kept before cleanup |
+
 ### Account Lockout
 
 Account lockout protects against brute-force attacks on the login endpoint. Failed attempts are tracked directly on the `User` entity (`FailedLoginAttempts`, `LockoutEnd`).

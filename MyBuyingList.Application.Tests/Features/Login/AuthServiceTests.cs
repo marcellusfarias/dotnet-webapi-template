@@ -435,8 +435,8 @@ public class AuthServiceTests
         result.RefreshToken.Should().NotBe(rawToken);
         result.AccessTokenExpiresAt.Should().BeAfter(DateTimeOffset.UtcNow);
         result.RefreshTokenExpiresAt.Should().BeAfter(DateTimeOffset.UtcNow);
-        await _refreshTokenRepositoryMock.Received(1).RevokeAsync(storedToken, CancellationToken.None);
-        await _refreshTokenRepositoryMock.Received(1).AddAsync(
+        await _refreshTokenRepositoryMock.Received(1).RevokeAndAddAsync(
+            storedToken,
             Arg.Is<RefreshToken>(t => t.UserId == userId && !t.IsRevoked),
             CancellationToken.None);
     }
@@ -526,7 +526,7 @@ public class AuthServiceTests
 
         // Assert
         await act.Should().ThrowAsync<DatabaseException>();
-        await _refreshTokenRepositoryMock.DidNotReceive().AddAsync(Arg.Any<RefreshToken>(), CancellationToken.None);
+        await _refreshTokenRepositoryMock.DidNotReceive().RevokeAndAddAsync(Arg.Any<RefreshToken>(), Arg.Any<RefreshToken>(), CancellationToken.None);
     }
 
     private static (string RawToken, RefreshToken Entity) BuildValidToken(int userId = 42, bool isRevoked = false,

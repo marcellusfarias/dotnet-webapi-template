@@ -34,17 +34,18 @@ public class RefreshTokenCleanupService : BackgroundService
                 var repository = scope.ServiceProvider.GetRequiredService<IRefreshTokenRepository>();
                 await repository.DeleteExpiredAndRevokedAsync(revokedBefore, stoppingToken);
                 _logger.LogInformation("Refresh token cleanup completed.");
+                
+                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
             catch (OperationCanceledException)
             {
+                _logger.LogInformation("Refresh token cleanup canceled.");
                 break;
             }
             catch (Exception ex)
             {
-                _logger.LogError("Refresh token cleanup failed. Error: {ExMessage}", ex.Message);
+                _logger.LogError(ex, "Refresh token cleanup failed.");
             }
-            
-            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
         }
     }
 }

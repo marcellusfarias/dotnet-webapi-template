@@ -37,12 +37,13 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         catch (Exception ex) { throw new DatabaseException(ex); }
     }
 
-    public async Task RevokeAsync(RefreshToken token, CancellationToken cancellationToken)
+    public async Task RevokeAndAddAsync(RefreshToken tokenToRevoke, RefreshToken newToken, CancellationToken cancellationToken)
     {
         try
         {
-            token.IsRevoked = true;
-            _context.Entry(token).State = EntityState.Modified;
+            tokenToRevoke.IsRevoked = true;
+            _context.Entry(tokenToRevoke).State = EntityState.Modified;
+            _context.Set<RefreshToken>().Add(newToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
         catch (OperationCanceledException) { throw; }
